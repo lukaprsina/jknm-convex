@@ -1,0 +1,16 @@
+{
+	"servers": {
+		"plate": {
+			"args": ["-y", "shadcn@canary", "registry:mcp"],
+			"command": "bunx",
+			"env": {
+				"REGISTRY_URL": "https://platejs.org/r/registry.json"
+			},
+			"type": "stdio"
+		},
+		"playwright": {
+			"args": ["@playwright/mcp@latest"],
+			"command": "bunx"
+		}
+	}
+}
