@@ -34,17 +34,17 @@ const schema = defineSchema({
         deleted_at: v.optional(v.number()), // Unix timestamp
         published_at: v.optional(v.number()), // Unix timestamp
         archived_at: v.optional(v.number()), // Unix timestamp
+        published_year: v.optional(v.number()), // Extracted year for efficient filtering
     })
-        // .index("by_published_at", ["published_at"])
-        // .index("by_status", ["status"])
-        .index("by_title", ["title"])
         .index("by_slug", ["slug"])
-        .index("by_created_at", ["created_at"])
         .index("by_legacy_id", ["legacy_id"])
-        .index("by_published_at", ["published_at"])
-        .searchIndex("search_content", {
+        // Compound indexes for efficient year + status filtering
+        .index("by_status_and_published_year", ["status", "published_year", "published_at"])
+        .index("by_status_and_published_at", ["status", "published_at"])
+        // Search index with year filtering support
+        .searchIndex("search_content_by_year", {
             searchField: "content_markdown",
-            filterFields: ["status"],
+            filterFields: ["status", "published_year"],
         }),
 
     authors: defineTable({
