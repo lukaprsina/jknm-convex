@@ -1,5 +1,5 @@
 {
-  "include": ["**/*.ts", "**/*.tsx"],
+  "include": ["**/*.ts", "**/*.tsx", "convex/schema.ts.old", "convex/board.ts.old"],
   "compilerOptions": {
     "strict": true,
     "esModuleInterop": true,

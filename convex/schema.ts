@@ -1,64 +1,67 @@
-import { defineSchema, defineTable } from 'convex/server'
-import { type Infer, v } from 'convex/values'
+import { defineSchema, defineTable } from "convex/server";
+import { v } from "convex/values";
 
-const schema = defineSchema({
-  boards: defineTable({
-    id: v.string(),
-    name: v.string(),
-    color: v.string(),
-  }).index('id', ['id']),
+export default defineSchema({
+    authors: defineTable({
+        author_type: v.union(v.literal("member"), v.literal("guest")),
+        name: v.string(),
+        google_id: v.optional(v.string()),
+        email: v.optional(v.string()),
+        image: v.optional(v.string()),
+    })
+        .index("by_google_id", ["google_id"])
+        .index("by_email", ["email"])
+        .index("by_author_type", ["author_type"]),
 
-  columns: defineTable({
-    id: v.string(),
-    boardId: v.string(),
-    name: v.string(),
-    order: v.number(),
-  })
-    .index('id', ['id'])
-    .index('board', ['boardId']),
+    articles: defineTable({
+        title: v.string(),
+        slug: v.string(), // URL-friendly version
+        url: v.string(), // Full URL for legacy
+        status: v.union(
+            v.literal("draft"),
+            v.literal("published"),
+            v.literal("archived"),
+            v.literal("deleted")
+        ),
+        content_json: v.optional(v.any()), // PlateJS Value type
+        content_html: v.optional(v.string()),
+        content_markdown: v.optional(v.string()), // For full-text search
+        excerpt: v.optional(v.string()), // For previews/SEO
+        view_count: v.number(),
+        thumbnail_crop: v.optional(
+            v.object({
+                x: v.number(),
+                y: v.number(),
+                width: v.number(),
+                height: v.number(),
+            })
+        ),
+        meta_description: v.optional(v.string()), // SEO
+        legacy_id: v.optional(v.number()),
+        updated_at: v.number(), // Unix timestamp
+        created_at: v.number(), // Unix timestamp
+        deleted_at: v.optional(v.number()), // Unix timestamp
+        published_at: v.optional(v.number()), // Unix timestamp
+        archived_at: v.optional(v.number()), // Unix timestamp
+    })
+        .index("by_slug", ["slug"])
+        .index("by_status", ["status"])
+        .index("by_created_at", ["created_at"])
+        .index("by_published_at", ["published_at"])
+        .index("by_legacy_id", ["legacy_id"])
+        .index("by_status_and_published_at", ["status", "published_at"])
+        .searchIndex("search_content", {
+            searchField: "content_markdown",
+            filterFields: ["status"],
+        }),
 
-  items: defineTable({
-    id: v.string(),
-    title: v.string(),
-    content: v.optional(v.string()),
-    order: v.number(),
-    columnId: v.string(),
-    boardId: v.string(),
-  })
-    .index('id', ['id'])
-    .index('column', ['columnId'])
-    .index('board', ['boardId']),
-})
-export default schema
-
-const board = schema.tables.boards.validator
-const column = schema.tables.columns.validator
-const item = schema.tables.items.validator
-
-export const updateBoardSchema = v.object({
-  id: board.fields.id,
-  name: v.optional(board.fields.name),
-  color: v.optional(v.string()),
-})
-
-export const updateColumnSchema = v.object({
-  id: column.fields.id,
-  boardId: column.fields.boardId,
-  name: v.optional(column.fields.name),
-  order: v.optional(column.fields.order),
-})
-
-export const deleteItemSchema = v.object({
-  id: item.fields.id,
-  boardId: item.fields.boardId,
-})
-const { order, id, ...rest } = column.fields
-export const newColumnsSchema = v.object(rest)
-export const deleteColumnSchema = v.object({
-  boardId: column.fields.boardId,
-  id: column.fields.id,
-})
-
-export type Board = Infer<typeof board>
-export type Column = Infer<typeof column>
-export type Item = Infer<typeof item>
+    articles_to_authors: defineTable({
+        article_id: v.id("articles"),
+        author_id: v.id("authors"),
+        order: v.number(),
+    })
+        .index("by_article", ["article_id"])
+        .index("by_author", ["author_id"])
+        .index("by_article_and_order", ["article_id", "order"])
+        .index("by_article_and_author", ["article_id", "author_id"]),
+});

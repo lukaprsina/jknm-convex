@@ -12,7 +12,7 @@ import schema, {
   newColumnsSchema,
   updateBoardSchema,
   updateColumnSchema,
-} from './schema'
+} from './schema.ts.old'
 import type { Doc, Id } from './_generated/dataModel'
 
 export const seed = internalMutation(async (ctx) => {

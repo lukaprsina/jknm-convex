@@ -1,10 +1,8 @@
 /// <reference types="vite/client" />
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools/production'
 import {
-  Link,
   Outlet,
   createRootRouteWithContext,
-  useRouterState,
   HeadContent,
   Scripts,
 } from '@tanstack/react-router'
