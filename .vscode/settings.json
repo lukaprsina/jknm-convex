@@ -33,7 +33,7 @@
     "**/routeTree.gen.ts": true,
     "bun.lock": true
   },
-  "typescript.experimental.useTsgo": false,
   // always choose typescript from node_modules
-  "typescript.tsdk": "./node_modules/typescript/lib"
+  "typescript.tsdk": "./node_modules/typescript/lib",
+  "biome.lsp.trace.server": "verbose"
 }
