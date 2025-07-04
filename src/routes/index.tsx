@@ -9,7 +9,7 @@ export const Route = createFileRoute('/')({
 })
 
 function Home() {
-  const boardsQuery = useSuspenseQuery(convexQuery(api.board.getBoards, {}))
+  /* const boardsQuery = useSuspenseQuery(convexQuery(api.board.getBoards, {}))
 
   return (
     <div className="p-8 space-y-2">
@@ -30,5 +30,6 @@ function Home() {
         ))}
       </ul>
     </div>
-  )
+  ) */
+  return <>Home</>
 }

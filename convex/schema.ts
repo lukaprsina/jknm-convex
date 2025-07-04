@@ -1,7 +1,9 @@
+import { authTables } from "@convex-dev/auth/server";
 import { defineSchema, defineTable } from "convex/server";
 import { v } from "convex/values";
 
 export default defineSchema({
+    ...authTables,
     authors: defineTable({
         author_type: v.union(v.literal("member"), v.literal("guest")),
         name: v.string(),
