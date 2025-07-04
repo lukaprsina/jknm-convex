@@ -14,7 +14,7 @@ import {
   NavigationMenuLink,
   NavigationMenuList,
   NavigationMenuTrigger,
-} from "~/components/ui/navigation-menu3";
+} from "~/components/ui/navigation-menu";
 import {
   Sheet,
   SheetContent,

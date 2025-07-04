@@ -55,7 +55,7 @@ export const get_by_slug = query({
  */
 export const get_paginated_published = query({
     args: {
-        pagination_opts: paginationOptsValidator,
+        paginationOpts: paginationOptsValidator,
         year: v.optional(v.number()), // Optional year filter
     },
     handler: async (ctx, args) => {
@@ -74,7 +74,7 @@ export const get_paginated_published = query({
             );
         }
 
-        const result = await new_query.order("desc").paginate(args.pagination_opts);
+        const result = await new_query.order("desc").paginate(args.paginationOpts);
 
         // Load authors for each article
         const articlesWithAuthors = await Promise.all(
@@ -111,7 +111,7 @@ export const get_paginated_published = query({
 export const search_published = query({
     args: {
         search_term: v.string(),
-        pagination_opts: paginationOptsValidator,
+        paginationOpts: paginationOptsValidator,
         year: v.optional(v.number()), // Optional year filter
     },
     handler: async (ctx, args) => {
@@ -123,7 +123,7 @@ export const search_published = query({
             return search;
         });
 
-        const result = await searchQuery.paginate(args.pagination_opts);
+        const result = await searchQuery.paginate(args.paginationOpts);
 
         // Load authors for each article
         const articlesWithAuthors = await Promise.all(
