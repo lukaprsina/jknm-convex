@@ -144,7 +144,7 @@ const BlockCommentContent = ({
 				([node]) =>
 					TextApi.isText(node) &&
 					editor.getApi(SuggestionPlugin).suggestion.nodeId(node) ===
-						activeSuggestion.suggestionId,
+					activeSuggestion.suggestionId,
 			);
 		}
 

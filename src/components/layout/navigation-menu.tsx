@@ -217,7 +217,7 @@ export default function Component() {
 
                                   {/* Display label with description if present */}
                                   {link.type === "description" &&
-                                  "description" in item ? (
+                                    "description" in item ? (
                                     <div className="space-y-1">
                                       <div className="font-medium">
                                         {item.label}

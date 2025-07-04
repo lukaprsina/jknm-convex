@@ -1,3 +1,5 @@
+https://motion-primitives.com/docs/border-trail
+
 https://originui.com/file-upload
 Mixed content w/ card
 
