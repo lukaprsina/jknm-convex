@@ -16,6 +16,7 @@ import { PlateElement, useEditorPlugin, withHOC } from "platejs/react";
 import { useFilePicker } from "use-file-picker";
 
 import { cn } from "~/lib/utils";
+import { SelectedFilesOrErrors } from "use-file-picker/types";
 
 const CONTENT: Record<
 	string,
@@ -56,7 +57,7 @@ export const PlaceholderElement = withHOC(
 
 		// TODO: Dummy values for useUploadFile
 		/* const { isUploading, progress, uploadedFile, uploadFile, uploadingFile } =
-      useUploadFile(); */
+	  useUploadFile(); */
 		const isUploading = false;
 		const progress = 0;
 		const uploadedFile = new File([""], "placeholder.txt", {
@@ -88,14 +89,20 @@ export const PlaceholderElement = withHOC(
 		const { openFilePicker } = useFilePicker({
 			accept: currentContent.accept,
 			multiple: true,
-			onFilesSelected: ({ plainFiles: updatedFiles }) => {
-				const firstFile = updatedFiles[0];
-				const restFiles = updatedFiles.slice(1);
+			readFilesContent: false,
+			onFilesSelected: (data: SelectedFilesOrErrors<undefined, unknown>) => {
+				if ("plainFiles" in data && data?.plainFiles && data.plainFiles.length > 0) {
+					const firstFile = data.plainFiles[0];
+					const restFiles = data.plainFiles.slice(1);
 
-				replaceCurrentPlaceholder(firstFile);
+					replaceCurrentPlaceholder(firstFile);
 
-				if (restFiles.length > 0) {
-					editor.getTransforms(PlaceholderPlugin).insert.media(restFiles);
+					if (restFiles.length > 0) {
+						editor.getTransforms(PlaceholderPlugin).insert.media(restFiles as unknown as FileList);
+					}
+				} else if ("errors" in data) {
+					// Handle errors if needed
+					console.error("File selection errors:", data.errors);
 				}
 			},
 		});
@@ -263,9 +270,8 @@ function formatBytes(
 
 	const i = Math.floor(Math.log(bytes) / Math.log(1024));
 
-	return `${(bytes / Math.pow(1024, i)).toFixed(decimals)} ${
-		sizeType === "accurate"
-			? (accurateSizes[i] ?? "Bytest")
-			: (sizes[i] ?? "Bytes")
-	}`;
+	return `${(bytes / Math.pow(1024, i)).toFixed(decimals)} ${sizeType === "accurate"
+		? (accurateSizes[i] ?? "Bytest")
+		: (sizes[i] ?? "Bytes")
+		}`;
 }

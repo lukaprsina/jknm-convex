@@ -41,6 +41,7 @@ import {
 	ToolbarSplitButtonPrimary,
 	ToolbarSplitButtonSecondary,
 } from "./toolbar";
+import { SelectedFilesOrErrors } from "use-file-picker/types";
 
 const MEDIA_CONFIG: Record<
 	string,
@@ -90,8 +91,15 @@ export function MediaToolbarButton({
 	const { openFilePicker } = useFilePicker({
 		accept: currentConfig.accept,
 		multiple: true,
-		onFilesSelected: ({ plainFiles: updatedFiles }) => {
-			editor.getTransforms(PlaceholderPlugin).insert.media(updatedFiles);
+		readFilesContent: false,
+		onFilesSelected: (data: SelectedFilesOrErrors<undefined, unknown>) => {
+			if ("plainFiles" in data && data?.plainFiles && data.plainFiles.length > 0) {
+				editor.getTransforms(PlaceholderPlugin).insert.media(data.plainFiles as unknown as FileList);
+			} else if ("errors" in data) {
+				// Handle errors if needed
+				console.error("File selection errors:", data.errors);
+			}
+			setOpen(false);
 		},
 	});
 
