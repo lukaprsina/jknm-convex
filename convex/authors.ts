@@ -6,17 +6,6 @@ import { v } from "convex/values";
  */
 export const getAll = query({
     args: {},
-    returns: v.array(
-        v.object({
-            _id: v.id("authors"),
-            _creationTime: v.number(),
-            author_type: v.union(v.literal("member"), v.literal("guest")),
-            name: v.string(),
-            google_id: v.optional(v.string()),
-            email: v.optional(v.string()),
-            image: v.optional(v.string()),
-        })
-    ),
     handler: async (ctx) => {
         return await ctx.db.query("authors").collect();
     },
@@ -27,18 +16,6 @@ export const getAll = query({
  */
 export const getById = query({
     args: { id: v.id("authors") },
-    returns: v.union(
-        v.object({
-            _id: v.id("authors"),
-            _creationTime: v.number(),
-            author_type: v.union(v.literal("member"), v.literal("guest")),
-            name: v.string(),
-            google_id: v.optional(v.string()),
-            email: v.optional(v.string()),
-            image: v.optional(v.string()),
-        }),
-        v.null()
-    ),
     handler: async (ctx, args) => {
         return await ctx.db.get(args.id);
     },
@@ -49,18 +26,6 @@ export const getById = query({
  */
 export const getByGoogleId = query({
     args: { google_id: v.string() },
-    returns: v.union(
-        v.object({
-            _id: v.id("authors"),
-            _creationTime: v.number(),
-            author_type: v.union(v.literal("member"), v.literal("guest")),
-            name: v.string(),
-            google_id: v.optional(v.string()),
-            email: v.optional(v.string()),
-            image: v.optional(v.string()),
-        }),
-        v.null()
-    ),
     handler: async (ctx, args) => {
         return await ctx.db
             .query("authors")
@@ -74,18 +39,6 @@ export const getByGoogleId = query({
  */
 export const getByEmail = query({
     args: { email: v.string() },
-    returns: v.union(
-        v.object({
-            _id: v.id("authors"),
-            _creationTime: v.number(),
-            author_type: v.union(v.literal("member"), v.literal("guest")),
-            name: v.string(),
-            google_id: v.optional(v.string()),
-            email: v.optional(v.string()),
-            image: v.optional(v.string()),
-        }),
-        v.null()
-    ),
     handler: async (ctx, args) => {
         return await ctx.db
             .query("authors")
@@ -105,7 +58,6 @@ export const create = mutation({
         email: v.optional(v.string()),
         image: v.optional(v.string()),
     },
-    returns: v.id("authors"),
     handler: async (ctx, args) => {
         return await ctx.db.insert("authors", args);
     },
@@ -123,7 +75,6 @@ export const update = mutation({
         email: v.optional(v.string()),
         image: v.optional(v.string()),
     },
-    returns: v.null(),
     handler: async (ctx, args) => {
         const { id, ...updates } = args;
         const author = await ctx.db.get(id);
@@ -142,7 +93,6 @@ export const update = mutation({
  */
 export const remove = mutation({
     args: { id: v.id("authors") },
-    returns: v.null(),
     handler: async (ctx, args) => {
         const author = await ctx.db.get(args.id);
 

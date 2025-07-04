@@ -7,42 +7,6 @@ import { paginationOptsValidator } from "convex/server";
  */
 export const getBySlug = query({
     args: { slug: v.string() },
-    returns: v.union(
-        v.object({
-            _id: v.id("articles"),
-            _creationTime: v.number(),
-            title: v.string(),
-            slug: v.string(),
-            url: v.string(),
-            status: v.union(
-                v.literal("draft"),
-                v.literal("published"),
-                v.literal("archived"),
-                v.literal("deleted")
-            ),
-            content_json: v.optional(v.any()),
-            content_html: v.optional(v.string()),
-            content_markdown: v.optional(v.string()),
-            excerpt: v.optional(v.string()),
-            view_count: v.number(),
-            thumbnail_crop: v.optional(
-                v.object({
-                    x: v.number(),
-                    y: v.number(),
-                    width: v.number(),
-                    height: v.number(),
-                })
-            ),
-            meta_description: v.optional(v.string()),
-            legacy_id: v.optional(v.number()),
-            updated_at: v.number(),
-            created_at: v.number(),
-            deleted_at: v.optional(v.number()),
-            published_at: v.optional(v.number()),
-            archived_at: v.optional(v.number()),
-        }),
-        v.null()
-    ),
     handler: async (ctx, args) => {
         const article = await ctx.db
             .query("articles")
@@ -58,45 +22,6 @@ export const getBySlug = query({
  */
 export const getPublished = query({
     args: { paginationOpts: paginationOptsValidator },
-    returns: v.object({
-        page: v.array(
-            v.object({
-                _id: v.id("articles"),
-                _creationTime: v.number(),
-                title: v.string(),
-                slug: v.string(),
-                url: v.string(),
-                status: v.union(
-                    v.literal("draft"),
-                    v.literal("published"),
-                    v.literal("archived"),
-                    v.literal("deleted")
-                ),
-                content_json: v.optional(v.any()),
-                content_html: v.optional(v.string()),
-                content_markdown: v.optional(v.string()),
-                excerpt: v.optional(v.string()),
-                view_count: v.number(),
-                thumbnail_crop: v.optional(
-                    v.object({
-                        x: v.number(),
-                        y: v.number(),
-                        width: v.number(),
-                        height: v.number(),
-                    })
-                ),
-                meta_description: v.optional(v.string()),
-                legacy_id: v.optional(v.number()),
-                updated_at: v.number(),
-                created_at: v.number(),
-                deleted_at: v.optional(v.number()),
-                published_at: v.optional(v.number()),
-                archived_at: v.optional(v.number()),
-            })
-        ),
-        isDone: v.boolean(),
-        continueCursor: v.string(),
-    }),
     handler: async (ctx, args) => {
         return await ctx.db
             .query("articles")
@@ -116,45 +41,6 @@ export const searchArticles = query({
         searchTerm: v.string(),
         paginationOpts: paginationOptsValidator,
     },
-    returns: v.object({
-        page: v.array(
-            v.object({
-                _id: v.id("articles"),
-                _creationTime: v.number(),
-                title: v.string(),
-                slug: v.string(),
-                url: v.string(),
-                status: v.union(
-                    v.literal("draft"),
-                    v.literal("published"),
-                    v.literal("archived"),
-                    v.literal("deleted")
-                ),
-                content_json: v.optional(v.any()),
-                content_html: v.optional(v.string()),
-                content_markdown: v.optional(v.string()),
-                excerpt: v.optional(v.string()),
-                view_count: v.number(),
-                thumbnail_crop: v.optional(
-                    v.object({
-                        x: v.number(),
-                        y: v.number(),
-                        width: v.number(),
-                        height: v.number(),
-                    })
-                ),
-                meta_description: v.optional(v.string()),
-                legacy_id: v.optional(v.number()),
-                updated_at: v.number(),
-                created_at: v.number(),
-                deleted_at: v.optional(v.number()),
-                published_at: v.optional(v.number()),
-                archived_at: v.optional(v.number()),
-            })
-        ),
-        isDone: v.boolean(),
-        continueCursor: v.string(),
-    }),
     handler: async (ctx, args) => {
         return await ctx.db
             .query("articles")
@@ -194,7 +80,6 @@ export const create = mutation({
         meta_description: v.optional(v.string()),
         legacy_id: v.optional(v.number()),
     },
-    returns: v.id("articles"),
     handler: async (ctx, args) => {
         const now = Date.now();
 
@@ -239,7 +124,6 @@ export const update = mutation({
         ),
         meta_description: v.optional(v.string()),
     },
-    returns: v.null(),
     handler: async (ctx, args) => {
         const { id, ...updates } = args;
         const article = await ctx.db.get(id);
@@ -279,7 +163,6 @@ export const update = mutation({
  */
 export const incrementViewCount = mutation({
     args: { id: v.id("articles") },
-    returns: v.null(),
     handler: async (ctx, args) => {
         const article = await ctx.db.get(args.id);
 

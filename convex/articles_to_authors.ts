@@ -6,18 +6,6 @@ import { v } from "convex/values";
  */
 export const getAuthorsForArticle = query({
     args: { article_id: v.id("articles") },
-    returns: v.array(
-        v.object({
-            _id: v.id("authors"),
-            _creationTime: v.number(),
-            author_type: v.union(v.literal("member"), v.literal("guest")),
-            name: v.string(),
-            google_id: v.optional(v.string()),
-            email: v.optional(v.string()),
-            image: v.optional(v.string()),
-            order: v.number(),
-        })
-    ),
     handler: async (ctx, args) => {
         const articlesToAuthors = await ctx.db
             .query("articles_to_authors")
@@ -45,41 +33,6 @@ export const getAuthorsForArticle = query({
  */
 export const getArticlesForAuthor = query({
     args: { author_id: v.id("authors") },
-    returns: v.array(
-        v.object({
-            _id: v.id("articles"),
-            _creationTime: v.number(),
-            title: v.string(),
-            slug: v.string(),
-            url: v.string(),
-            status: v.union(
-                v.literal("draft"),
-                v.literal("published"),
-                v.literal("archived"),
-                v.literal("deleted")
-            ),
-            content_json: v.optional(v.any()),
-            content_html: v.optional(v.string()),
-            content_markdown: v.optional(v.string()),
-            excerpt: v.optional(v.string()),
-            view_count: v.number(),
-            thumbnail_crop: v.optional(
-                v.object({
-                    x: v.number(),
-                    y: v.number(),
-                    width: v.number(),
-                    height: v.number(),
-                })
-            ),
-            meta_description: v.optional(v.string()),
-            legacy_id: v.optional(v.number()),
-            updated_at: v.number(),
-            created_at: v.number(),
-            deleted_at: v.optional(v.number()),
-            published_at: v.optional(v.number()),
-            archived_at: v.optional(v.number()),
-        })
-    ),
     handler: async (ctx, args) => {
         const articlesToAuthors = await ctx.db
             .query("articles_to_authors")
@@ -107,7 +60,6 @@ export const addAuthorToArticle = mutation({
         author_id: v.id("authors"),
         order: v.optional(v.number()),
     },
-    returns: v.id("articles_to_authors"),
     handler: async (ctx, args) => {
         // Check if the article exists
         const article = await ctx.db.get(args.article_id);
@@ -162,7 +114,6 @@ export const removeAuthorFromArticle = mutation({
         article_id: v.id("articles"),
         author_id: v.id("authors"),
     },
-    returns: v.null(),
     handler: async (ctx, args) => {
         const relation = await ctx.db
             .query("articles_to_authors")
@@ -189,7 +140,6 @@ export const updateAuthorOrder = mutation({
         author_id: v.id("authors"),
         order: v.number(),
     },
-    returns: v.null(),
     handler: async (ctx, args) => {
         const relation = await ctx.db
             .query("articles_to_authors")

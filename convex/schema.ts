@@ -2,7 +2,7 @@ import { authTables } from "@convex-dev/auth/server";
 import { defineSchema, defineTable } from "convex/server";
 import { v } from "convex/values";
 
-export default defineSchema({
+const schema = defineSchema({
     ...authTables,
     authors: defineTable({
         author_type: v.union(v.literal("member"), v.literal("guest")),
@@ -67,3 +67,10 @@ export default defineSchema({
         .index("by_article_and_order", ["article_id", "order"])
         .index("by_article_and_author", ["article_id", "author_id"]),
 });
+export default schema;
+
+const article = schema.tables.articles.validator;
+const author = schema.tables.authors.validator;
+const articlesToAuthors = schema.tables.articles_to_authors.validator;
+
+export const 
