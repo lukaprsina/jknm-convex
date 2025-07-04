@@ -90,7 +90,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
             <Toaster />
           </div>
         </div>
-        <ReactQueryDevtools />
+        <ReactQueryDevtools buttonPosition="bottom-left" />
         <TanStackRouterDevtools position="bottom-right" />
         <Scripts />
       </body>
