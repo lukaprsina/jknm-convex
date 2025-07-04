@@ -9,13 +9,8 @@
  */
 
 import type * as articles from "../articles.js";
-import type * as articles_to_authors from "../articles_to_authors.js";
 import type * as auth from "../auth.js";
-import type * as authors from "../authors.js";
-import type * as board from "../board.js";
-import type * as examples from "../examples.js";
 import type * as http from "../http.js";
-import type * as schema2 from "../schema2.js";
 
 import type {
   ApiFromModules,
@@ -33,13 +28,8 @@ import type {
  */
 declare const fullApi: ApiFromModules<{
   articles: typeof articles;
-  articles_to_authors: typeof articles_to_authors;
   auth: typeof auth;
-  authors: typeof authors;
-  board: typeof board;
-  examples: typeof examples;
   http: typeof http;
-  schema2: typeof schema2;
 }>;
 declare const fullApiWithMounts: typeof fullApi;
 
