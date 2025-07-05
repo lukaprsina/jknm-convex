@@ -1,12 +1,12 @@
 import { createFileRoute } from '@tanstack/react-router'
+import React from 'react';
 import { Footer2 } from '~/components/layout/footer2'
 import { Navbar1 } from '~/components/layout/navbar1'
-import { usePaginatedQuery, usePreloadedQuery } from "convex/react"
+import { usePaginatedQuery } from "convex/react"
 import { convexQuery } from '@convex-dev/react-query'
 import { api } from 'convex/_generated/api'
-import { useSuspenseQuery } from '@tanstack/react-query'
-// import NavigationMenu from '~/components/layout/navigation-menu'
-// import { Footer } from '~/components/layout/footer'
+import { useIntersectionObserver } from 'usehooks-ts'
+import { AccordionDemo } from '~/components/filter-accordion';
 
 const DEFAULT_NUM_ITEMS = 10
 
@@ -26,21 +26,32 @@ function Home() {
     { initialNumItems: DEFAULT_NUM_ITEMS },
   );
 
-  const { data } = useSuspenseQuery(convexQuery(api.articles.get_paginated_published, { paginationOpts: { cursor: null, numItems: DEFAULT_NUM_ITEMS } }));
+  // Sentinel for infinite loading
+  const { isIntersecting, ref } = useIntersectionObserver({ threshold: 0.5 });
 
-  console.log("Home results:", results, "status:", status);
+  // Only load more if the sentinel is visible and we can load more
+  React.useEffect(() => {
+    if (isIntersecting && status === "CanLoadMore") {
+      loadMore(5);
+    }
+  }, [isIntersecting, status, loadMore]);
 
   return (
-    <div className="w-full">
+    // <div className="w-full flex-grow">
+    <>
       <Navbar1 />
+      <AccordionDemo />
       <main className="w-full flex-grow">
-        {/* <pre>{JSON.stringify(data, null, 2)}</pre> */}
         {results?.map(({ _id, title }) => <div key={_id}>{title}</div>)}
-        <button onClick={() => loadMore(5)} disabled={status !== "CanLoadMore"}>
-          Load More
-        </button>
+        {/* Sentinel for infinite scroll */}
+        {status === "CanLoadMore" && (
+          <div ref={ref} style={{ height: 32, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <span>Loading more...</span>
+          </div>
+        )}
       </main>
       <Footer2 />
-    </div>
+    </>
+    // </div>
   )
 }
