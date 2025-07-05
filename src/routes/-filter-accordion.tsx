@@ -1,3 +1,4 @@
+import { getRouteApi, useNavigate } from "@tanstack/react-router"
 import {
     Accordion,
     AccordionContent,
@@ -6,18 +7,20 @@ import {
 } from "~/components/ui/accordion"
 
 export function AccordionDemo() {
+    const home_route = getRouteApi("/")
+    const home_search = home_route.useSearch()
+    const navigate = useNavigate({ from: home_route.id })
+
     return (
         <Accordion
             type="single"
             collapsible
             className="w-full"
-            defaultValue="item-1"
         >
             <AccordionItem value="item-1">
-                <AccordionTrigger className="justify-end">Filters</AccordionTrigger>
+                <AccordionTrigger className="justify-end">Filtriraj</AccordionTrigger>
                 <AccordionContent className="flex flex-col gap-4 text-balance">
-                    {/* TODO */}
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed
+
                 </AccordionContent>
             </AccordionItem>
         </Accordion>

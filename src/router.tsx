@@ -45,12 +45,16 @@ export function createRouter() {
       defaultErrorComponent: DefaultCatchBoundary,
       defaultNotFoundComponent: () => <NotFound />,
       context: { queryClient },
+      defaultStructuralSharing: true,
+      scrollRestoration: true,
+      // react-query will handle data fetching & caching
+      // https://tanstack.com/router/latest/docs/framework/react/guide/data-loading#passing-all-loader-events-to-an-external-cache
+      defaultPreloadStaleTime: 0,
       Wrap: ({ children }) => (
         <ConvexAuthProvider client={convexQueryClient.convexClient}>
           {children}
         </ConvexAuthProvider>
       ),
-      scrollRestoration: true,
     }),
     queryClient,
   )
