@@ -53,7 +53,7 @@ const schema = defineSchema({
 
 	authors: defineTable({
 		author_type: v.union(v.literal("member"), v.literal("guest")),
-		name: v.string(), // Unique name for authors
+		name: v.string(), // non-unique
 		google_id: v.optional(v.string()),
 		email: v.optional(v.string()),
 		image: v.optional(v.string()),

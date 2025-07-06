@@ -1,15 +1,11 @@
 "use client";
 
+import type { api } from "convex/_generated/api";
 import * as React from "react";
 import MultipleSelector, { type Option } from "~/components/ui/multiselect";
 
-interface Author {
-    value: string;
-    label: string;
-}
-
 interface AuthorSelectProps {
-    authors: Author[];
+    authors: typeof api.authors.get_all._returnType
     selectedAuthors?: string[];
     onAuthorsChange: (authors: string[]) => void;
     placeholder?: string;
@@ -26,8 +22,8 @@ export function AuthorSelect({
     // Convert authors to Options format
     const authorOptions: Option[] = React.useMemo(
         () => authors.map((author) => ({
-            value: author.value,
-            label: author.label,
+            value: author._id,
+            label: author.name,
         })),
         [authors]
     );

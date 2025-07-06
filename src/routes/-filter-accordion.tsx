@@ -28,6 +28,8 @@ const home_route = getRouteApi("/");
 
 export function FilterAccordion() {
     const home_search = home_route.useSearch();
+    const { authors } = home_route.useLoaderData()
+
     const navigate = useNavigate({ from: home_route.id });
     const isMobile = useIsMobile();
     const [isOpen, setIsOpen] = useState(
@@ -51,21 +53,21 @@ export function FilterAccordion() {
                         <Label className="text-sm font-medium pr-2">Leto</Label>
                         {isMobile ? (
                             <YearDropdown
-                                selectedYear={home_search.year ?? undefined}
+                                selectedYear={home_search.leto ?? undefined}
                                 onYearChange={async (year) =>
                                     await navigate({
                                         from: home_route.id,
-                                        search: (prev) => ({ ...prev, year }),
+                                        search: (prev) => ({ ...prev, leto: year }),
                                     })
                                 }
                             />
                         ) : (
                             <YearSelectorHorizontal
-                                selectedYear={home_search.year ?? undefined}
+                                selectedYear={home_search.leto ?? undefined}
                                 onYearChange={async (year) =>
                                     await navigate({
                                         from: home_route.id,
-                                        search: (prev) => ({ ...prev, year }),
+                                        search: (prev) => ({ ...prev, leto: year }),
                                     })
                                 }
                                 className="w-full h-11"
@@ -81,12 +83,12 @@ export function FilterAccordion() {
                                 Avtor
                             </Label>
                             <AuthorSelect
-                                authors={mock_authors}
-                                selectedAuthors={home_search.authors}
+                                authors={authors}
+                                selectedAuthors={home_search.avtorji}
                                 onAuthorsChange={async (authors: string[]) =>
                                     await navigate({
                                         from: home_route.id,
-                                        search: (prev) => ({ ...prev, authors: authors }),
+                                        search: (prev) => ({ ...prev, avtorji: authors }),
                                     })
                                 }
                             />
@@ -101,11 +103,11 @@ export function FilterAccordion() {
                                 id="search"
                                 type="text"
                                 placeholder="Poišči članke..."
-                                value={home_search.search ?? ""}
+                                value={home_search.iskanje ?? ""}
                                 onChange={async (event) =>
                                     await navigate({
                                         from: home_route.id,
-                                        search: (prev) => ({ ...prev, search: event.target.value }),
+                                        search: (prev) => ({ ...prev, iskanje: event.target.value }),
                                     })
                                 }
                                 className="w-auto min-w-[200px]"
