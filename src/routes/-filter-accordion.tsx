@@ -69,14 +69,32 @@ export function AccordionDemo() {
                     </div>
 
                     {/* Second row - Search and Author dropdown */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="flex flex-col md:flex-row gap-4">
+                        {/* Author dropdown */}
+                        <div className="space-y-2 w-auto">
+                            <Label htmlFor="author-select" className="text-sm font-medium">
+                                Avtor
+                            </Label>
+                            <AuthorSelect
+                                id="author-select"
+                                authors={authors}
+                                selectedAuthor={home_search.authors?.at(0)}
+                                onAuthorChange={async (author) =>
+                                    await navigate({
+                                        from: home_route.id,
+                                        search: (prev) => ({ ...prev, authors: [author] }),
+                                    })
+                                }
+                            />
+                        </div>
+
                         {/* Search field */}
-                        <div className="space-y-2">
+                        <div className="space-y-2 w-auto">
                             <Label htmlFor="search" className="text-sm font-medium">
                                 Iskanje
                             </Label>
                             <Input
-                                className="w-1/2"
+                                id="search"
                                 type="text"
                                 placeholder="Poišči članke..."
                                 value={home_search.search ?? ""}
@@ -86,20 +104,9 @@ export function AccordionDemo() {
                                         search: (prev) => ({ ...prev, search: event.target.value }),
                                     })
                                 }
+                                className="w-auto min-w-[200px]"
                             />
                         </div>
-
-                        {/* Author dropdown */}
-                        <AuthorSelect
-                            authors={authors}
-                            selectedAuthor={home_search.authors?.at(0)}
-                            onAuthorChange={async (author) =>
-                                await navigate({
-                                    from: home_route.id,
-                                    search: (prev) => ({ ...prev, authors: [author] }),
-                                })
-                            }
-                        />
                     </div>
                 </AccordionContent>
             </AccordionItem>

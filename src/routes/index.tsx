@@ -1,32 +1,31 @@
+import { convexQuery } from "@convex-dev/react-query";
 import { createFileRoute, stripSearchParams } from "@tanstack/react-router";
 import { fallback, zodValidator } from "@tanstack/zod-adapter";
+import { api } from "convex/_generated/api";
+import { usePaginatedQuery } from "convex/react";
 import React from "react";
+import { useIntersectionObserver } from "usehooks-ts";
+import { z } from "zod";
 import { Footer2 } from "~/components/layout/footer2";
 import { Navbar1 } from "~/components/layout/navbar1";
-import { usePaginatedQuery } from "convex/react";
-import { convexQuery } from "@convex-dev/react-query";
-import { api } from "convex/_generated/api";
-import { useIntersectionObserver } from "usehooks-ts";
 import { AccordionDemo } from "~/routes/-filter-accordion";
-import { z } from "zod";
 
 const DEFAULT_NUM_ITEMS = 10;
 
 const default_values = {
-	authors: null,
+	authors: [""],
 	year: null,
-	search: null,
+	search: "",
 };
 
 const article_search_validator = z.object({
-	authors: fallback(
-		z.array(z.string()).nullable(),
+	authors: fallback(z.array(z.string()), default_values.authors).default(
 		default_values.authors,
-	).default(default_values.authors),
+	),
 	year: fallback(z.number().nullable(), default_values.year).default(
 		default_values.year,
 	),
-	search: fallback(z.string().nullable(), default_values.search).default(
+	search: fallback(z.string(), default_values.search).default(
 		default_values.search,
 	),
 });
