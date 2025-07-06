@@ -1,5 +1,4 @@
-import { useState } from "react"
-import { cn } from "~/lib/utils"
+import { useState } from "react";
 import {
     Timeline,
     TimelineContent,
@@ -9,14 +8,15 @@ import {
     TimelineItem,
     TimelineSeparator,
     TimelineTitle,
-} from "~/components/ui/timeline"
+} from "~/components/ui/timeline";
+import { cn } from "~/lib/utils";
 
 interface YearSelectorHorizontalProps {
-    selectedYear?: number
-    onYearChange?: (year?: number) => void
-    startYear?: number
-    endYear?: number
-    className?: string
+    selectedYear?: number;
+    onYearChange?: (year?: number) => void;
+    startYear?: number;
+    endYear?: number;
+    className?: string;
 }
 
 export function YearSelectorHorizontal({
@@ -24,14 +24,14 @@ export function YearSelectorHorizontal({
     onYearChange,
     startYear = 2008,
     endYear = new Date().getFullYear(),
-    className
+    className,
 }: YearSelectorHorizontalProps) {
-    const [value, setValue] = useState(selectedYear)
+    const [value, setValue] = useState(selectedYear);
 
     const years = Array.from(
         { length: endYear - startYear + 1 },
-        (_, i) => startYear + i
-    )
+        (_, i) => startYear + i,
+    );
 
     return (
         <div className={cn("w-full overflow-x-auto", className)}>
@@ -40,11 +40,11 @@ export function YearSelectorHorizontal({
                     <TimelineItem
                         key={year}
                         step={year}
-                        className="group-data-[orientation=horizontal]/timeline:mt-0 cursor-pointer"
+                        className="cursor-pointer group-data-[orientation=horizontal]/timeline:mt-0"
                         onClick={() => {
-                            const result = value === year ? undefined : year
-                            setValue(result)
-                            onYearChange?.(result)
+                            const result = value === year ? undefined : year;
+                            setValue(result);
+                            onYearChange?.(result);
                         }}
                     >
                         <TimelineHeader>
@@ -53,7 +53,7 @@ export function YearSelectorHorizontal({
                             <TimelineIndicator
                                 className={cn(
                                     "group-data-[orientation=horizontal]/timeline:top-8",
-                                    value === year && "bg-primary"
+                                    value === year && "bg-primary",
                                 )}
                             />
                         </TimelineHeader>
@@ -61,5 +61,5 @@ export function YearSelectorHorizontal({
                 ))}
             </Timeline>
         </div>
-    )
+    );
 }

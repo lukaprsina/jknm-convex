@@ -9,7 +9,10 @@ import { ArrowUpToLineIcon } from "lucide-react";
 import { getEditorDOMFromHtmlString } from "platejs";
 import { useEditorRef } from "platejs/react";
 import { useFilePicker } from "use-file-picker";
-import type { SelectedFiles, SelectedFilesOrErrors } from "use-file-picker/types";
+import type {
+	SelectedFiles,
+	SelectedFilesOrErrors,
+} from "use-file-picker/types";
 
 import {
 	DropdownMenu,
@@ -48,9 +51,15 @@ export function ImportToolbarButton(props: DropdownMenuProps) {
 		accept: [".md", ".mdx"],
 		multiple: false,
 		readFilesContent: false,
-		onFilesSelected: async (data: SelectedFilesOrErrors<undefined, unknown>) => {
+		onFilesSelected: async (
+			data: SelectedFilesOrErrors<undefined, unknown>,
+		) => {
 			// Check if this is the success case (has plainFiles)
-			if ("plainFiles" in data && data?.plainFiles && data.plainFiles.length > 0) {
+			if (
+				"plainFiles" in data &&
+				data?.plainFiles &&
+				data.plainFiles.length > 0
+			) {
 				const text = await data.plainFiles[0].text();
 				const nodes = getFileNodes(text, "markdown");
 				editor.tf.insertNodes(nodes);
@@ -65,9 +74,15 @@ export function ImportToolbarButton(props: DropdownMenuProps) {
 		accept: ["text/html"],
 		multiple: false,
 		readFilesContent: false,
-		onFilesSelected: async (data: SelectedFilesOrErrors<undefined, unknown>) => {
+		onFilesSelected: async (
+			data: SelectedFilesOrErrors<undefined, unknown>,
+		) => {
 			// Check if this is the success case (has plainFiles)
-			if ("plainFiles" in data && data?.plainFiles && data.plainFiles.length > 0) {
+			if (
+				"plainFiles" in data &&
+				data?.plainFiles &&
+				data.plainFiles.length > 0
+			) {
 				const text = await data.plainFiles[0]?.text();
 				if (text) {
 					const nodes = getFileNodes(text, "html");

@@ -93,8 +93,14 @@ export function MediaToolbarButton({
 		multiple: true,
 		readFilesContent: false,
 		onFilesSelected: (data: SelectedFilesOrErrors<undefined, unknown>) => {
-			if ("plainFiles" in data && data?.plainFiles && data.plainFiles.length > 0) {
-				editor.getTransforms(PlaceholderPlugin).insert.media(data.plainFiles as unknown as FileList);
+			if (
+				"plainFiles" in data &&
+				data?.plainFiles &&
+				data.plainFiles.length > 0
+			) {
+				editor
+					.getTransforms(PlaceholderPlugin)
+					.insert.media(data.plainFiles as unknown as FileList);
 			} else if ("errors" in data) {
 				// Handle errors if needed
 				console.error("File selection errors:", data.errors);

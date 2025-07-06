@@ -1,39 +1,39 @@
 {
-  "editor.codeActionsOnSave": {
-    "source.action.useSortedKeys.biome": "always",
-    "source.fixAll.biome": "explicit"
-  },
-  "editor.quickSuggestions": {
-    // https://marketplace.visualstudio.com/items?itemName=bradlc.vscode-tailwindcss#recommended-vs-code-settings
-    "strings": "on"
-  },
-  "explorer.fileNesting.enabled": true,
-  "explorer.fileNesting.patterns": {
-    "package.json": "package-lock.json, pnpm*, .yarnrc*, yarn*, .eslint*, eslint*, .prettier*, prettier*, .editorconfig, .gitattributes, bun.lock",
-    "tsconfig.json": "tsconfig.*.json, env.d.ts",
-    "vite.config.*": "jsconfig*, vitest.config.*, cypress.config.*, playwright.config.*"
-  },
-  "files.associations": {
-    "*.css": "tailwindcss"
-  },
-  // use LF line endings
-  "files.eol": "\n",
-  "files.readonlyInclude": {
-    "**/.tanstack/**/*": true,
-    "**/routeTree.gen.ts": true,
-    "bun.lock": true
-  },
-  "files.watcherExclude": {
-    "**/.tanstack/**/*": true,
-    "**/routeTree.gen.ts": true,
-    "bun.lock": true
-  },
-  "search.exclude": {
-    "**/.tanstack/**/*": true,
-    "**/routeTree.gen.ts": true,
-    "bun.lock": true
-  },
-  // always choose typescript from node_modules
-  "typescript.tsdk": "./node_modules/typescript/lib",
-  "biome.lsp.trace.server": "verbose"
+	"editor.codeActionsOnSave": {
+		"source.action.useSortedKeys.biome": "always",
+		"source.fixAll.biome": "explicit"
+	},
+	"editor.quickSuggestions": {
+		// https://marketplace.visualstudio.com/items?itemName=bradlc.vscode-tailwindcss#recommended-vs-code-settings
+		"strings": "on"
+	},
+	"explorer.fileNesting.enabled": true,
+	"explorer.fileNesting.patterns": {
+		"package.json": "package-lock.json, pnpm*, .yarnrc*, yarn*, .eslint*, eslint*, .prettier*, prettier*, .editorconfig, .gitattributes, bun.lock",
+		"tsconfig.json": "tsconfig.*.json, env.d.ts",
+		"vite.config.*": "jsconfig*, vitest.config.*, cypress.config.*, playwright.config.*"
+	},
+	"files.associations": {
+		"*.css": "tailwindcss"
+	},
+	// use LF line endings
+	"files.eol": "\n",
+	"files.readonlyInclude": {
+		"**/.tanstack/**/*": true,
+		"**/routeTree.gen.ts": true,
+		"bun.lock": true
+	},
+	"files.watcherExclude": {
+		"**/.tanstack/**/*": true,
+		"**/routeTree.gen.ts": true,
+		"bun.lock": true
+	},
+	"search.exclude": {
+		"**/.tanstack/**/*": true,
+		"**/routeTree.gen.ts": true,
+		"bun.lock": true
+	},
+	// always choose typescript from node_modules
+	"typescript.tsdk": "./node_modules/typescript/lib",
+	"biome.lsp.trace.server": "verbose"
 }

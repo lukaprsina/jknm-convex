@@ -1,17 +1,17 @@
-import { getRouteApi, useNavigate } from "@tanstack/react-router"
-import { useState } from "react"
+import { getRouteApi, useNavigate } from "@tanstack/react-router";
+import { useState } from "react";
 import {
     Accordion,
     AccordionContent,
     AccordionItem,
     AccordionTrigger,
-} from "~/components/ui/accordion"
-import { Input } from "~/components/ui/input"
-import { Label } from "~/components/ui/label"
-import { YearSelectorHorizontal } from "~/components/ui/year-selector-horizontal"
-import { YearDropdown } from "~/components/ui/year-dropdown"
-import { AuthorSelect } from "~/components/ui/author-select"
-import { useIsMobile } from "~/hooks/use-mobile"
+} from "~/components/ui/accordion";
+import { AuthorSelect } from "~/components/ui/author-select";
+import { Input } from "~/components/ui/input";
+import { Label } from "~/components/ui/label";
+import { YearDropdown } from "~/components/ui/year-dropdown";
+import { YearSelectorHorizontal } from "~/components/ui/year-selector-horizontal";
+import { useIsMobile } from "~/hooks/use-mobile";
 
 // Mock authors data - replace with actual data from your backend
 const authors = [
@@ -20,14 +20,14 @@ const authors = [
     { value: "bob-johnson", label: "Bob Johnson" },
     { value: "alice-brown", label: "Alice Brown" },
     { value: "mike-wilson", label: "Mike Wilson" },
-]
+];
 
 export function AccordionDemo() {
-    const home_route = getRouteApi("/")
-    const home_search = home_route.useSearch()
-    const navigate = useNavigate({ from: home_route.id })
-    const isMobile = useIsMobile()
-    const [isOpen, setIsOpen] = useState(false) // "accordion-open"
+    const home_route = getRouteApi("/");
+    const home_search = home_route.useSearch();
+    const navigate = useNavigate({ from: home_route.id });
+    const isMobile = useIsMobile();
+    const [isOpen, setIsOpen] = useState(false); // "accordion-open"
 
     return (
         <Accordion
@@ -40,19 +40,29 @@ export function AccordionDemo() {
                 <div className="flex justify-end w-full">
                     <AccordionTrigger className="grow-0">Filtriraj</AccordionTrigger>
                 </div>
-                <AccordionContent className="grid grid-rows-2 gap-6 text-balance">
+                <AccordionContent className="grid grid-rows-2 gap-6 text-balance px-2">
                     {/* First row - Year selector */}
                     <div className="space-y-2">
                         <Label className="text-sm font-medium pr-2">Leto</Label>
                         {isMobile ? (
                             <YearDropdown
                                 selectedYear={home_search.year ?? undefined}
-                                onYearChange={async (year) => await navigate({ from: home_route.id, search: (prev) => ({ ...prev, year }) })}
+                                onYearChange={async (year) =>
+                                    await navigate({
+                                        from: home_route.id,
+                                        search: (prev) => ({ ...prev, year }),
+                                    })
+                                }
                             />
                         ) : (
                             <YearSelectorHorizontal
                                 selectedYear={home_search.year ?? undefined}
-                                onYearChange={async (year) => await navigate({ from: home_route.id, search: (prev) => ({ ...prev, year }) })}
+                                onYearChange={async (year) =>
+                                    await navigate({
+                                        from: home_route.id,
+                                        search: (prev) => ({ ...prev, year }),
+                                    })
+                                }
                                 className="w-full h-11"
                             />
                         )}
@@ -70,7 +80,12 @@ export function AccordionDemo() {
                                 type="text"
                                 placeholder="Poišči članke..."
                                 value={home_search.search ?? ""}
-                                onChange={async (event) => await navigate({ from: home_route.id, search: (prev) => ({ ...prev, search: event.target.value }) })}
+                                onChange={async (event) =>
+                                    await navigate({
+                                        from: home_route.id,
+                                        search: (prev) => ({ ...prev, search: event.target.value }),
+                                    })
+                                }
                             />
                         </div>
 
@@ -78,11 +93,16 @@ export function AccordionDemo() {
                         <AuthorSelect
                             authors={authors}
                             selectedAuthor={home_search.authors?.at(0)}
-                            onAuthorChange={async (author) => await navigate({ from: home_route.id, search: (prev) => ({ ...prev, authors: [author] }) })}
+                            onAuthorChange={async (author) =>
+                                await navigate({
+                                    from: home_route.id,
+                                    search: (prev) => ({ ...prev, authors: [author] }),
+                                })
+                            }
                         />
                     </div>
                 </AccordionContent>
             </AccordionItem>
         </Accordion>
-    )
+    );
 }

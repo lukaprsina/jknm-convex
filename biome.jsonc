@@ -17,7 +17,7 @@
 		"rules": {
 			"nursery": {
 				"useSortedClasses": {
-					"level": "warn",
+					"level": "off",
 					"fix": "safe",
 					"options": {
 						"functions": ["clsx", "cva", "cn"]
@@ -26,13 +26,5 @@
 			},
 			"recommended": true
 		}
-	},
-	"assist": {
-		"enabled": true,
-		"actions": {
-			"source": {
-				"useSortedKeys": "off"
-			}
-		}
-	},
+	}	
 }

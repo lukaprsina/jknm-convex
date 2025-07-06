@@ -91,14 +91,20 @@ export const PlaceholderElement = withHOC(
 			multiple: true,
 			readFilesContent: false,
 			onFilesSelected: (data: SelectedFilesOrErrors<undefined, unknown>) => {
-				if ("plainFiles" in data && data?.plainFiles && data.plainFiles.length > 0) {
+				if (
+					"plainFiles" in data &&
+					data?.plainFiles &&
+					data.plainFiles.length > 0
+				) {
 					const firstFile = data.plainFiles[0];
 					const restFiles = data.plainFiles.slice(1);
 
 					replaceCurrentPlaceholder(firstFile);
 
 					if (restFiles.length > 0) {
-						editor.getTransforms(PlaceholderPlugin).insert.media(restFiles as unknown as FileList);
+						editor
+							.getTransforms(PlaceholderPlugin)
+							.insert.media(restFiles as unknown as FileList);
 					}
 				} else if ("errors" in data) {
 					// Handle errors if needed
@@ -270,8 +276,9 @@ function formatBytes(
 
 	const i = Math.floor(Math.log(bytes) / Math.log(1024));
 
-	return `${(bytes / Math.pow(1024, i)).toFixed(decimals)} ${sizeType === "accurate"
-		? (accurateSizes[i] ?? "Bytest")
-		: (sizes[i] ?? "Bytes")
-		}`;
+	return `${(bytes / Math.pow(1024, i)).toFixed(decimals)} ${
+		sizeType === "accurate"
+			? (accurateSizes[i] ?? "Bytest")
+			: (sizes[i] ?? "Bytes")
+	}`;
 }
