@@ -7,7 +7,7 @@ export default defineConfig({
   optimizeDeps: {
     exclude:
       [
-        "D:/dev/js/jknm-convex/node_modules/.vite/deps/FloatingTanStackRouterDevtools-O3GU54LF.js?v=d4ea31ab"
+        "@tanstack/react-router-devtools"
       ]
   },
   server: {

@@ -27,30 +27,33 @@ export function AccordionDemo() {
     const home_search = home_route.useSearch()
     const navigate = useNavigate({ from: home_route.id })
     const isMobile = useIsMobile()
+    const [isOpen, setIsOpen] = useState(false) // "accordion-open"
 
     return (
         <Accordion
-            type="single"
-            collapsible
+            type="multiple"
             className="w-full"
+            value={isOpen ? ["item-1"] : []}
+            onValueChange={(item) => setIsOpen(item.at(0) === "item-1")}
         >
             <AccordionItem value="item-1">
-                <AccordionTrigger className="justify-end">Filtriraj</AccordionTrigger>
+                <div className="flex justify-end w-full">
+                    <AccordionTrigger className="grow-0">Filtriraj</AccordionTrigger>
+                </div>
                 <AccordionContent className="grid grid-rows-2 gap-6 text-balance">
                     {/* First row - Year selector */}
                     <div className="space-y-2">
-                        <Label className="text-sm font-medium">Leto</Label>
+                        <Label className="text-sm font-medium pr-2">Leto</Label>
                         {isMobile ? (
                             <YearDropdown
                                 selectedYear={home_search.year ?? undefined}
                                 onYearChange={async (year) => await navigate({ from: home_route.id, search: (prev) => ({ ...prev, year }) })}
-                                className="w-full"
                             />
                         ) : (
                             <YearSelectorHorizontal
                                 selectedYear={home_search.year ?? undefined}
                                 onYearChange={async (year) => await navigate({ from: home_route.id, search: (prev) => ({ ...prev, year }) })}
-                                className="w-full"
+                                className="w-full h-11"
                             />
                         )}
                     </div>
@@ -63,12 +66,11 @@ export function AccordionDemo() {
                                 Iskanje
                             </Label>
                             <Input
-                                id="search"
+                                className="w-1/2"
                                 type="text"
                                 placeholder="Poišči članke..."
                                 value={home_search.search ?? ""}
                                 onChange={async (event) => await navigate({ from: home_route.id, search: (prev) => ({ ...prev, search: event.target.value }) })}
-                                className="w-full"
                             />
                         </div>
 

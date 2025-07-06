@@ -53,7 +53,6 @@ function Home() {
   }, [isIntersecting, status, loadMore]);
 
   return (
-    // <div className="w-full flex-grow">
     <>
       <Navbar1 />
       <div className='w-full p-4'>
@@ -70,6 +69,5 @@ function Home() {
       </main>
       <Footer2 />
     </>
-    // </div>
   )
 }

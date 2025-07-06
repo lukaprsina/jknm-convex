@@ -31,7 +31,7 @@
 		"enabled": true,
 		"actions": {
 			"source": {
-				"useSortedKeys": "on"
+				"useSortedKeys": "off"
 			}
 		}
 	},
