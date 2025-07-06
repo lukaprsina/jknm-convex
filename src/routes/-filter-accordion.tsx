@@ -1,6 +1,6 @@
 import { getRouteApi, useNavigate } from "@tanstack/react-router";
 import equal from "fast-deep-equal";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
     Accordion,
     AccordionContent,
@@ -24,8 +24,9 @@ const mock_authors = [
     { value: "mike-wilson", label: "Mike Wilson" },
 ];
 
-export function AccordionDemo() {
-    const home_route = getRouteApi("/");
+const home_route = getRouteApi("/");
+
+export function FilterAccordion() {
     const home_search = home_route.useSearch();
     const navigate = useNavigate({ from: home_route.id });
     const isMobile = useIsMobile();

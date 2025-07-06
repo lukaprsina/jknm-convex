@@ -1,14 +1,14 @@
 import { convexQuery } from "@convex-dev/react-query";
-import { createFileRoute, stripSearchParams } from "@tanstack/react-router";
+import { createFileRoute, getRouteApi, stripSearchParams } from "@tanstack/react-router";
 import { fallback, zodValidator } from "@tanstack/zod-adapter";
 import { api } from "convex/_generated/api";
-import { usePaginatedQuery } from "convex/react";
-import React from "react";
+import { usePaginatedQuery, useQuery } from "convex/react";
+import { useEffect } from "react";
 import { useIntersectionObserver } from "usehooks-ts";
 import { z } from "zod";
 import { Footer2 } from "~/components/layout/footer2";
 import { Navbar1 } from "~/components/layout/navbar1";
-import { AccordionDemo } from "~/routes/-filter-accordion";
+import { FilterAccordion } from "~/routes/-filter-accordion";
 
 const DEFAULT_NUM_ITEMS = 10;
 
@@ -34,7 +34,10 @@ export const Route = createFileRoute("/")({
 	component: Home,
 	loader: async ({ context }) => {
 		await context.queryClient.ensureQueryData(
-			convexQuery(api.articles.get_paginated_published, {
+			convexQuery(api.articles.search_articles_unified, {
+				search_term: "",
+				author_ids: [],
+				year: undefined,
 				paginationOpts: { cursor: null, numItems: DEFAULT_NUM_ITEMS },
 			}),
 		);
@@ -43,10 +46,26 @@ export const Route = createFileRoute("/")({
 	search: { middlewares: [stripSearchParams(DEFAULT_SEARCH_VALUES)] },
 });
 
+const home_route = getRouteApi("/");
+
 function Home() {
-	const { results, status, loadMore } = usePaginatedQuery(
-		api.articles.get_paginated_published,
-		{},
+	const home_search = home_route.useSearch();
+
+	// Get all authors for the filter
+	const authors = useQuery(api.authors.get_all);
+
+	// Convert author names to IDs for the unified search
+	const authorIds = authors?.filter((author: any) =>
+		home_search.authors.includes(author.name)
+	).map((author: any) => author._id) ?? [];
+
+	const search_api = usePaginatedQuery(
+		api.articles.search_articles_unified,
+		{
+			search_term: home_search.search ?? "",
+			author_ids: authorIds,
+			year: home_search.year ?? undefined,
+		},
 		{ initialNumItems: DEFAULT_NUM_ITEMS },
 	);
 
@@ -54,24 +73,24 @@ function Home() {
 	const { isIntersecting, ref } = useIntersectionObserver({ threshold: 0.5 });
 
 	// Only load more if the sentinel is visible and we can load more
-	React.useEffect(() => {
-		if (isIntersecting && status === "CanLoadMore") {
-			loadMore(5);
+	useEffect(() => {
+		if (isIntersecting && search_api.status === "CanLoadMore") {
+			search_api.loadMore(5);
 		}
-	}, [isIntersecting, status, loadMore]);
+	}, [isIntersecting, search_api.status, search_api.loadMore]);
 
 	return (
 		<>
 			<Navbar1 />
 			<div className="w-full p-4">
-				<AccordionDemo />
+				<FilterAccordion authors={authors} />
 			</div>
 			<main className="w-full flex-grow">
-				{results?.map(({ _id, title }) => (
+				{search_api.results?.map(({ _id, title }) => (
 					<div key={_id}>{title}</div>
 				))}
 				{/* Sentinel for infinite scroll */}
-				{status === "CanLoadMore" && (
+				{search_api.status === "CanLoadMore" && (
 					<div
 						ref={ref}
 						style={{
