@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
     Timeline,
     TimelineContent,
@@ -28,28 +28,37 @@ export function YearSelectorHorizontal({
 }: YearSelectorHorizontalProps) {
     const [value, setValue] = useState(selectedYear);
 
+    // Sync local state with prop changes
+    useEffect(() => {
+        setValue(selectedYear);
+    }, [selectedYear]);
+
     const years = Array.from(
         { length: endYear - startYear + 1 },
         (_, i) => startYear + i,
     );
 
+    const handleYearClick = (year: number) => {
+        const result = value === year ? undefined : year;
+        setValue(result);
+        onYearChange?.(result);
+    };
+
     return (
         <div className={cn("w-full overflow-x-auto", className)}>
-            <Timeline defaultValue={value} orientation="horizontal">
+            <Timeline value={value} onValueChange={setValue} orientation="horizontal">
                 {years.map((year) => (
                     <TimelineItem
                         key={year}
                         step={year}
                         className="cursor-pointer group-data-[orientation=horizontal]/timeline:mt-0 w-16 flex-none"
-                        onClick={() => {
-                            const result = value === year ? undefined : year;
-                            setValue(result);
-                            onYearChange?.(result);
-                        }}
+                        onClick={() => handleYearClick(year)}
                     >
                         <TimelineHeader>
                             <TimelineSeparator className="group-data-[orientation=horizontal]/timeline:top-8" />
-                            <TimelineDate className="mb-2 text-sm text-center">{year}</TimelineDate>
+                            <TimelineDate className="mb-2 text-sm text-center">
+                                {year}
+                            </TimelineDate>
                             <TimelineIndicator
                                 className={cn(
                                     "group-data-[orientation=horizontal]/timeline:top-8",

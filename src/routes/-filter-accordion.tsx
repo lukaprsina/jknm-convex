@@ -1,5 +1,6 @@
 import { getRouteApi, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import equal from "fast-deep-equal";
+import { useEffect, useState } from "react";
 import {
     Accordion,
     AccordionContent,
@@ -12,6 +13,7 @@ import { Label } from "~/components/ui/label";
 import { YearDropdown } from "~/components/ui/year-dropdown";
 import { YearSelectorHorizontal } from "~/components/ui/year-selector-horizontal";
 import { useIsMobile } from "~/hooks/use-mobile";
+import { DEFAULT_SEARCH_VALUES } from ".";
 
 // Mock authors data - replace with actual data from your backend
 const mock_authors = [
@@ -27,7 +29,9 @@ export function AccordionDemo() {
     const home_search = home_route.useSearch();
     const navigate = useNavigate({ from: home_route.id });
     const isMobile = useIsMobile();
-    const [isOpen, setIsOpen] = useState(false); // "accordion-open"
+    const [isOpen, setIsOpen] = useState(
+        !equal(home_search, DEFAULT_SEARCH_VALUES),
+    );
 
     return (
         <Accordion

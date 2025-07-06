@@ -12,21 +12,21 @@ import { AccordionDemo } from "~/routes/-filter-accordion";
 
 const DEFAULT_NUM_ITEMS = 10;
 
-const default_values = {
+export const DEFAULT_SEARCH_VALUES = {
 	authors: [],
 	year: null,
 	search: "",
 };
 
 const article_search_validator = z.object({
-	authors: fallback(z.array(z.string()), default_values.authors).default(
-		default_values.authors,
+	authors: fallback(z.array(z.string()), DEFAULT_SEARCH_VALUES.authors).default(
+		DEFAULT_SEARCH_VALUES.authors,
 	),
-	year: fallback(z.number().nullable(), default_values.year).default(
-		default_values.year,
+	year: fallback(z.number().nullable(), DEFAULT_SEARCH_VALUES.year).default(
+		DEFAULT_SEARCH_VALUES.year,
 	),
-	search: fallback(z.string(), default_values.search).default(
-		default_values.search,
+	search: fallback(z.string(), DEFAULT_SEARCH_VALUES.search).default(
+		DEFAULT_SEARCH_VALUES.search,
 	),
 });
 
@@ -40,7 +40,7 @@ export const Route = createFileRoute("/")({
 		);
 	},
 	validateSearch: zodValidator(article_search_validator),
-	search: { middlewares: [stripSearchParams(default_values)] },
+	search: { middlewares: [stripSearchParams(DEFAULT_SEARCH_VALUES)] },
 });
 
 function Home() {
