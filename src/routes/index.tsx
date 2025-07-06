@@ -13,7 +13,7 @@ import { AccordionDemo } from "~/routes/-filter-accordion";
 const DEFAULT_NUM_ITEMS = 10;
 
 const default_values = {
-	authors: [""],
+	authors: [],
 	year: null,
 	search: "",
 };

@@ -76,10 +76,9 @@ export function AccordionDemo() {
                                 Avtor
                             </Label>
                             <AuthorSelect
-                                id="author-select"
                                 authors={mock_authors}
                                 selectedAuthors={home_search.authors}
-                                onAuthorsChange={async (authors) =>
+                                onAuthorsChange={async (authors: string[]) =>
                                     await navigate({
                                         from: home_route.id,
                                         search: (prev) => ({ ...prev, authors: authors }),
