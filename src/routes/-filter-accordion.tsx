@@ -14,7 +14,7 @@ import { YearSelectorHorizontal } from "~/components/ui/year-selector-horizontal
 import { useIsMobile } from "~/hooks/use-mobile";
 
 // Mock authors data - replace with actual data from your backend
-const authors = [
+const mock_authors = [
     { value: "john-doe", label: "John Doe" },
     { value: "jane-smith", label: "Jane Smith" },
     { value: "bob-johnson", label: "Bob Johnson" },
@@ -77,12 +77,12 @@ export function AccordionDemo() {
                             </Label>
                             <AuthorSelect
                                 id="author-select"
-                                authors={authors}
-                                selectedAuthor={home_search.authors?.at(0)}
-                                onAuthorChange={async (author) =>
+                                authors={mock_authors}
+                                selectedAuthors={home_search.authors}
+                                onAuthorsChange={async (authors) =>
                                     await navigate({
                                         from: home_route.id,
-                                        search: (prev) => ({ ...prev, authors: [author] }),
+                                        search: (prev) => ({ ...prev, authors: authors }),
                                     })
                                 }
                             />
