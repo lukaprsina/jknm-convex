@@ -116,6 +116,30 @@ export const search_articles_unified = query({
 	},
 });
 
+export const get_all_drafts = query({
+	args: {},
+	handler: async (ctx) => {
+		const drafts = await ctx.db
+			.query("articles")
+			.withIndex("by_status_and_updated_at", (q) => q.eq("status", "draft"))
+			.order("desc")
+			.collect();
+
+		// Load authors for each draft article
+		const draftsWithAuthors = await Promise.all(
+			drafts.map(async (draft) => {
+				const authors = await load_authors_for_article(ctx, draft._id);
+				return {
+					...draft,
+					authors,
+				};
+			})
+		);
+
+		return draftsWithAuthors;
+	},
+});
+
 export const create_draft = mutation({
 	args: {},
 	handler: async (ctx) => {

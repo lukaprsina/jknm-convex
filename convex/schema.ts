@@ -43,6 +43,7 @@ const schema = defineSchema({
 			"published_at",
 		])
 		.index("by_status_and_published_at", ["status", "published_at"])
+		.index("by_status_and_updated_at", ["status", "updated_at"])
 		// Search index with year filtering support
 		.searchIndex("search_content_by_year", {
 			searchField: "content_markdown",

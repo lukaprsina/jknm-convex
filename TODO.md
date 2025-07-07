@@ -5,6 +5,12 @@ Filtriraj Accordion animacija ne dela
 diceui in fumadocs za sidebar in TOC
 "react-player": "^2.16.0"
 
+Zgodovina
+Raziskovanje
+Publiciranje
+Varstvo
+Klub
+
 https://motion-primitives.com/docs/border-trail
 
 https://originui.com/file-upload
