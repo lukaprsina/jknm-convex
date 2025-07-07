@@ -26,11 +26,11 @@ export const Route = createFileRoute("/novica/$article_slug/")({
 	},
 });
 
-const route_api = getRouteApi("/novica/$article_slug/");
+const article_slug_route_api = getRouteApi("/novica/$article_slug/");
 
 function RouteComponent() {
-	const { article_slug } = route_api.useParams();
-	const { userId } = route_api.useRouteContext();
+	const { article_slug } = article_slug_route_api.useParams();
+	const { userId } = article_slug_route_api.useRouteContext();
 
 	const { data: article } = useSuspenseQuery(
 		convexQuery(api.articles.get_by_slug, {

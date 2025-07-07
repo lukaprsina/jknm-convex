@@ -11,16 +11,21 @@
 import { createServerRootRoute } from '@tanstack/react-start/server'
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as AdminRouteRouteImport } from './routes/admin/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as PrijavaIndexRouteImport } from './routes/prijava.index'
-import { Route as AdminIndexRouteImport } from './routes/admin/index'
-import { Route as AdminOsnutkiRouteImport } from './routes/admin/osnutki'
 import { Route as NovicaArticle_slugIndexRouteImport } from './routes/novica/$article_slug/index'
-import { Route as NovicaArticle_slugUrediRouteImport } from './routes/novica/$article_slug/uredi'
+import { Route as AdminOsnutkiIndexRouteImport } from './routes/admin/osnutki.index'
+import { Route as AdminOsnutkiDraft_idIndexRouteImport } from './routes/admin/osnutki.$draft_id.index'
 import { ServerRoute as ApiAuthSplatServerRouteImport } from './routes/api/auth.$'
 
 const rootServerRouteImport = createServerRootRoute()
 
+const AdminRouteRoute = AdminRouteRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -31,26 +36,22 @@ const PrijavaIndexRoute = PrijavaIndexRouteImport.update({
   path: '/prijava/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AdminIndexRoute = AdminIndexRouteImport.update({
-  id: '/admin/',
-  path: '/admin/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AdminOsnutkiRoute = AdminOsnutkiRouteImport.update({
-  id: '/admin/osnutki',
-  path: '/admin/osnutki',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const NovicaArticle_slugIndexRoute = NovicaArticle_slugIndexRouteImport.update({
   id: '/novica/$article_slug/',
   path: '/novica/$article_slug/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const NovicaArticle_slugUrediRoute = NovicaArticle_slugUrediRouteImport.update({
-  id: '/novica/$article_slug/uredi',
-  path: '/novica/$article_slug/uredi',
-  getParentRoute: () => rootRouteImport,
+const AdminOsnutkiIndexRoute = AdminOsnutkiIndexRouteImport.update({
+  id: '/osnutki/',
+  path: '/osnutki/',
+  getParentRoute: () => AdminRouteRoute,
 } as any)
+const AdminOsnutkiDraft_idIndexRoute =
+  AdminOsnutkiDraft_idIndexRouteImport.update({
+    id: '/osnutki/$draft_id/',
+    path: '/osnutki/$draft_id/',
+    getParentRoute: () => AdminRouteRoute,
+  } as any)
 const ApiAuthSplatServerRoute = ApiAuthSplatServerRouteImport.update({
   id: '/api/auth/$',
   path: '/api/auth/$',
@@ -59,62 +60,60 @@ const ApiAuthSplatServerRoute = ApiAuthSplatServerRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/admin/osnutki': typeof AdminOsnutkiRoute
-  '/admin': typeof AdminIndexRoute
+  '/admin': typeof AdminRouteRouteWithChildren
   '/prijava': typeof PrijavaIndexRoute
-  '/novica/$article_slug/uredi': typeof NovicaArticle_slugUrediRoute
+  '/admin/osnutki': typeof AdminOsnutkiIndexRoute
   '/novica/$article_slug': typeof NovicaArticle_slugIndexRoute
+  '/admin/osnutki/$draft_id': typeof AdminOsnutkiDraft_idIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/admin/osnutki': typeof AdminOsnutkiRoute
-  '/admin': typeof AdminIndexRoute
+  '/admin': typeof AdminRouteRouteWithChildren
   '/prijava': typeof PrijavaIndexRoute
-  '/novica/$article_slug/uredi': typeof NovicaArticle_slugUrediRoute
+  '/admin/osnutki': typeof AdminOsnutkiIndexRoute
   '/novica/$article_slug': typeof NovicaArticle_slugIndexRoute
+  '/admin/osnutki/$draft_id': typeof AdminOsnutkiDraft_idIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/admin/osnutki': typeof AdminOsnutkiRoute
-  '/admin/': typeof AdminIndexRoute
+  '/admin': typeof AdminRouteRouteWithChildren
   '/prijava/': typeof PrijavaIndexRoute
-  '/novica/$article_slug/uredi': typeof NovicaArticle_slugUrediRoute
+  '/admin/osnutki/': typeof AdminOsnutkiIndexRoute
   '/novica/$article_slug/': typeof NovicaArticle_slugIndexRoute
+  '/admin/osnutki/$draft_id/': typeof AdminOsnutkiDraft_idIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/admin/osnutki'
     | '/admin'
     | '/prijava'
-    | '/novica/$article_slug/uredi'
+    | '/admin/osnutki'
     | '/novica/$article_slug'
+    | '/admin/osnutki/$draft_id'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/admin/osnutki'
     | '/admin'
     | '/prijava'
-    | '/novica/$article_slug/uredi'
+    | '/admin/osnutki'
     | '/novica/$article_slug'
+    | '/admin/osnutki/$draft_id'
   id:
     | '__root__'
     | '/'
-    | '/admin/osnutki'
-    | '/admin/'
+    | '/admin'
     | '/prijava/'
-    | '/novica/$article_slug/uredi'
+    | '/admin/osnutki/'
     | '/novica/$article_slug/'
+    | '/admin/osnutki/$draft_id/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  AdminOsnutkiRoute: typeof AdminOsnutkiRoute
-  AdminIndexRoute: typeof AdminIndexRoute
+  AdminRouteRoute: typeof AdminRouteRouteWithChildren
   PrijavaIndexRoute: typeof PrijavaIndexRoute
-  NovicaArticle_slugUrediRoute: typeof NovicaArticle_slugUrediRoute
   NovicaArticle_slugIndexRoute: typeof NovicaArticle_slugIndexRoute
 }
 export interface FileServerRoutesByFullPath {
@@ -141,6 +140,13 @@ export interface RootServerRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -155,20 +161,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PrijavaIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/admin/': {
-      id: '/admin/'
-      path: '/admin'
-      fullPath: '/admin'
-      preLoaderRoute: typeof AdminIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/admin/osnutki': {
-      id: '/admin/osnutki'
-      path: '/admin/osnutki'
-      fullPath: '/admin/osnutki'
-      preLoaderRoute: typeof AdminOsnutkiRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/novica/$article_slug/': {
       id: '/novica/$article_slug/'
       path: '/novica/$article_slug'
@@ -176,12 +168,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof NovicaArticle_slugIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/novica/$article_slug/uredi': {
-      id: '/novica/$article_slug/uredi'
-      path: '/novica/$article_slug/uredi'
-      fullPath: '/novica/$article_slug/uredi'
-      preLoaderRoute: typeof NovicaArticle_slugUrediRouteImport
-      parentRoute: typeof rootRouteImport
+    '/admin/osnutki/': {
+      id: '/admin/osnutki/'
+      path: '/osnutki'
+      fullPath: '/admin/osnutki'
+      preLoaderRoute: typeof AdminOsnutkiIndexRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/admin/osnutki/$draft_id/': {
+      id: '/admin/osnutki/$draft_id/'
+      path: '/osnutki/$draft_id'
+      fullPath: '/admin/osnutki/$draft_id'
+      preLoaderRoute: typeof AdminOsnutkiDraft_idIndexRouteImport
+      parentRoute: typeof AdminRouteRoute
     }
   }
 }
@@ -197,12 +196,24 @@ declare module '@tanstack/react-start/server' {
   }
 }
 
+interface AdminRouteRouteChildren {
+  AdminOsnutkiIndexRoute: typeof AdminOsnutkiIndexRoute
+  AdminOsnutkiDraft_idIndexRoute: typeof AdminOsnutkiDraft_idIndexRoute
+}
+
+const AdminRouteRouteChildren: AdminRouteRouteChildren = {
+  AdminOsnutkiIndexRoute: AdminOsnutkiIndexRoute,
+  AdminOsnutkiDraft_idIndexRoute: AdminOsnutkiDraft_idIndexRoute,
+}
+
+const AdminRouteRouteWithChildren = AdminRouteRoute._addFileChildren(
+  AdminRouteRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  AdminOsnutkiRoute: AdminOsnutkiRoute,
-  AdminIndexRoute: AdminIndexRoute,
+  AdminRouteRoute: AdminRouteRouteWithChildren,
   PrijavaIndexRoute: PrijavaIndexRoute,
-  NovicaArticle_slugUrediRoute: NovicaArticle_slugUrediRoute,
   NovicaArticle_slugIndexRoute: NovicaArticle_slugIndexRoute,
 }
 export const routeTree = rootRouteImport

@@ -140,6 +140,40 @@ export const get_all_drafts = query({
 	},
 });
 
+export const get_draft_by_slug = query({
+	args: { slug: v.string() },
+	handler: async (ctx, args) => {
+		const drafts = await ctx.db
+			.query("articles")
+			.withIndex("by_status_and_updated_at", (q) => q.eq("status", "draft"))
+			.order("desc")
+			.collect();
+
+		const draft = await ctx.db
+			.query("articles")
+			.withIndex("by_slug", (q) => q.eq("slug", args.slug))
+			// .filter((q) => q.eq("status", "draft"))
+			.first();
+
+		// console.log("Drafts found:", drafts.map((d) => d.slug));
+		// console.log("Draft found:", "Draft by slug:", draft?.slug);
+
+		if (!draft) {
+			throw new Error(`Draft with slug "${args.slug}" not found.`);
+		}
+
+		// Load authors for the draft article
+		const authors = await load_authors_for_article(ctx, draft._id);
+
+		return {
+			...draft,
+			authors,
+		};
+	},
+});
+
+
+
 export const create_draft = mutation({
 	args: {},
 	handler: async (ctx) => {

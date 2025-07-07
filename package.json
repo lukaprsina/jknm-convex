@@ -6,13 +6,16 @@
 	"scripts": {
 		"dev": "concurrently npm:dev:web npm:dev:server",
 		"dev:web": "vite dev",
-		"dev:server": "convex dev",
+		"dev:server": "convex dev --local",
 		"build": "vite build && tsc --noEmit",
 		"start": "vite start",
 		"format": "biome format --write .",
 		"lint": "biome lint --write .",
 		"check": "biome check --write .",
 		"deps": "ncu --interactive --format group"
+	},
+	"patchedDependencies": {
+		"react-lite-youtube-embed@2.5.1": "patches/react-lite-youtube-embed.patch"
 	},
 	"dependencies": {
 		"@ariakit/react": "^0.4.17",
