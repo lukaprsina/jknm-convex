@@ -8,115 +8,119 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-import { Route as rootRouteImport } from './routes/__root'
-import { Route as IndexRouteImport } from './routes/index'
-import { Route as PrijavaIndexRouteImport } from './routes/prijava.index'
-import { Route as NovicaArticle_slugIndexRouteImport } from './routes/novica/$article_slug/index'
-import { Route as NovicaArticle_slugUrediRouteImport } from './routes/novica/$article_slug/uredi'
+import { Route as rootRouteImport } from "./routes/__root";
+import { Route as IndexRouteImport } from "./routes/index";
+import { Route as PrijavaIndexRouteImport } from "./routes/prijava.index";
+import { Route as NovicaArticle_slugIndexRouteImport } from "./routes/novica/$article_slug/index";
+import { Route as NovicaArticle_slugUrediRouteImport } from "./routes/novica/$article_slug/uredi";
 
 const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => rootRouteImport,
-} as any)
+	id: "/",
+	path: "/",
+	getParentRoute: () => rootRouteImport,
+} as any);
 const PrijavaIndexRoute = PrijavaIndexRouteImport.update({
-  id: '/prijava/',
-  path: '/prijava/',
-  getParentRoute: () => rootRouteImport,
-} as any)
+	id: "/prijava/",
+	path: "/prijava/",
+	getParentRoute: () => rootRouteImport,
+} as any);
 const NovicaArticle_slugIndexRoute = NovicaArticle_slugIndexRouteImport.update({
-  id: '/novica/$article_slug/',
-  path: '/novica/$article_slug/',
-  getParentRoute: () => rootRouteImport,
-} as any)
+	id: "/novica/$article_slug/",
+	path: "/novica/$article_slug/",
+	getParentRoute: () => rootRouteImport,
+} as any);
 const NovicaArticle_slugUrediRoute = NovicaArticle_slugUrediRouteImport.update({
-  id: '/novica/$article_slug/uredi',
-  path: '/novica/$article_slug/uredi',
-  getParentRoute: () => rootRouteImport,
-} as any)
+	id: "/novica/$article_slug/uredi",
+	path: "/novica/$article_slug/uredi",
+	getParentRoute: () => rootRouteImport,
+} as any);
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
-  '/prijava': typeof PrijavaIndexRoute
-  '/novica/$article_slug/uredi': typeof NovicaArticle_slugUrediRoute
-  '/novica/$article_slug': typeof NovicaArticle_slugIndexRoute
+	"/": typeof IndexRoute;
+	"/prijava": typeof PrijavaIndexRoute;
+	"/novica/$article_slug/uredi": typeof NovicaArticle_slugUrediRoute;
+	"/novica/$article_slug": typeof NovicaArticle_slugIndexRoute;
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
-  '/prijava': typeof PrijavaIndexRoute
-  '/novica/$article_slug/uredi': typeof NovicaArticle_slugUrediRoute
-  '/novica/$article_slug': typeof NovicaArticle_slugIndexRoute
+	"/": typeof IndexRoute;
+	"/prijava": typeof PrijavaIndexRoute;
+	"/novica/$article_slug/uredi": typeof NovicaArticle_slugUrediRoute;
+	"/novica/$article_slug": typeof NovicaArticle_slugIndexRoute;
 }
 export interface FileRoutesById {
-  __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
-  '/prijava/': typeof PrijavaIndexRoute
-  '/novica/$article_slug/uredi': typeof NovicaArticle_slugUrediRoute
-  '/novica/$article_slug/': typeof NovicaArticle_slugIndexRoute
+	__root__: typeof rootRouteImport;
+	"/": typeof IndexRoute;
+	"/prijava/": typeof PrijavaIndexRoute;
+	"/novica/$article_slug/uredi": typeof NovicaArticle_slugUrediRoute;
+	"/novica/$article_slug/": typeof NovicaArticle_slugIndexRoute;
 }
 export interface FileRouteTypes {
-  fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths:
-    | '/'
-    | '/prijava'
-    | '/novica/$article_slug/uredi'
-    | '/novica/$article_slug'
-  fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/prijava' | '/novica/$article_slug/uredi' | '/novica/$article_slug'
-  id:
-    | '__root__'
-    | '/'
-    | '/prijava/'
-    | '/novica/$article_slug/uredi'
-    | '/novica/$article_slug/'
-  fileRoutesById: FileRoutesById
+	fileRoutesByFullPath: FileRoutesByFullPath;
+	fullPaths:
+		| "/"
+		| "/prijava"
+		| "/novica/$article_slug/uredi"
+		| "/novica/$article_slug";
+	fileRoutesByTo: FileRoutesByTo;
+	to:
+		| "/"
+		| "/prijava"
+		| "/novica/$article_slug/uredi"
+		| "/novica/$article_slug";
+	id:
+		| "__root__"
+		| "/"
+		| "/prijava/"
+		| "/novica/$article_slug/uredi"
+		| "/novica/$article_slug/";
+	fileRoutesById: FileRoutesById;
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
-  PrijavaIndexRoute: typeof PrijavaIndexRoute
-  NovicaArticle_slugUrediRoute: typeof NovicaArticle_slugUrediRoute
-  NovicaArticle_slugIndexRoute: typeof NovicaArticle_slugIndexRoute
+	IndexRoute: typeof IndexRoute;
+	PrijavaIndexRoute: typeof PrijavaIndexRoute;
+	NovicaArticle_slugUrediRoute: typeof NovicaArticle_slugUrediRoute;
+	NovicaArticle_slugIndexRoute: typeof NovicaArticle_slugIndexRoute;
 }
 
-declare module '@tanstack/react-router' {
-  interface FileRoutesByPath {
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/prijava/': {
-      id: '/prijava/'
-      path: '/prijava'
-      fullPath: '/prijava'
-      preLoaderRoute: typeof PrijavaIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/novica/$article_slug/': {
-      id: '/novica/$article_slug/'
-      path: '/novica/$article_slug'
-      fullPath: '/novica/$article_slug'
-      preLoaderRoute: typeof NovicaArticle_slugIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/novica/$article_slug/uredi': {
-      id: '/novica/$article_slug/uredi'
-      path: '/novica/$article_slug/uredi'
-      fullPath: '/novica/$article_slug/uredi'
-      preLoaderRoute: typeof NovicaArticle_slugUrediRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-  }
+declare module "@tanstack/react-router" {
+	interface FileRoutesByPath {
+		"/": {
+			id: "/";
+			path: "/";
+			fullPath: "/";
+			preLoaderRoute: typeof IndexRouteImport;
+			parentRoute: typeof rootRouteImport;
+		};
+		"/prijava/": {
+			id: "/prijava/";
+			path: "/prijava";
+			fullPath: "/prijava";
+			preLoaderRoute: typeof PrijavaIndexRouteImport;
+			parentRoute: typeof rootRouteImport;
+		};
+		"/novica/$article_slug/": {
+			id: "/novica/$article_slug/";
+			path: "/novica/$article_slug";
+			fullPath: "/novica/$article_slug";
+			preLoaderRoute: typeof NovicaArticle_slugIndexRouteImport;
+			parentRoute: typeof rootRouteImport;
+		};
+		"/novica/$article_slug/uredi": {
+			id: "/novica/$article_slug/uredi";
+			path: "/novica/$article_slug/uredi";
+			fullPath: "/novica/$article_slug/uredi";
+			preLoaderRoute: typeof NovicaArticle_slugUrediRouteImport;
+			parentRoute: typeof rootRouteImport;
+		};
+	}
 }
 
 const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
-  PrijavaIndexRoute: PrijavaIndexRoute,
-  NovicaArticle_slugUrediRoute: NovicaArticle_slugUrediRoute,
-  NovicaArticle_slugIndexRoute: NovicaArticle_slugIndexRoute,
-}
+	IndexRoute: IndexRoute,
+	PrijavaIndexRoute: PrijavaIndexRoute,
+	NovicaArticle_slugUrediRoute: NovicaArticle_slugUrediRoute,
+	NovicaArticle_slugIndexRoute: NovicaArticle_slugIndexRoute,
+};
 export const routeTree = rootRouteImport
-  ._addFileChildren(rootRouteChildren)
-  ._addFileTypes<FileRouteTypes>()
+	._addFileChildren(rootRouteChildren)
+	._addFileTypes<FileRouteTypes>();

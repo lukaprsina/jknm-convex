@@ -22,10 +22,10 @@ export const seo = ({
 		{ name: "og:description", content: description },
 		...(image
 			? [
-				{ name: "twitter:image", content: image },
-				{ name: "twitter:card", content: "summary_large_image" },
-				{ name: "og:image", content: image },
-			]
+					{ name: "twitter:image", content: image },
+					{ name: "twitter:card", content: "summary_large_image" },
+					{ name: "og:image", content: image },
+				]
 			: []),
 	];
 

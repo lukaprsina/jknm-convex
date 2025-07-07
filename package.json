@@ -9,6 +9,9 @@
 		"dev:db": "convex dev",
 		"build": "vite build && tsc --noEmit",
 		"start": "vite start",
+		"format": "biome format --write .",
+		"lint": "biome lint --write .",
+		"check": "biome check --write .",
 		"deps": "ncu --interactive --format group"
 	},
 	"dependencies": {
@@ -110,6 +113,7 @@
 		"zod": "^3.25.75"
 	},
 	"devDependencies": {
+		"@biomejs/biome": "2.0.6",
 		"@types/lodash": "^4.17.20",
 		"@types/react": "^19.1.8",
 		"@types/react-dom": "^19.1.6",

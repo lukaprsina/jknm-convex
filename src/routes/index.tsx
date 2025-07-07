@@ -1,5 +1,9 @@
 import { convexQuery } from "@convex-dev/react-query";
-import { createFileRoute, getRouteApi, stripSearchParams } from "@tanstack/react-router";
+import {
+	createFileRoute,
+	getRouteApi,
+	stripSearchParams,
+} from "@tanstack/react-router";
 import { fallback, zodValidator } from "@tanstack/zod-adapter";
 import { api } from "convex/_generated/api";
 import { usePaginatedQuery } from "convex/react";

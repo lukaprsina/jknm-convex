@@ -22,7 +22,7 @@ export const Route = createRootRouteWithContext<{
 }>()({
 	beforeLoad: async ({ context }) => {
 		const user = await context.queryClient.ensureQueryData(
-			convexQuery(api.auth.current_user, {})
+			convexQuery(api.auth.current_user, {}),
 		);
 
 		return { user };
