@@ -11,6 +11,7 @@ import { ConvexAuthProvider } from "@convex-dev/auth/react";
 import { routeTree } from "./routeTree.gen";
 import { DefaultCatchBoundary } from "./components/DefaultCatchBoundary";
 import { NotFound } from "./components/NotFound";
+import { ConvexReactClient } from "convex/react";
 
 export function createRouter() {
 	if (typeof document !== "undefined") {
@@ -19,9 +20,14 @@ export function createRouter() {
 
 	const CONVEX_URL = import.meta.env.VITE_CONVEX_URL!;
 	if (!CONVEX_URL) {
-		console.error("missing envar CONVEX_URL");
+		throw new Error('missing VITE_CONVEX_URL envar');
 	}
-	const convexQueryClient = new ConvexQueryClient(CONVEX_URL, { verbose: true });
+
+	const convex = new ConvexReactClient(CONVEX_URL, {
+		unsavedChangesWarning: false,
+	})
+
+	const convexQueryClient = new ConvexQueryClient(CONVEX_URL);
 
 	const queryClient: QueryClient = new QueryClient({
 		defaultOptions: {
@@ -44,7 +50,7 @@ export function createRouter() {
 			defaultPreload: "intent",
 			defaultErrorComponent: DefaultCatchBoundary,
 			defaultNotFoundComponent: () => <NotFound />,
-			context: { queryClient },
+			context: { queryClient, convexClient: convex, convexQueryClient },
 			defaultStructuralSharing: true,
 			scrollRestoration: true,
 			// react-query will handle data fetching & caching

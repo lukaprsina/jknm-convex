@@ -1,17 +1,16 @@
-import { useAuthActions } from "@convex-dev/auth/react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { Authenticated, Unauthenticated } from "convex/react";
 import { Home } from "lucide-react";
 import { useState } from "react";
 import { Button } from "~/components/ui/button";
 import { Card, CardContent } from "~/components/ui/card";
+import { auth_client } from "~/lib/auth-client";
 
 export const Route = createFileRoute("/prijava/")({
 	component: RouteComponent,
 });
 
 function RouteComponent() {
-	const { signIn, signOut } = useAuthActions();
 	const navigate = useNavigate();
 
 	const [isLoading, setIsLoading] = useState(false);
@@ -50,7 +49,7 @@ function RouteComponent() {
 										onClick={async () => {
 											setIsLoading(true);
 											try {
-												await signOut();
+												await auth_client.signOut();
 												navigate({ to: "/" });
 											} catch {
 												setErrorMessage("Napaka pri odjavi");
@@ -68,10 +67,13 @@ function RouteComponent() {
 								<Unauthenticated>
 									<Button
 										type="button"
-										onClick={() => {
+										onClick={async () => {
 											setIsLoading(true);
 											try {
-												signIn("google");
+												await auth_client.signIn.social({
+													provider: "google",
+													callbackURL: "/"
+												});
 											} catch {
 												setErrorMessage("Napaka pri prijavi");
 											} finally {

@@ -9,6 +9,7 @@ const article_status_validator = v.union(
 );
 
 const schema = defineSchema({
+	users: defineTable({}),
 	articles: defineTable({
 		title: v.string(),
 		slug: v.string(),
