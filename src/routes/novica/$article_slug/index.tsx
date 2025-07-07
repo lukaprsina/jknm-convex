@@ -1,7 +1,11 @@
 import { convexQuery } from '@convex-dev/react-query';
+import { MarkdownPlugin } from '@platejs/markdown';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { createFileRoute, getRouteApi } from '@tanstack/react-router'
 import { api } from 'convex/_generated/api';
+import { createSlateEditor, PlateStatic } from 'platejs';
+import type { PlateEditor } from 'platejs/react';
+import { BaseEditorKit } from '~/components/editor-base-kit';
 
 export const Route = createFileRoute('/novica/$article_slug/')({
     component: RouteComponent,
@@ -36,7 +40,7 @@ function RouteComponent() {
     const editor = createSlateEditor({
         plugins: BaseEditorKit,
         nodeId: false, // Disable NodeIdPlugin to prevent hydration mismatches
-        value: (editor) => {
+        value: (editor: PlateEditor) => {
             return editor
                 .getApi(MarkdownPlugin)
                 .markdown.deserialize(article.content_markdown ?? "# No article");
