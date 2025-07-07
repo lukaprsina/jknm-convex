@@ -16,7 +16,7 @@ import { Footer2 } from "~/components/layout/footer2";
 import { Navbar1 } from "~/components/layout/navbar1";
 import { Button } from "~/components/ui/button";
 
-import { FilterAccordion } from "~/routes/-filter-accordion";
+import { FilterAccordion } from "./-filter-accordion";
 
 const DEFAULT_NUM_ITEMS = 10;
 
@@ -52,12 +52,12 @@ export const Route = createFileRoute("/")({
 				}),
 			),
 			context.queryClient.ensureQueryData(convexQuery(api.authors.get_all, {})),
-		]);
+		])
 
 		return {
 			search_results,
 			authors,
-		};
+		}
 	},
 	validateSearch: zodValidator(article_search_validator),
 	search: { middlewares: [stripSearchParams(DEFAULT_SEARCH_VALUES)] },
@@ -76,9 +76,9 @@ function Home() {
 			year: home_search.leto ?? undefined,
 		},
 		{ initialNumItems: DEFAULT_NUM_ITEMS },
-	);
+	)
 
-	const { mutate } = useMutation<typeof api.articles.create_draft._returnType, EmptyObject | undefined, EmptyObject | undefined>({
+	const { mutate } = useMutation<typeof api.articles.create_draft._returnType, void, EmptyObject | undefined>({
 		mutationFn: useConvexMutation(api.articles.create_draft),
 		onSuccess: (new_draft) => {
 			/* if (typeof new_draft === "string") {
@@ -107,7 +107,7 @@ function Home() {
 				<FilterAccordion />
 				<Button
 					onClick={() => {
-						mutate({});
+						mutate({})
 					}}
 				>Create draft article</Button>
 			</div>
@@ -133,5 +133,5 @@ function Home() {
 			</main>
 			<Footer2 />
 		</>
-	);
+	)
 }

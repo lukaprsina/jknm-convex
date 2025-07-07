@@ -18,7 +18,7 @@ export const Route = createFileRoute("/novica/$article_slug/")({
 		const article = await context.queryClient.ensureQueryData(
 			convexQuery(api.articles.get_by_slug, {
 				slug: article_slug,
-				user_id: context.user?._id,
+				user_id: context.userId,
 			}),
 		);
 
@@ -30,12 +30,12 @@ const route_api = getRouteApi("/novica/$article_slug/");
 
 function RouteComponent() {
 	const { article_slug } = route_api.useParams();
-	const { user } = route_api.useRouteContext();
+	const { userId } = route_api.useRouteContext();
 
 	const { data: article } = useSuspenseQuery(
 		convexQuery(api.articles.get_by_slug, {
 			slug: article_slug,
-			user_id: user?._id,
+			user_id: userId,
 		}),
 	);
 

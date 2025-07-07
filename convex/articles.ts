@@ -9,7 +9,7 @@ import { type QueryCtx, mutation, query } from "./_generated/server";
  * Get an article by its slug
  */
 export const get_by_slug = query({
-	args: { slug: v.string(), user_id: v.optional(v.id("users")) },
+	args: { slug: v.string(), user_id: v.optional(v.string()) },
 	handler: async (ctx, args) => {
 		const article_unfiltered = ctx.db
 			.query("articles")
