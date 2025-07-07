@@ -1,0 +1,40 @@
+diff --git a/dist/index.es.js b/dist/index.es.js
+index b7119bc8d9b0a96e8b8bf5a0bb713fde23ec62ce..55ebc4a95fd5cb401dde474d31d18290c47d05bf 100644
+--- a/dist/index.es.js
++++ b/dist/index.es.js
+@@ -107,4 +107,4 @@ function LiteYouTubeEmbedComponent(props, ref) {
+ var index = React.forwardRef(LiteYouTubeEmbedComponent);
+ 
+ export { index as default };
+-//# sourceMappingURL=index.es.js.map
++// ignored: sourceMappingURL=index.es.js.map
+diff --git a/dist/index.es.jsx b/dist/index.es.jsx
+index 41d3419df13fc00906d785684bc0d8fd528abaaa..1a72525365591286dabd4588bb3144346220c829 100644
+--- a/dist/index.es.jsx
++++ b/dist/index.es.jsx
+@@ -102,4 +102,4 @@ function LiteYouTubeEmbed(props) {
+ }
+ 
+ export { LiteYouTubeEmbed as default };
+-//# sourceMappingURL=index.es.jsx.map
++// ignored: sourceMappingURL=index.es.jsx.map
+diff --git a/dist/index.js b/dist/index.js
+index fb26de7f8f2bd07474ad9cab66d11db4fab2dbe3..1b0899fcdca306fb9048c18bd9765bbdfe0813ce 100644
+--- a/dist/index.js
++++ b/dist/index.js
+@@ -129,4 +129,4 @@ function LiteYouTubeEmbedComponent(props, ref) {
+ var index = React__namespace.forwardRef(LiteYouTubeEmbedComponent);
+ 
+ module.exports = index;
+-//# sourceMappingURL=index.js.map
++// ignored: sourceMappingURL=index.js.map
+diff --git a/dist/index.jsx b/dist/index.jsx
+index 63953fc85af8d6a04d85eb932f7e9ae84e96f529..2399357c5004eb62fee9188646b57c1aef2a2752 100644
+--- a/dist/index.jsx
++++ b/dist/index.jsx
+@@ -126,4 +126,4 @@ function LiteYouTubeEmbed(props) {
+ }
+ 
+ module.exports = LiteYouTubeEmbed;
+-//# sourceMappingURL=index.jsx.map
++// ignored: sourceMappingURL=index.jsx.map
