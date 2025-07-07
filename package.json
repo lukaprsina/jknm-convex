@@ -8,6 +8,7 @@
 		"dev:web": "vite dev",
 		"dev:server": "convex dev --local",
 		"build": "vite build && tsc --noEmit",
+		"deploy": "convex deploy -y",
 		"start": "vite start",
 		"format": "biome format --write .",
 		"lint": "biome lint --write .",
