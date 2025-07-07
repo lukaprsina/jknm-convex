@@ -8,7 +8,6 @@ import { betterAuth } from "better-auth";
 import { components, internal } from "./_generated/api";
 import { query, type GenericCtx } from "./_generated/server";
 import type { Id, DataModel } from "./_generated/dataModel";
-import { reactStartCookies } from "better-auth/react-start";
 
 // Typesafe way to pass Convex functions defined in this file
 const authFunctions: AuthFunctions = internal.auth;
@@ -25,8 +24,7 @@ export const createAuth = (ctx: GenericCtx) =>
     // Configure your Better Auth instance here
     betterAuth({
         // All auth requests will be proxied through your TanStack Start server
-        // baseURL: process.env.SITE_URL!, // "http://localhost:3000",
-        baseURL: "new.jknm.site",
+        baseURL: process.env.SITE_URL!, // "http://localhost:3000" or "https://new.jknm.site"
         database: convexAdapter(ctx, betterAuthComponent),
 
         /* // Simple non-verified email/password to get started
@@ -54,6 +52,8 @@ export const createAuth = (ctx: GenericCtx) =>
             // The Convex plugin is required
             convex(),
         ],
+
+
     });
 
 // These are required named exports
@@ -65,7 +65,7 @@ export const {
 } =
     betterAuthComponent.createAuthFunctions<DataModel>({
         // Must create a user and return the user id
-        onCreateUser: async (ctx, user) => {
+        onCreateUser: async (ctx, /* user */) => {
             return ctx.db.insert("users", {});
         },
 

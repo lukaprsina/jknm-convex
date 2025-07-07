@@ -42,6 +42,7 @@ export function createRouter() {
 			},
 		}),
 	});
+
 	convexQueryClient.connect(queryClient);
 
 	const router = routerWithQueryClient(
