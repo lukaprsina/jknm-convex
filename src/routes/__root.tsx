@@ -1,23 +1,33 @@
 /// <reference types="vite/client" />
+
+import { convexQuery } from "@convex-dev/react-query";
+import type { QueryClient } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools/production";
 import {
-	Outlet,
 	createRootRouteWithContext,
 	HeadContent,
+	Outlet,
 	Scripts,
 } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
-import * as React from "react";
+import { api } from "convex/_generated/api";
 import { Toaster } from "react-hot-toast";
-import type { QueryClient } from "@tanstack/react-query";
+import appCss from "~/app.css?url";
 import { DefaultCatchBoundary } from "~/components/default-catch-boundary";
 import { NotFound } from "~/components/not-found";
-import appCss from "~/app.css?url";
 import { seo } from "~/utils/seo";
 
 export const Route = createRootRouteWithContext<{
 	queryClient: QueryClient;
 }>()({
+	beforeLoad: async ({ context }) => {
+		const user = await context.queryClient.ensureQueryData(
+			convexQuery(api.auth.current_user, {})
+		);
+
+		return { user };
+	},
+
 	head: () => ({
 		meta: [
 			{
@@ -34,24 +44,6 @@ export const Route = createRootRouteWithContext<{
 		],
 		links: [
 			{ rel: "stylesheet", href: appCss },
-			/* {
-        rel: 'apple-touch-icon',
-        sizes: '180x180',
-        href: '/apple-touch-icon.png',
-      },
-      {
-        rel: 'icon',
-        type: 'image/png',
-        sizes: '32x32',
-        href: '/favicon-32x32.png',
-      },
-      {
-        rel: 'icon',
-        type: 'image/png',
-        sizes: '16x16',
-        href: '/favicon-16x16.png',
-      },
-      { rel: 'manifest', href: '/site.webmanifest', color: '#fffff' }, */
 			{ rel: "icon", href: "/favicon.ico" },
 		],
 	}),
@@ -94,3 +86,22 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 		</html>
 	);
 }
+
+/* {
+		rel: 'apple-touch-icon',
+		sizes: '180x180',
+		href: '/apple-touch-icon.png',
+	  },
+	  {
+		rel: 'icon',
+		type: 'image/png',
+		sizes: '32x32',
+		href: '/favicon-32x32.png',
+	  },
+	  {
+		rel: 'icon',
+		type: 'image/png',
+		sizes: '16x16',
+		href: '/favicon-16x16.png',
+	  },
+	  { rel: 'manifest', href: '/site.webmanifest', color: '#fffff' }, */

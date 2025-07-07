@@ -4,7 +4,6 @@ import { v } from "convex/values";
 import { getAll, getManyFrom } from "convex-helpers/server/relationships";
 import type { Doc, Id } from "./_generated/dataModel";
 import { type QueryCtx, query } from "./_generated/server";
-import { article } from "./schema";
 
 /**
  * Helper function to load authors for an article in the correct order
@@ -58,13 +57,15 @@ async function load_authors_and_filter<T extends Doc<"articles">>(
  * Get an article by its slug
  */
 export const get_by_slug = query({
-	args: { slug: v.string(), status: article.fields.status },
+	args: { slug: v.string(), user_id: v.optional(v.id("users")) },
 	handler: async (ctx, args) => {
-		const article = await ctx.db
+		const article_unfiltered = ctx.db
 			.query("articles")
 			.withIndex("by_slug", (q) => q.eq("slug", args.slug))
 			.order("desc")
-			.filter((q) => q.eq("status", args.status ?? "published"))
+
+		const article = args.user_id ? await article_unfiltered.first() : await article_unfiltered
+			.filter((q) => q.eq("status", "published"))
 			.first();
 
 		if (!article) {
