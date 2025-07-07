@@ -1,4 +1,5 @@
-import { convexQuery } from "@convex-dev/react-query";
+import { convexQuery, useConvexMutation } from "@convex-dev/react-query";
+import { useMutation } from "@tanstack/react-query";
 import {
 	createFileRoute,
 	getRouteApi,
@@ -12,6 +13,8 @@ import { useIntersectionObserver } from "usehooks-ts";
 import { z } from "zod";
 import { Footer2 } from "~/components/layout/footer2";
 import { Navbar1 } from "~/components/layout/navbar1";
+import { Button } from "~/components/ui/button";
+
 import { FilterAccordion } from "~/routes/-filter-accordion";
 
 const DEFAULT_NUM_ITEMS = 10;
@@ -67,12 +70,24 @@ function Home() {
 	const search_api = usePaginatedQuery(
 		api.articles.search_articles_unified,
 		{
-			search_term: home_search.iskanje ?? "",
+			search_term: home_search.iskanje,
 			author_ids: home_search.avtorji,
 			year: home_search.leto ?? undefined,
 		},
 		{ initialNumItems: DEFAULT_NUM_ITEMS },
 	);
+
+	const { mutate } = useMutation({
+		mutationFn: useConvexMutation(api.articles.create_draft),
+		onSuccess: (new_draft) => {
+			/* if (typeof new_draft === "string") {
+
+			} else {
+				new_draft
+			} */
+			console.log("New draft created:", new_draft);
+		}
+	});
 
 	// Sentinel for infinite loading
 	const { isIntersecting, ref } = useIntersectionObserver({ threshold: 0.5 });
@@ -89,8 +104,14 @@ function Home() {
 			<Navbar1 />
 			<div className="w-full p-4">
 				<FilterAccordion />
+				<Button
+					onClick={() => {
+						mutate({});
+					}}
+				>Create draft article</Button>
 			</div>
 			<main className="w-full flex-grow">
+
 				{search_api.results?.map(({ _id, title }) => (
 					<div key={_id}>{title}</div>
 				))}

@@ -1,4 +1,3 @@
-import { authTables } from "@convex-dev/auth/server";
 import { defineSchema, defineTable } from "convex/server";
 import { v } from "convex/values";
 
@@ -10,8 +9,6 @@ const article_status_validator = v.union(
 );
 
 const schema = defineSchema({
-	...authTables,
-
 	articles: defineTable({
 		title: v.string(),
 		slug: v.string(),

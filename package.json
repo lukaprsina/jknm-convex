@@ -4,9 +4,9 @@
 	"sideEffects": false,
 	"type": "module",
 	"scripts": {
-		"dev": "concurrently -r npm:dev:web npm:dev:db",
+		"dev": "concurrently npm:dev:web npm:dev:server",
 		"dev:web": "vite dev",
-		"dev:db": "convex dev",
+		"dev:server": "convex dev",
 		"build": "vite build && tsc --noEmit",
 		"start": "vite start",
 		"format": "biome format --write .",
@@ -16,8 +16,6 @@
 	},
 	"dependencies": {
 		"@ariakit/react": "^0.4.17",
-		"@auth/core": "0.40.0",
-		"@convex-dev/auth": "^0.0.87",
 		"@convex-dev/react-query": "0.0.0-alpha.11",
 		"@convex-dev/sharded-counter": "^0.1.8",
 		"@emoji-mart/data": "1.2.1",

@@ -3,55 +3,7 @@ import { paginationOptsValidator } from "convex/server";
 import { v } from "convex/values";
 import { getAll, getManyFrom } from "convex-helpers/server/relationships";
 import type { Doc, Id } from "./_generated/dataModel";
-import { type QueryCtx, query } from "./_generated/server";
-
-/**
- * Helper function to load authors for an article in the correct order
- */
-async function load_authors_for_article(ctx: QueryCtx, articleId: Id<"articles">) {
-	const authorLinks = await ctx.db
-		.query("articles_to_authors")
-		.withIndex("by_article_and_order", (q) => q.eq("article_id", articleId))
-		.collect();
-
-	const authors = await Promise.all(
-		authorLinks.map(async (link) => {
-			const author = await ctx.db.get(link.author_id);
-			return author ? { ...author, order: link.order } : null;
-		}),
-	);
-
-	return authors
-		.filter((author): author is NonNullable<typeof author> => author !== null)
-		.sort((a, b) => a.order - b.order);
-}
-
-/**
- * Helper function to load authors for multiple articles and apply author filtering
- */
-async function load_authors_and_filter<T extends Doc<"articles">>(
-	ctx: QueryCtx,
-	articles: T[],
-	authorFilter: string[],
-) {
-	const articlesWithAuthors = await Promise.all(
-		articles.map(async (article) => {
-			const authors = await load_authors_for_article(ctx, article._id);
-			return {
-				...article,
-				authors,
-			};
-		}),
-	);
-
-	// Filter by authors if specified
-	const hasAuthorFilter = authorFilter.length > 0;
-	return hasAuthorFilter
-		? articlesWithAuthors.filter((article) =>
-			article.authors.some((author) => authorFilter.includes(author._id)),
-		)
-		: articlesWithAuthors;
-}
+import { type QueryCtx, mutation, query } from "./_generated/server";
 
 /**
  * Get an article by its slug
@@ -163,3 +115,78 @@ export const search_articles_unified = query({
 		};
 	},
 });
+
+export const create_draft = mutation({
+	args: {},
+	handler: async (ctx) => {
+		const user_id = await ctx.auth.getUserIdentity();
+
+		if (!user_id) {
+			throw new Error("User must be authenticated to create a draft article.");
+		}
+
+		const new_article = await ctx.db.insert("articles", {
+			status: "draft",
+			title: "Neimenovana novica",
+			slug: "",
+			content_markdown: "# Neimenovana novica",
+			view_count: 0,
+			updated_at: Date.now(),
+			created_at: Date.now()
+		});
+
+		await ctx.db.patch(new_article, {
+			slug: `neimenovana-novica-${new_article}`,
+		});
+
+		return new_article;
+	},
+});
+
+/**
+ * Helper function to load authors for an article in the correct order
+ */
+async function load_authors_for_article(ctx: QueryCtx, articleId: Id<"articles">) {
+	const authorLinks = await ctx.db
+		.query("articles_to_authors")
+		.withIndex("by_article_and_order", (q) => q.eq("article_id", articleId))
+		.collect();
+
+	const authors = await Promise.all(
+		authorLinks.map(async (link) => {
+			const author = await ctx.db.get(link.author_id);
+			return author ? { ...author, order: link.order } : null;
+		}),
+	);
+
+	return authors
+		.filter((author): author is NonNullable<typeof author> => author !== null)
+		.sort((a, b) => a.order - b.order);
+}
+
+/**
+ * Helper function to load authors for multiple articles and apply author filtering
+ */
+async function load_authors_and_filter<T extends Doc<"articles">>(
+	ctx: QueryCtx,
+	articles: T[],
+	authorFilter: string[],
+) {
+	const articlesWithAuthors = await Promise.all(
+		articles.map(async (article) => {
+			const authors = await load_authors_for_article(ctx, article._id);
+			return {
+				...article,
+				authors,
+			};
+		}),
+	);
+
+	// Filter by authors if specified
+	const hasAuthorFilter = authorFilter.length > 0;
+	return hasAuthorFilter
+		? articlesWithAuthors.filter((article) =>
+			article.authors.some((author) => authorFilter.includes(author._id)),
+		)
+		: articlesWithAuthors;
+}
