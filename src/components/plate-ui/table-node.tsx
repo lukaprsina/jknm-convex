@@ -85,13 +85,13 @@ import {
 	BorderNoneIcon,
 	BorderRightIcon,
 	BorderTopIcon,
-} from "./table-icons";
+} from "../ui/table-icons";
 import {
 	Toolbar,
 	ToolbarButton,
 	ToolbarGroup,
 	ToolbarMenuGroup,
-} from "./toolbar";
+} from "../ui/toolbar";
 export const TableElement = withHOC(
 	TableProvider,
 	function TableElement({

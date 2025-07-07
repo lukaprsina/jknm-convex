@@ -2,7 +2,7 @@
 
 import { createPlatePlugin } from "platejs/react";
 
-import { TocSidebar } from "~/components/ui/toc-sidebar";
+import { TocSidebar } from "~/components/plate-ui/toc-sidebar";
 
 export const TocSidebarKit = [
 	createPlatePlugin({

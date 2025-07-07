@@ -27,7 +27,7 @@ import {
 } from "~/components/ui/tooltip";
 import { cn } from "~/lib/utils";
 
-import { ToolbarButton, ToolbarMenuGroup } from "./toolbar";
+import { ToolbarButton, ToolbarMenuGroup } from "../ui/toolbar";
 
 export function FontColorToolbarButton({
 	children,
@@ -219,13 +219,13 @@ function ColorCustom({
 		() =>
 			customColor
 				? [
-						...customColors,
-						{
-							isBrightColor: false,
-							name: "",
-							value: customColor,
-						},
-					]
+					...customColors,
+					{
+						isBrightColor: false,
+						name: "",
+						value: customColor,
+					},
+				]
 				: customColors,
 		[customColor, customColors],
 	);

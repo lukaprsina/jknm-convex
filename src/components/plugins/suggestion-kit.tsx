@@ -13,11 +13,11 @@ import {
 } from "platejs";
 import { toTPlatePlugin } from "platejs/react";
 
-import { BlockSuggestion } from "~/components/ui/block-suggestion";
+import { BlockSuggestion } from "~/components/plate-ui/block-suggestion";
 import {
 	SuggestionLeaf,
 	SuggestionLineBreak,
-} from "~/components/ui/suggestion-node";
+} from "~/components/plate-ui/suggestion-node";
 
 import { discussionPlugin } from "./discussion-kit";
 

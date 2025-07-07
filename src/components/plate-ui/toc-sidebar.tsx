@@ -4,7 +4,7 @@ import * as React from "react";
 
 import { useTocSideBar, useTocSideBarState } from "@platejs/toc/react";
 import { cn } from "~/lib/utils";
-import { Button } from "./button";
+import { Button } from "../ui/button";
 
 export interface TocSidebarProps {
 	className?: string;

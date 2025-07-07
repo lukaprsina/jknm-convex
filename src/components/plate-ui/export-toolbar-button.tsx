@@ -19,7 +19,7 @@ import {
 } from "~/components/ui/dropdown-menu";
 
 import { EditorStatic } from "./editor-static";
-import { ToolbarButton } from "./toolbar";
+import { ToolbarButton } from "../ui/toolbar";
 
 const siteUrl = "https://platejs.org";
 

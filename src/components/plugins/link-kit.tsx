@@ -2,8 +2,8 @@
 
 import { LinkPlugin } from "@platejs/link/react";
 
-import { LinkElement } from "~/components/ui/link-node";
-import { LinkFloatingToolbar } from "~/components/ui/link-toolbar";
+import { LinkElement } from "~/components/plate-ui/link-node";
+import { LinkFloatingToolbar } from "~/components/plate-ui/link-toolbar";
 
 export const LinkKit = [
 	LinkPlugin.configure({

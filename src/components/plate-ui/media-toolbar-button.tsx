@@ -40,7 +40,7 @@ import {
 	ToolbarSplitButton,
 	ToolbarSplitButtonPrimary,
 	ToolbarSplitButtonSecondary,
-} from "./toolbar";
+} from "../ui/toolbar";
 import { SelectedFilesOrErrors } from "use-file-picker/types";
 
 const MEDIA_CONFIG: Record<

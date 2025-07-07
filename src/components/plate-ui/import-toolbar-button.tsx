@@ -22,7 +22,7 @@ import {
 	DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
 
-import { ToolbarButton } from "./toolbar";
+import { ToolbarButton } from "../ui/toolbar";
 
 type ImportType = "html" | "markdown";
 
