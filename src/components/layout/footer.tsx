@@ -36,18 +36,18 @@ export function Footer() {
 						<ul className="space-y-2">
 							<li className="flex items-center">
 								<Mail className="mr-2 h-5 w-5" />
-								<Link
+								<a
 									href="mailto:info@jknm.si"
 									className="hover:text-gray-300"
 								>
 									info@jknm.si
-								</Link>
+								</a>
 							</li>
 							<li className="flex items-center">
 								<Phone className="mr-2 h-5 w-5" />
-								<Link href="tel:+38641871385" className="hover:text-gray-300">
+								<a href="tel:+38641871385" className="hover:text-gray-300">
 									+386 (0)41 871 385
-								</Link>
+								</a>
 								, Zdravko Bučar
 							</li>
 						</ul>

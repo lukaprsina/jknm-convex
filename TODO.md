@@ -1,6 +1,10 @@
 `6. 7.`
 Filtriraj Accordion animacija ne dela
 
+`7. 7.`
+diceui in fumadocs za sidebar in TOC
+"react-player": "^2.16.0"
+
 https://motion-primitives.com/docs/border-trail
 
 https://originui.com/file-upload
