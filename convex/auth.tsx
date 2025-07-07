@@ -21,11 +21,16 @@ export const betterAuthComponent = new BetterAuth(
     }
 );
 
-export const createAuth = (ctx: GenericCtx) =>
+export const createAuth = (ctx: GenericCtx) => {
     // Configure your Better Auth instance here
-    betterAuth({
+    console.warn("createAuth", {
+        baseURL: process.env.SITE_URL!,
+        pr_env: process.env
+    });
+    return betterAuth({
         // All auth requests will be proxied through your TanStack Start server
-        baseURL: process.env.SITE_URL!, // "http://localhost:3000",
+        // baseURL: process.env.SITE_URL!, // "http://localhost:3000",
+        baseURL: "new.jknm.site",
         database: convexAdapter(ctx, betterAuthComponent),
 
         /* // Simple non-verified email/password to get started
@@ -54,7 +59,7 @@ export const createAuth = (ctx: GenericCtx) =>
             convex(),
         ],
     });
-
+}
 // These are required named exports
 export const {
     createUser,
