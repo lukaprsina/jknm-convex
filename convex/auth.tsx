@@ -87,6 +87,8 @@ export const getCurrentUser = query({
         // Get user data from your application's database
         // (skip this if you have no fields in your users table schema)
         const user = await ctx.db.get(userMetadata.userId as Id<"users">);
+        // @ts-expect-error idk
+        console.log("getCurrentUser", { userMetadata, user, url: process.env.SITE_URL, vite_url: import.meta.env.SITE_URL });
         return {
             ...user,
             ...userMetadata,
