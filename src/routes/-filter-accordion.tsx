@@ -44,13 +44,13 @@ export function FilterAccordion() {
 			onValueChange={(item) => setIsOpen(item.at(0) === "item-1")}
 		>
 			<AccordionItem value="item-1">
-				<div className="flex justify-end w-full">
+				<div className="flex w-full justify-end">
 					<AccordionTrigger className="grow-0">Filtriraj</AccordionTrigger>
 				</div>
 				<AccordionContent className="grid grid-rows-2 gap-6 text-balance px-2">
 					{/* First row - Year selector */}
 					<div className="space-y-2">
-						<Label className="text-sm font-medium pr-2">Leto</Label>
+						<Label className="pr-2 font-medium text-sm">Leto</Label>
 						{isMobile ? (
 							<YearDropdown
 								selectedYear={home_search.leto ?? undefined}
@@ -70,16 +70,16 @@ export function FilterAccordion() {
 										search: (prev) => ({ ...prev, leto: year }),
 									})
 								}
-								className="w-full h-11"
+								className="h-11 w-full"
 							/>
 						)}
 					</div>
 
 					{/* Second row - Search and Author dropdown */}
-					<div className="flex flex-col md:flex-row gap-4">
+					<div className="flex flex-col gap-4 md:flex-row">
 						{/* Author dropdown */}
-						<div className="space-y-2 w-auto">
-							<Label htmlFor="author-select" className="text-sm font-medium">
+						<div className="w-auto space-y-2">
+							<Label htmlFor="author-select" className="font-medium text-sm">
 								Avtor
 							</Label>
 							<AuthorSelect
@@ -95,8 +95,8 @@ export function FilterAccordion() {
 						</div>
 
 						{/* Search field */}
-						<div className="space-y-2 w-auto">
-							<Label htmlFor="search" className="text-sm font-medium">
+						<div className="w-auto space-y-2">
+							<Label htmlFor="search" className="font-medium text-sm">
 								Iskanje
 							</Label>
 							<Input

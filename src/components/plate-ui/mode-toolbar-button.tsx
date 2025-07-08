@@ -66,14 +66,14 @@ export function ModeToolbarButton(props: DropdownMenuProps) {
 
 							return;
 						}
-							setReadOnly(false);
+						setReadOnly(false);
 
 						if (newValue === "suggestion") {
 							editor.setOption(SuggestionPlugin, "isSuggesting", true);
 
 							return;
 						}
-							editor.setOption(SuggestionPlugin, "isSuggesting", false);
+						editor.setOption(SuggestionPlugin, "isSuggesting", false);
 
 						if (newValue === "editing") {
 							editor.tf.focus();
@@ -83,7 +83,7 @@ export function ModeToolbarButton(props: DropdownMenuProps) {
 					}}
 				>
 					<DropdownMenuRadioItem
-						className="*:[svg]:text-muted-foreground pl-2 *:first:[span]:hidden"
+						className="pl-2 *:first:[span]:hidden *:[svg]:text-muted-foreground"
 						value="editing"
 					>
 						<Indicator />
@@ -92,7 +92,7 @@ export function ModeToolbarButton(props: DropdownMenuProps) {
 					</DropdownMenuRadioItem>
 
 					<DropdownMenuRadioItem
-						className="*:[svg]:text-muted-foreground pl-2 *:first:[span]:hidden"
+						className="pl-2 *:first:[span]:hidden *:[svg]:text-muted-foreground"
 						value="viewing"
 					>
 						<Indicator />
@@ -101,7 +101,7 @@ export function ModeToolbarButton(props: DropdownMenuProps) {
 					</DropdownMenuRadioItem>
 
 					<DropdownMenuRadioItem
-						className="*:[svg]:text-muted-foreground pl-2 *:first:[span]:hidden"
+						className="pl-2 *:first:[span]:hidden *:[svg]:text-muted-foreground"
 						value="suggestion"
 					>
 						<Indicator />

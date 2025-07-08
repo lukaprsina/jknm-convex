@@ -163,7 +163,7 @@ function TableFloatingToolbar({
 				{...props}
 			>
 				<Toolbar
-					className="scrollbar-hide bg-popover flex w-auto max-w-[80vw] flex-row overflow-x-auto rounded-md border p-1 shadow-md print:hidden"
+					className="scrollbar-hide flex w-auto max-w-[80vw] flex-row overflow-x-auto rounded-md border bg-popover p-1 shadow-md print:hidden"
 					contentEditable={false}
 				>
 					<ToolbarGroup>
@@ -469,7 +469,7 @@ function RowDragHandle({ dragRef }: { dragRef: React.Ref<any> }) {
 			ref={dragRef}
 			variant="outline"
 			className={cn(
-				"absolute top-1/2 left-0 z-51 h-6 w-4 -translate-y-1/2 p-0 focus-visible:ring-0 focus-visible:ring-offset-0",
+				"-translate-y-1/2 absolute top-1/2 left-0 z-51 h-6 w-4 p-0 focus-visible:ring-0 focus-visible:ring-offset-0",
 				"cursor-grab active:cursor-grabbing",
 				'opacity-0 transition-opacity duration-100 group-hover/row:opacity-100 group-has-data-[resizing="true"]/row:opacity-0',
 			)}
@@ -490,7 +490,7 @@ function RowDropLine() {
 	return (
 		<div
 			className={cn(
-				"bg-brand/50 absolute inset-x-0 left-2 z-50 h-0.5",
+				"absolute inset-x-0 left-2 z-50 h-0.5 bg-brand/50",
 				dropLine === "top" ? "-top-px" : "-bottom-px",
 			)}
 		/>
@@ -531,16 +531,16 @@ export function TableCellElement({
 			{...props}
 			as={isHeader ? "th" : "td"}
 			className={cn(
-				"bg-background h-full overflow-visible border-none p-0",
+				"h-full overflow-visible border-none bg-background p-0",
 				element.background ? "bg-(--cellBackground)" : "bg-background",
 				isHeader && "text-left *:m-0",
 				"before:size-full",
-				selected && "before:bg-brand/5 before:z-10",
-				"before:absolute before:box-border before:content-[''] before:select-none",
-				borders.bottom?.size && "before:border-b-border before:border-b",
-				borders.right?.size && "before:border-r-border before:border-r",
-				borders.left?.size && "before:border-l-border before:border-l",
-				borders.top?.size && "before:border-t-border before:border-t",
+				selected && "before:z-10 before:bg-brand/5",
+				"before:absolute before:box-border before:select-none before:content-['']",
+				borders.bottom?.size && "before:border-b before:border-b-border",
+				borders.right?.size && "before:border-r before:border-r-border",
+				borders.left?.size && "before:border-l before:border-l-border",
+				borders.top?.size && "before:border-t before:border-t-border",
 			)}
 			style={
 				{
@@ -579,14 +579,14 @@ export function TableCellElement({
 							{!hiddenLeft && (
 								<ResizeHandle
 									{...leftProps}
-									className="top-0 -left-1 w-2"
+									className="-left-1 top-0 w-2"
 									data-resizer-left={colIndex === 0 ? "true" : undefined}
 								/>
 							)}
 
 							<div
 								className={cn(
-									"bg-ring absolute top-0 z-30 hidden h-full w-1",
+									"absolute top-0 z-30 hidden h-full w-1 bg-ring",
 									"right-[-1.5px]",
 									columnResizeVariants({ colIndex: colIndex as any }),
 								)}
@@ -594,9 +594,9 @@ export function TableCellElement({
 							{colIndex === 0 && (
 								<div
 									className={cn(
-										"bg-ring absolute top-0 z-30 h-full w-1",
+										"absolute top-0 z-30 h-full w-1 bg-ring",
 										"left-[-1.5px]",
-										'animate-in fade-in hidden group-has-[[data-resizer-left]:hover]/table:block group-has-[[data-resizer-left][data-resizing="true"]]/table:block',
+										"fade-in group-has-[[data-resizer-left][data-resizing= hidden animate-in group-has-[[data-resizer-left]:hover]/table:block"true"]]/table:block",
 									)}
 								/>
 							)}
@@ -618,7 +618,7 @@ export function TableCellHeaderElement(
 	return <TableCellElement {...props} isHeader />;
 }
 
-const columnResizeVariants = cva("hidden animate-in fade-in", {
+const columnResizeVariants = cva("fade-in hidden animate-in", {
 	variants: {
 		colIndex: {
 			0: 'group-has-[[data-col="0"]:hover]/table:block group-has-[[data-col="0"][data-resizing="true"]]/table:block',

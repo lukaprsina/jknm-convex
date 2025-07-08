@@ -1,12 +1,11 @@
-import { cn } from "~/lib/utils";
-import { Button, buttonVariants } from "../ui/button";
 import {
+	SearchIcon as LucideSearchIcon,
 	MailIcon,
 	UsersIcon,
-	SearchIcon as LucideSearchIcon,
 } from "lucide-react";
+import { cn } from "~/lib/utils";
+import { Button, buttonVariants } from "../ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
-import { Link } from "@tanstack/react-router";
 
 // simpleicons.org
 export function FacebookIcon() {
@@ -20,7 +19,8 @@ export function FacebookIcon() {
 						buttonVariants({ variant: "ghost", size: "icon" }),
 						"h-9 w-9 rounded-full p-0 text-center",
 						"transition-colors hover:text-[#4267B2]",
-					)} rel="noopener"
+					)}
+					rel="noopener"
 				>
 					<svg
 						role="img"
@@ -49,7 +49,8 @@ export function YoutubeIcon() {
 						buttonVariants({ variant: "ghost", size: "icon" }),
 						"h-9 w-9 rounded-full p-0 text-center",
 						"transition-colors hover:text-[#FF0000]",
-					)} rel="noopener"
+					)}
+					rel="noopener"
 				>
 					<svg
 						role="img"
@@ -78,7 +79,8 @@ export function InstagramIcon() {
 						buttonVariants({ variant: "ghost", size: "icon" }),
 						"h-9 w-9 rounded-full p-0 text-center",
 						"transition-colors hover:text-[#E4405F]",
-					)} rel="noopener"
+					)}
+					rel="noopener"
 				>
 					<svg
 						role="img"
@@ -107,7 +109,8 @@ export function TwitterIcon() {
 						buttonVariants({ variant: "ghost", size: "icon" }),
 						"h-9 w-9 rounded-full p-0 text-center",
 						"transition-colors hover:text-black",
-					)} rel="noopener"
+					)}
+					rel="noopener"
 				>
 					<svg
 						role="img"
@@ -135,7 +138,8 @@ export function IntranetIcon() {
 						buttonVariants({ variant: "ghost", size: "icon" }),
 						"h-9 w-9 rounded-full p-0 text-center",
 						"transition-colors hover:text-[#000000]",
-					)} rel="noopener"
+					)}
+					rel="noopener"
 				>
 					<UsersIcon />
 				</a>

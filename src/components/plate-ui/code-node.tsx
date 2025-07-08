@@ -9,7 +9,7 @@ export function CodeLeaf(props: PlateLeafProps) {
 		<PlateLeaf
 			{...props}
 			as="code"
-			className="bg-muted rounded-md px-[0.3em] py-[0.2em] font-mono text-sm whitespace-pre-wrap"
+			className="whitespace-pre-wrap rounded-md bg-muted px-[0.3em] py-[0.2em] font-mono text-sm"
 		>
 			{props.children}
 		</PlateLeaf>

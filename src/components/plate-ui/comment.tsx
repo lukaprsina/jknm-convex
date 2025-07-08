@@ -183,7 +183,7 @@ export function Comment(props: {
 					<AvatarImage alt={userInfo?.name} src={userInfo?.avatarUrl} />
 					<AvatarFallback>{userInfo?.name?.[0]}</AvatarFallback>
 				</Avatar>
-				<h4 className="mx-2 text-sm leading-none font-semibold">
+				<h4 className="mx-2 font-semibold text-sm leading-none">
 					{/* Replace to your own backend or refer to potion */}
 					{userInfo?.name}
 				</h4>
@@ -200,7 +200,7 @@ export function Comment(props: {
 						{index === 0 && (
 							<Button
 								variant="ghost"
-								className="text-muted-foreground h-6 p-1"
+								className="h-6 p-1 text-muted-foreground"
 								onClick={onResolveComment}
 								type="button"
 							>
@@ -230,18 +230,18 @@ export function Comment(props: {
 			</div>
 
 			{isFirst && showDocumentContent && (
-				<div className="text-subtle-foreground relative mt-1 flex pl-[32px] text-sm">
+				<div className="relative mt-1 flex pl-[32px] text-sm text-subtle-foreground">
 					{discussionLength > 1 && (
-						<div className="bg-muted absolute top-[5px] left-3 h-full w-0.5 shrink-0" />
+						<div className="absolute top-[5px] left-3 h-full w-0.5 shrink-0 bg-muted" />
 					)}
-					<div className="bg-highlight my-px w-0.5 shrink-0" />
+					<div className="my-px w-0.5 shrink-0 bg-highlight" />
 					{documentContent && <div className="ml-2">{documentContent}</div>}
 				</div>
 			)}
 
 			<div className="relative my-1 pl-[26px]">
 				{!isLast && (
-					<div className="bg-muted absolute top-0 left-3 h-full w-0.5 shrink-0" />
+					<div className="absolute top-0 left-3 h-full w-0.5 shrink-0 bg-muted" />
 				)}
 				<Plate readOnly={!isEditing} editor={commentEditor}>
 					<EditorContainer variant="comment">
@@ -262,8 +262,8 @@ export function Comment(props: {
 										void onCancel();
 									}}
 								>
-									<div className="bg-primary/40 flex size-5 shrink-0 items-center justify-center rounded-[50%]">
-										<XIcon className="text-background size-3 stroke-[3px]" />
+									<div className="flex size-5 shrink-0 items-center justify-center rounded-[50%] bg-primary/40">
+										<XIcon className="size-3 stroke-[3px] text-background" />
 									</div>
 								</Button>
 
@@ -275,8 +275,8 @@ export function Comment(props: {
 										void onSave();
 									}}
 								>
-									<div className="bg-brand flex size-5 shrink-0 items-center justify-center rounded-[50%]">
-										<CheckIcon className="text-background size-3 stroke-[3px]" />
+									<div className="flex size-5 shrink-0 items-center justify-center rounded-[50%] bg-brand">
+										<CheckIcon className="size-3 stroke-[3px] text-background" />
 									</div>
 								</Button>
 							</div>
@@ -358,7 +358,7 @@ function CommentMoreDropdown(props: {
 			modal={false}
 		>
 			<DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
-				<Button variant="ghost" className={cn("text-muted-foreground h-6 p-1")}>
+				<Button variant="ghost" className={cn("h-6 p-1 text-muted-foreground")}>
 					<MoreHorizontalIcon className="size-4" />
 				</Button>
 			</DropdownMenuTrigger>

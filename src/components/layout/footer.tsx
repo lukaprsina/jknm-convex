@@ -13,7 +13,7 @@ export function Footer() {
 			<div className="container mx-auto px-4">
 				<div className="flex flex-col justify-between space-y-8 md:flex-row md:space-x-8 md:space-y-0">
 					<div className="flex-1">
-						<h2 className="mb-4 text-xl font-bold">Vizitka</h2>
+						<h2 className="mb-4 font-bold text-xl">Vizitka</h2>
 						<address className="mb-4 not-italic">
 							Jamarski klub Novo mesto
 							<br />
@@ -32,7 +32,7 @@ export function Footer() {
 						</div>
 					</div>
 					<div className="flex-1">
-						<h2 className="mb-4 text-xl font-bold">Stik z nami</h2>
+						<h2 className="mb-4 font-bold text-xl">Stik z nami</h2>
 						<ul className="space-y-2">
 							<li className="flex items-center">
 								<Mail className="mr-2 h-5 w-5" />
@@ -50,7 +50,7 @@ export function Footer() {
 						</ul>
 					</div>
 					<div className="flex-1">
-						<h2 className="mb-4 text-xl font-bold">Spremljajte nas</h2>
+						<h2 className="mb-4 font-bold text-xl">Spremljajte nas</h2>
 						<div className="flex space-x-4">
 							<FacebookIcon />
 							<YoutubeIcon />
@@ -59,7 +59,7 @@ export function Footer() {
 						</div>
 					</div>
 				</div>
-				<div className="mt-8 border-t border-gray-700 pt-8 text-center text-sm">
+				<div className="mt-8 border-gray-700 border-t pt-8 text-center text-sm">
 					<p>
 						&copy; {new Date().getFullYear()} Jamarski klub Novo mesto. Vse
 						pravice pridržane.

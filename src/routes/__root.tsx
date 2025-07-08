@@ -114,8 +114,8 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 				<HeadContent />
 			</head>
 			<body>
-				<div className="h-screen flex flex-col min-h-0">
-					<div className="flex-grow min-h-0 flex flex-col">
+				<div className="flex h-screen min-h-0 flex-col">
+					<div className="flex min-h-0 flex-grow flex-col">
 						{children}
 						<Toaster />
 					</div>

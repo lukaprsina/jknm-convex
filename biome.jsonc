@@ -23,7 +23,7 @@
 		"rules": {
 			"nursery": {
 				"useSortedClasses": {
-					"level": "off",
+					"level": "on",
 					"fix": "safe",
 					"options": {
 						"functions": ["clsx", "cva", "cn"]
@@ -63,6 +63,7 @@
 		}
 	},
 	"assist": {
+		"enabled": true,
 		"actions": {
 			"source": {
 				"organizeImports": "on"

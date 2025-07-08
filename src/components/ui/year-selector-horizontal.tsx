@@ -51,12 +51,12 @@ export function YearSelectorHorizontal({
 					<TimelineItem
 						key={year}
 						step={year}
-						className="cursor-pointer group-data-[orientation=horizontal]/timeline:mt-0 w-16 flex-none"
+						className="w-16 flex-none cursor-pointer group-data-[orientation=horizontal]/timeline:mt-0"
 						onClick={() => handleYearClick(year)}
 					>
 						<TimelineHeader>
 							<TimelineSeparator className="group-data-[orientation=horizontal]/timeline:top-8" />
-							<TimelineDate className="mb-2 text-sm text-center">
+							<TimelineDate className="mb-2 text-center text-sm">
 								{year}
 							</TimelineDate>
 							<TimelineIndicator

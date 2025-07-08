@@ -50,7 +50,7 @@ export function AuthorSelect({
 			defaultOptions={authorOptions}
 			placeholder={placeholder}
 			emptyIndicator={
-				<p className="text-center text-sm text-muted-foreground">
+				<p className="text-center text-muted-foreground text-sm">
 					Ni najdenih avtorjev
 				</p>
 			}

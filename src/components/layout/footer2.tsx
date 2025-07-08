@@ -91,7 +91,7 @@ const Footer2 = ({
 										className="h-10"
 									/>
 								</a>
-								<p className="text-xl font-semibold">{logo.title}</p>
+								<p className="font-semibold text-xl">{logo.title}</p>
 							</div>
 							<p className="mt-4 font-bold">{tagline}</p>
 						</div>
@@ -111,7 +111,7 @@ const Footer2 = ({
 							</div>
 						))}
 					</div>
-					<div className="mt-24 flex flex-col justify-between gap-4 border-t pt-8 text-sm font-medium text-muted-foreground md:flex-row md:items-center">
+					<div className="mt-24 flex flex-col justify-between gap-4 border-t pt-8 font-medium text-muted-foreground text-sm md:flex-row md:items-center">
 						<p>{copyright}</p>
 						<ul className="flex gap-4">
 							{bottomLinks.map((link, linkIdx) => (

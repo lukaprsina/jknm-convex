@@ -38,11 +38,11 @@ export function TocSidebar({
 			{...navProps}
 			ref={navProps.ref as React.RefObject<HTMLDivElement>}
 			className={cn(
-				"bg-background/95 supports-[backdrop-filter]:bg-background/60 fixed top-1/2 right-4 z-50 max-h-96 w-64 -translate-y-1/2 overflow-y-auto rounded-lg border p-4 shadow-lg backdrop-blur",
+				"-translate-y-1/2 fixed top-1/2 right-4 z-50 max-h-96 w-64 overflow-y-auto rounded-lg border bg-background/95 p-4 shadow-lg backdrop-blur supports-[backdrop-filter]:bg-background/60",
 				className,
 			)}
 		>
-			<div className="text-foreground mb-2 text-sm font-medium">
+			<div className="mb-2 font-medium text-foreground text-sm">
 				Table of Contents
 			</div>
 			<nav className="space-y-1">
@@ -52,7 +52,7 @@ export function TocSidebar({
 						variant="ghost"
 						size="sm"
 						className={cn(
-							"text-muted-foreground h-auto w-full justify-start px-2 py-1.5 text-left font-normal",
+							"h-auto w-full justify-start px-2 py-1.5 text-left font-normal text-muted-foreground",
 							"hover:bg-accent hover:text-accent-foreground",
 							"focus-visible:bg-accent focus-visible:text-accent-foreground",
 							activeContentId === item.id && "bg-accent text-accent-foreground",
