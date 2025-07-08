@@ -12,8 +12,8 @@ export function PlateEditorFromMarkdown({ markdown }: { markdown: string }) {
 
 	return (
 		<Plate editor={editor}>
-			<EditorContainer className="overflow-hidden">
-				<Editor spellCheck={false}  className="overflow-hidden"/>
+			<EditorContainer>
+				<Editor spellCheck={false} variant="article"/>
 			</EditorContainer>
 		</Plate>
 	);

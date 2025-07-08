@@ -22,8 +22,6 @@ function RouteComponent() {
   }
 
   return (
-    <div className="overflow-hidden flex w-full flex-grow m-2 outline-2 outline-red-400">
     	<PlateEditorFromMarkdown markdown={article.content_markdown} />
-    </div>
   );
 }

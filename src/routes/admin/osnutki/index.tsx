@@ -31,11 +31,9 @@ function RouteComponent() {
   >({
     mutationFn: useConvexMutation(api.articles.create_draft),
     onSuccess: (new_draft) => {
-      console.log("New draft created:", new_draft);
-
       navigate({
-        to: "/",
-        // params: { draft_id: new_draft }
+        to: "/admin/osnutki/$draft_id/uredi",
+        params: { draft_id: new_draft }
       });
     },
   });
