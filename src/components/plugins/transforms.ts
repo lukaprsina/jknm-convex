@@ -170,11 +170,10 @@ export const getBlockType = (block: TElement) => {
 	if (block[KEYS.listType]) {
 		if (block[KEYS.listType] === KEYS.ol) {
 			return KEYS.ol;
-		} else if (block[KEYS.listType] === KEYS.listTodo) {
+		}if (block[KEYS.listType] === KEYS.listTodo) {
 			return KEYS.listTodo;
-		} else {
-			return KEYS.ul;
 		}
+			return KEYS.ul;
 	}
 
 	return block.type;

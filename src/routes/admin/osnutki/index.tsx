@@ -2,7 +2,7 @@ import { createFileRoute, getRouteApi, Link } from "@tanstack/react-router";
 import { convexQuery, useConvexMutation } from "@convex-dev/react-query";
 import { api } from "convex/_generated/api";
 import { useMutation } from "@tanstack/react-query";
-import { EmptyObject } from "better-auth/react";
+import type { EmptyObject } from "better-auth/react";
 import { Button } from "~/components/ui/button";
 
 export const Route = createFileRoute("/admin/osnutki/")({

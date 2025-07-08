@@ -1,6 +1,12 @@
 /// <reference types="vite/client" />
 
-import { isServer, type QueryClient } from "@tanstack/react-query";
+import { ConvexBetterAuthProvider } from "@convex-dev/better-auth/react";
+import {
+	fetchSession,
+	getCookieName,
+} from "@convex-dev/better-auth/react-start";
+import type { ConvexQueryClient } from "@convex-dev/react-query";
+import type { QueryClient } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools/production";
 import {
 	createRootRouteWithContext,
@@ -10,23 +16,16 @@ import {
 	Scripts,
 } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
+import { createServerFn } from "@tanstack/react-start";
+import { getCookie, getWebRequest } from "@tanstack/react-start/server";
+import type { ConvexReactClient } from "convex/react";
 import { Toaster } from "react-hot-toast";
 import appCss from "~/app.css?url";
 import { DefaultCatchBoundary } from "~/components/default-catch-boundary";
 import { NotFound } from "~/components/not-found";
-import { seo } from "~/utils/seo";
-
-import { ConvexQueryClient } from "@convex-dev/react-query";
-import { ConvexReactClient } from "convex/react";
-import { getCookie, getWebRequest } from "@tanstack/react-start/server";
-import { ConvexBetterAuthProvider } from "@convex-dev/better-auth/react";
-import {
-	fetchSession,
-	getCookieName,
-} from "@convex-dev/better-auth/react-start";
 import { auth_client } from "~/lib/auth-client";
+import { seo } from "~/utils/seo";
 import { createAuth } from "../../convex/auth";
-import { createServerFn } from "@tanstack/react-start";
 
 // Server side session request
 const fetchAuth = createServerFn({ method: "GET" }).handler(async () => {
@@ -71,7 +70,8 @@ export const Route = createRootRouteWithContext<{
 			},
 			...seo({
 				title: "Jamarski klub Novo mesto",
-				description: `Specialisti za dokumentirano raziskovanje in ohranjanje čistega ter zdravega podzemskega sveta.`,
+				description:
+					"Specialisti za dokumentirano raziskovanje in ohranjanje čistega ter zdravega podzemskega sveta.",
 			}),
 		],
 		links: [

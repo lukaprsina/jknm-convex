@@ -1,4 +1,4 @@
-import * as React from "react";
+import type * as React from "react";
 
 import type {
 	SlateElementProps,
@@ -65,10 +65,10 @@ export function TableCellElementStatic({
 				"before:absolute before:box-border before:content-[''] before:select-none",
 				borders &&
 					cn(
-						borders.bottom?.size && `before:border-b-border before:border-b`,
-						borders.right?.size && `before:border-r-border before:border-r`,
-						borders.left?.size && `before:border-l-border before:border-l`,
-						borders.top?.size && `before:border-t-border before:border-t`,
+						borders.bottom?.size && "before:border-b-border before:border-b",
+						borders.right?.size && "before:border-r-border before:border-r",
+						borders.left?.size && "before:border-l-border before:border-l",
+						borders.top?.size && "before:border-t-border before:border-t",
 					),
 			)}
 			style={

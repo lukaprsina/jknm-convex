@@ -20,7 +20,7 @@ export function FacebookIcon() {
 						buttonVariants({ variant: "ghost", size: "icon" }),
 						"h-9 w-9 rounded-full p-0 text-center",
 						"transition-colors hover:text-[#4267B2]",
-					)}
+					)} rel="noopener"
 				>
 					<svg
 						role="img"
@@ -49,7 +49,7 @@ export function YoutubeIcon() {
 						buttonVariants({ variant: "ghost", size: "icon" }),
 						"h-9 w-9 rounded-full p-0 text-center",
 						"transition-colors hover:text-[#FF0000]",
-					)}
+					)} rel="noopener"
 				>
 					<svg
 						role="img"
@@ -78,7 +78,7 @@ export function InstagramIcon() {
 						buttonVariants({ variant: "ghost", size: "icon" }),
 						"h-9 w-9 rounded-full p-0 text-center",
 						"transition-colors hover:text-[#E4405F]",
-					)}
+					)} rel="noopener"
 				>
 					<svg
 						role="img"
@@ -107,7 +107,7 @@ export function TwitterIcon() {
 						buttonVariants({ variant: "ghost", size: "icon" }),
 						"h-9 w-9 rounded-full p-0 text-center",
 						"transition-colors hover:text-black",
-					)}
+					)} rel="noopener"
 				>
 					<svg
 						role="img"
@@ -135,7 +135,7 @@ export function IntranetIcon() {
 						buttonVariants({ variant: "ghost", size: "icon" }),
 						"h-9 w-9 rounded-full p-0 text-center",
 						"transition-colors hover:text-[#000000]",
-					)}
+					)} rel="noopener"
 				>
 					<UsersIcon />
 				</a>

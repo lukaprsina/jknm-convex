@@ -78,7 +78,7 @@ export function EquationElement(props: PlateElementProps<TEquationElement>) {
 
 				<EquationPopoverContent
 					open={open}
-					placeholder={`f(x) = \\begin{cases}\n  x^2, &\\quad x > 0 \\\\\n  0, &\\quad x = 0 \\\\\n  -x^2, &\\quad x < 0\n\\end{cases}`}
+					placeholder={"f(x) = \\begin{cases}\n  x^2, &\\quad x > 0 \\\\\n  0, &\\quad x = 0 \\\\\n  -x^2, &\\quad x < 0\n\\end{cases}"}
 					isInline={false}
 					setOpen={setOpen}
 				/>

@@ -537,10 +537,10 @@ export function TableCellElement({
 				"before:size-full",
 				selected && "before:bg-brand/5 before:z-10",
 				"before:absolute before:box-border before:content-[''] before:select-none",
-				borders.bottom?.size && `before:border-b-border before:border-b`,
-				borders.right?.size && `before:border-r-border before:border-r`,
-				borders.left?.size && `before:border-l-border before:border-l`,
-				borders.top?.size && `before:border-t-border before:border-t`,
+				borders.bottom?.size && "before:border-b-border before:border-b",
+				borders.right?.size && "before:border-r-border before:border-r",
+				borders.left?.size && "before:border-l-border before:border-l",
+				borders.top?.size && "before:border-t-border before:border-t",
 			)}
 			style={
 				{
