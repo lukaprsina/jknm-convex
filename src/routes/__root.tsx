@@ -1,6 +1,5 @@
 /// <reference types="vite/client" />
 
-import { convexQuery } from "@convex-dev/react-query";
 import { isServer, type QueryClient } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools/production";
 import {
@@ -9,10 +8,8 @@ import {
 	HeadContent,
 	Outlet,
 	Scripts,
-	useRouteContext
 } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
-import { api } from "convex/_generated/api";
 import { Toaster } from "react-hot-toast";
 import appCss from "~/app.css?url";
 import { DefaultCatchBoundary } from "~/components/default-catch-boundary";
@@ -55,8 +52,6 @@ export const Route = createRootRouteWithContext<{
 		// authenticated by an identity token.
 		const auth = await fetchAuth()
 		const { userId, token } = auth
-
-		console.warn("__root.tsx: beforeLoad", { userId, token, isServer })
 
 		// During SSR only (the only time serverHttpClient exists),
 		// set the auth token for Convex to make HTTP queries with.

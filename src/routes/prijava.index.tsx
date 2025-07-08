@@ -2,7 +2,7 @@ import { isServer } from "@tanstack/react-query";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { Authenticated, Unauthenticated, useConvexAuth } from "convex/react";
 import { Home } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Button } from "~/components/ui/button";
 import { Card, CardContent } from "~/components/ui/card";
 import { auth_client } from "~/lib/auth-client";
@@ -19,11 +19,6 @@ function RouteComponent() {
 
 	const { userId } = Route.useRouteContext()
 	const convexAuth = useConvexAuth();
-	console.log("prijava", { user_id_from_route: userId, convexAuth, isServer });
-
-	useEffect(() => {
-		console.log("prijava useEffect", { user_id_from_route: userId, convexAuth, isServer });
-	}, [userId, convexAuth]);
 
 	return (
 		<div className="flex flex-col gap-6">
