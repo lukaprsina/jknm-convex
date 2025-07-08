@@ -10,7 +10,11 @@ import {
 import { ParagraphPlugin } from "platejs/react";
 
 import { BlockquoteElement } from "~/components/plate-ui/blockquote-node";
-import { H1Element, H2Element, H3Element } from "~/components/plate-ui/heading-node";
+import {
+	H1Element,
+	H2Element,
+	H3Element,
+} from "~/components/plate-ui/heading-node";
 import { HrElement } from "~/components/plate-ui/hr-node";
 import { ParagraphElement } from "~/components/plate-ui/paragraph-node";
 

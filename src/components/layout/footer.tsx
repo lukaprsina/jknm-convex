@@ -36,10 +36,7 @@ export function Footer() {
 						<ul className="space-y-2">
 							<li className="flex items-center">
 								<Mail className="mr-2 h-5 w-5" />
-								<a
-									href="mailto:info@jknm.si"
-									className="hover:text-gray-300"
-								>
+								<a href="mailto:info@jknm.si" className="hover:text-gray-300">
 									info@jknm.si
 								</a>
 							</li>

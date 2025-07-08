@@ -72,7 +72,7 @@ function RouteComponent() {
 											try {
 												await auth_client.signIn.social({
 													provider: "google",
-													callbackURL: "/"
+													callbackURL: "/",
 												});
 											} catch {
 												setErrorMessage("Napaka pri prijavi");

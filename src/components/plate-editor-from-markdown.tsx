@@ -13,7 +13,7 @@ export function PlateEditorFromMarkdown({ markdown }: { markdown: string }) {
 	return (
 		<Plate editor={editor}>
 			<EditorContainer>
-				<Editor spellCheck={false} variant="article"/>
+				<Editor spellCheck={false} variant="article" />
 			</EditorContainer>
 		</Plate>
 	);

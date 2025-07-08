@@ -51,12 +51,12 @@ export const Route = createFileRoute("/")({
 				}),
 			),
 			context.queryClient.ensureQueryData(convexQuery(api.authors.get_all, {})),
-		])
+		]);
 
 		return {
 			search_results,
 			authors,
-		}
+		};
 	},
 	validateSearch: zodValidator(article_search_validator),
 	search: { middlewares: [stripSearchParams(DEFAULT_SEARCH_VALUES)] },
@@ -75,7 +75,7 @@ function Home() {
 			year: home_search.leto ?? undefined,
 		},
 		{ initialNumItems: DEFAULT_NUM_ITEMS },
-	)
+	);
 
 	// Sentinel for infinite loading
 	const { isIntersecting, ref } = useIntersectionObserver({ threshold: 0.5 });
@@ -92,12 +92,11 @@ function Home() {
 			<Navbar1 />
 			<div className="w-full p-4">
 				<FilterAccordion />
-				<Button asChild>
+				<Button variant="secondary" asChild>
 					<Link to="/admin/osnutki">Admin osnutki</Link>
 				</Button>
 			</div>
 			<main className="w-full flex-grow">
-
 				{search_api.results?.map(({ _id, title }) => (
 					<div key={_id}>{title}</div>
 				))}
@@ -118,5 +117,5 @@ function Home() {
 			</main>
 			<Footer2 />
 		</>
-	)
+	);
 }

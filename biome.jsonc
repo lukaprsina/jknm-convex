@@ -1,5 +1,5 @@
 {
-	"$schema": "https://biomejs.dev/schemas/2.0.6/schema.json",
+	"$schema": "https://biomejs.dev/schemas/2.1.0/schema.json",
 	"vcs": {
 		"enabled": true,
 		"clientKind": "git",
@@ -7,7 +7,12 @@
 	},
 	"files": {
 		"ignoreUnknown": false,
-		"includes": ["!convex/_generated/**", "!src/routeTree.gen.ts"]
+		"includes": [
+			"src/**",
+			"convex/**",
+			"!convex/_generated/**",
+			"!src/routeTree.gen.ts"
+		]
 	},
 	"formatter": {
 		"enabled": true,
@@ -25,24 +30,42 @@
 					}
 				}
 			},
+			"style": {
+				"useImportType": "error",
+				"useExportType": "error",
+				"useLiteralEnumMembers": "error",
+				"useNodejsImportProtocol": "error",
+				"useAsConstAssertion": "error",
+				"useEnumInitializers": "error",
+				"useSelfClosingElements": "error",
+				"useConst": "error",
+				"useSingleVarDeclarator": "error",
+				"noUnusedTemplateLiteral": "error",
+				"useNumberNamespace": "error",
+				"noInferrableTypes": "error",
+				"useExponentiationOperator": "error",
+				"useTemplate": "error",
+				"noParameterAssign": "error",
+				"noNonNullAssertion": "error",
+				"useDefaultParameterLast": "error",
+				"noUselessElse": "error",
+				"useShorthandFunctionType": "error"
+			},
+			"a11y": {
+				"noSvgWithoutTitle": "off",
+				"useButtonType": "off",
+				"useAltText": "off"
+			},
+			"complexity": {
+				"noBannedTypes": "off"
+			},
 			"recommended": true
 		}
 	},
 	"assist": {
-		"enabled": true,
 		"actions": {
 			"source": {
-				"organizeImports": {
-					"level": "on",
-					"options": {
-						"groups": [
-							"src/components/ui/**", // priority imports
-							":ALIAS:", // e.g. "~/" or "@/…"
-							":PACKAGE:", // external packages
-							":PATH:" // relative paths
-						]
-					}
-				}
+				"organizeImports": "on"
 			}
 		}
 	}

@@ -14,11 +14,13 @@ export const get_by_slug = query({
 		const article_unfiltered = ctx.db
 			.query("articles")
 			.withIndex("by_slug", (q) => q.eq("slug", args.slug))
-			.order("desc")
+			.order("desc");
 
-		const article = args.user_id ? await article_unfiltered.first() : await article_unfiltered
-			.filter((q) => q.eq("status", "published"))
-			.first();
+		const article = args.user_id
+			? await article_unfiltered.first()
+			: await article_unfiltered
+					.filter((q) => q.eq("status", "published"))
+					.first();
 
 		if (!article) {
 			return null;
@@ -93,11 +95,11 @@ export const search_articles_unified = query({
 
 			const indexedQuery = args.year
 				? articlesQuery.withIndex("by_status_and_published_year", (q) =>
-					q.eq("status", "published").eq("published_year", args.year),
-				)
+						q.eq("status", "published").eq("published_year", args.year),
+					)
 				: articlesQuery.withIndex("by_status_and_published_at", (q) =>
-					q.eq("status", "published"),
-				);
+						q.eq("status", "published"),
+					);
 
 			result = await indexedQuery.order("desc").paginate(args.paginationOpts);
 		}
@@ -133,7 +135,7 @@ export const get_all_drafts = query({
 					...draft,
 					authors,
 				};
-			})
+			}),
 		);
 
 		return draftsWithAuthors;
@@ -172,8 +174,6 @@ export const get_draft_by_slug = query({
 	},
 });
 
-
-
 export const create_draft = mutation({
 	args: {},
 	handler: async (ctx) => {
@@ -190,10 +190,10 @@ export const create_draft = mutation({
 			content_markdown: "# Neimenovana novica",
 			view_count: 0,
 			updated_at: Date.now(),
-			created_at: Date.now()
+			created_at: Date.now(),
 		});
 
-		const slug = `neimenovana-novica-${new_draft_id}`
+		const slug = `neimenovana-novica-${new_draft_id}`;
 
 		await ctx.db.patch(new_draft_id, {
 			slug,
@@ -206,7 +206,10 @@ export const create_draft = mutation({
 /**
  * Helper function to load authors for an article in the correct order
  */
-async function load_authors_for_article(ctx: QueryCtx, articleId: Id<"articles">) {
+async function load_authors_for_article(
+	ctx: QueryCtx,
+	articleId: Id<"articles">,
+) {
 	const authorLinks = await ctx.db
 		.query("articles_to_authors")
 		.withIndex("by_article_and_order", (q) => q.eq("article_id", articleId))
@@ -246,7 +249,7 @@ async function load_authors_and_filter<T extends Doc<"articles">>(
 	const hasAuthorFilter = authorFilter.length > 0;
 	return hasAuthorFilter
 		? articlesWithAuthors.filter((article) =>
-			article.authors.some((author) => authorFilter.includes(author._id)),
-		)
+				article.authors.some((author) => authorFilter.includes(author._id)),
+			)
 		: articlesWithAuthors;
 }

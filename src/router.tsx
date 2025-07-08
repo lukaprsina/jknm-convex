@@ -20,12 +20,12 @@ export function createRouter() {
 
 	const CONVEX_URL = import.meta.env.VITE_CONVEX_URL!;
 	if (!CONVEX_URL) {
-		throw new Error('missing VITE_CONVEX_URL envar');
+		throw new Error("missing VITE_CONVEX_URL envar");
 	}
 
 	const convex = new ConvexReactClient(CONVEX_URL, {
 		unsavedChangesWarning: false,
-	})
+	});
 
 	const convexQueryClient = new ConvexQueryClient(CONVEX_URL);
 
@@ -35,7 +35,7 @@ export function createRouter() {
 				queryKeyHashFn: convexQueryClient.hashFn(),
 				queryFn: convexQueryClient.queryFn(),
 				refetchOnWindowFocus: false,
-				staleTime: 1000 * 60 * 2, // 2 minutes				
+				staleTime: 1000 * 60 * 2, // 2 minutes
 			},
 		},
 		mutationCache: new MutationCache({
