@@ -1,21 +1,20 @@
 "use client";
 
-import * as React from "react";
-
 import { useDraggable, useDropLine } from "@platejs/dnd";
 import { BlockSelectionPlugin } from "@platejs/selection/react";
 import { GripVertical } from "lucide-react";
 import { getPluginByType, isType, KEYS } from "platejs";
 import {
+	MemoizedChildren,
 	type PlateElementProps,
 	type RenderNodeWrapper,
-	MemoizedChildren,
 	useEditorRef,
 	useElement,
 	usePath,
 	usePluginOption,
 	useSelected,
 } from "platejs/react";
+import * as React from "react";
 
 import { Button } from "~/components/ui/button";
 import {

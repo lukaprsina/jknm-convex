@@ -1,9 +1,6 @@
 "use client";
 
-import * as React from "react";
-
 import type { TResolvedSuggestion } from "@platejs/suggestion";
-
 import {
 	acceptSuggestion,
 	getSuggestionKey,
@@ -13,21 +10,22 @@ import {
 import { SuggestionPlugin } from "@platejs/suggestion/react";
 import { CheckIcon, XIcon } from "lucide-react";
 import {
-	type NodeEntry,
-	type Path,
-	type TElement,
-	type TSuggestionElement,
-	type TSuggestionText,
 	ElementApi,
 	KEYS,
+	type NodeEntry,
+	type Path,
 	PathApi,
+	type TElement,
 	TextApi,
+	type TSuggestionElement,
+	type TSuggestionText,
 } from "platejs";
 import { useEditorPlugin, usePluginOption } from "platejs/react";
+import * as React from "react";
 
 import {
-	type TDiscussion,
 	discussionPlugin,
+	type TDiscussion,
 } from "~/components/plugins/discussion-kit";
 import { suggestionPlugin } from "~/components/plugins/suggestion-kit";
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
@@ -35,10 +33,10 @@ import { Button } from "~/components/ui/button";
 import { cn } from "~/lib/utils";
 
 import {
-	type TComment,
 	Comment,
 	CommentCreateForm,
 	formatCommentDate,
+	type TComment,
 } from "./comment";
 
 export interface ResolvedSuggestion extends TResolvedSuggestion {

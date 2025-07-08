@@ -1,17 +1,16 @@
 "use client";
 
-import * as React from "react";
-import { useEffect } from "react";
 import { Command as CommandPrimitive, useCommandState } from "cmdk";
 import { XIcon } from "lucide-react";
-
-import { cn } from "~/lib/utils";
+import * as React from "react";
+import { useEffect } from "react";
 import {
 	Command,
 	CommandGroup,
 	CommandItem,
 	CommandList,
 } from "~/components/ui/command";
+import { cn } from "~/lib/utils";
 
 export interface Option {
 	value: string;

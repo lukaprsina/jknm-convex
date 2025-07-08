@@ -1,7 +1,5 @@
 "use client";
 
-import type * as React from "react";
-
 import {
 	type FloatingToolbarState,
 	flip,
@@ -16,6 +14,7 @@ import {
 	useEventEditorValue,
 	usePluginOption,
 } from "platejs/react";
+import type * as React from "react";
 
 import { cn } from "~/lib/utils";
 

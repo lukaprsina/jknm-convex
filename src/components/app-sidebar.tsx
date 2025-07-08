@@ -1,4 +1,3 @@
-import type * as React from "react";
 import {
 	AudioWaveform,
 	BookOpen,
@@ -11,6 +10,7 @@ import {
 	Settings2,
 	SquareTerminal,
 } from "lucide-react";
+import type * as React from "react";
 
 import { NavMain } from "~/components/nav-main";
 import { NavProjects } from "~/components/nav-projects";

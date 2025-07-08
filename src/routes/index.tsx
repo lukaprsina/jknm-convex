@@ -92,7 +92,7 @@ function Home() {
 			<Navbar1 />
 			<div className="w-full p-4">
 				<FilterAccordion />
-				<Button variant="secondary" asChild>
+				<Button asChild>
 					<Link to="/admin/osnutki">Admin osnutki</Link>
 				</Button>
 			</div>

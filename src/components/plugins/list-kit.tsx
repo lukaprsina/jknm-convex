@@ -2,9 +2,8 @@
 
 import { ListPlugin } from "@platejs/list/react";
 import { KEYS } from "platejs";
-
-import { IndentKit } from "~/components/plugins/indent-kit";
 import { BlockList } from "~/components/plate-ui/block-list";
+import { IndentKit } from "~/components/plugins/indent-kit";
 
 export const ListKit = [
 	...IndentKit,

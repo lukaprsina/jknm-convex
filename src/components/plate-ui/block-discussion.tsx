@@ -1,9 +1,5 @@
 "use client";
 
-import * as React from "react";
-
-import type { PlateElementProps, RenderNodeWrapper } from "platejs/react";
-
 import { getDraftCommentKey } from "@platejs/comment";
 import { CommentPlugin } from "@platejs/comment/react";
 import { SuggestionPlugin } from "@platejs/suggestion/react";
@@ -16,18 +12,20 @@ import {
 	type AnyPluginConfig,
 	type NodeEntry,
 	type Path,
+	PathApi,
 	type TCommentText,
 	type TElement,
-	type TSuggestionText,
-	PathApi,
 	TextApi,
+	type TSuggestionText,
 } from "platejs";
+import type { PlateElementProps, RenderNodeWrapper } from "platejs/react";
 import { useEditorPlugin, useEditorRef, usePluginOption } from "platejs/react";
+import * as React from "react";
 
 import { commentPlugin } from "~/components/plugins/comment-kit";
 import {
-	type TDiscussion,
 	discussionPlugin,
+	type TDiscussion,
 } from "~/components/plugins/discussion-kit";
 import { suggestionPlugin } from "~/components/plugins/suggestion-kit";
 import { Button } from "~/components/ui/button";

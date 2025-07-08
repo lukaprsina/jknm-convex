@@ -1,13 +1,13 @@
 import {
+	type AuthFunctions,
 	BetterAuth,
 	convexAdapter,
-	type AuthFunctions,
 } from "@convex-dev/better-auth";
 import { convex } from "@convex-dev/better-auth/plugins";
 import { betterAuth } from "better-auth";
 import { components, internal } from "./_generated/api";
-import { query, type GenericCtx } from "./_generated/server";
-import type { Id, DataModel } from "./_generated/dataModel";
+import type { DataModel, Id } from "./_generated/dataModel";
+import { type GenericCtx, query } from "./_generated/server";
 
 // Typesafe way to pass Convex functions defined in this file
 const authFunctions: AuthFunctions = internal.auth;

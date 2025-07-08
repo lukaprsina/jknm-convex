@@ -6,7 +6,6 @@ diceui in fumadocs za sidebar in TOC
 "react-player": "^2.16.0"
 
 uporabi "virtual file routes" za:
-
 - Zgodovina
 - Raziskovanje
 - Publiciranje
@@ -15,8 +14,15 @@ uporabi "virtual file routes" za:
 
 uporabi 5 referralov da dobiš 3.5 GB file storage, 6M function callov na mesec, 6GB file bandwidtha lolll
 
-ne uporabit Unauthorized pa Authorized, ker med ssr se še nalaga (verjetno gre dvakrat na server po userja)
++ ne uporabit Unauthorized pa Authorized, ker med ssr se še nalaga (verjetno gre dvakrat na server po userja)
 
+`8.7.`
+[](https://tweakcn.com/editor/theme)
+- caffeine
+- claude
+
+
+## Ostalo
 ```
 // to je v serverju, se še nalaga, češrav imamo user_id
 prijava {

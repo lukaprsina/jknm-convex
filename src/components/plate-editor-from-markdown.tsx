@@ -1,6 +1,6 @@
+import { MarkdownPlugin } from "@platejs/markdown";
 import { Plate, usePlateEditor } from "platejs/react";
 import { EditorKit } from "~/components/editor-kit";
-import { MarkdownPlugin } from "@platejs/markdown";
 import { Editor, EditorContainer } from "~/components/plate-ui/editor";
 
 export function PlateEditorFromMarkdown({ markdown }: { markdown: string }) {

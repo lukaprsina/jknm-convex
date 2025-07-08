@@ -1,13 +1,12 @@
 "use client";
 
-import * as React from "react";
+import { MarkdownPlugin } from "@platejs/markdown";
 
 import type { DropdownMenuProps } from "@radix-ui/react-dropdown-menu";
-
-import { MarkdownPlugin } from "@platejs/markdown";
 import { ArrowUpToLineIcon } from "lucide-react";
 import { getEditorDOMFromHtmlString } from "platejs";
 import { useEditorRef } from "platejs/react";
+import * as React from "react";
 import { useFilePicker } from "use-file-picker";
 import type {
 	SelectedFiles,

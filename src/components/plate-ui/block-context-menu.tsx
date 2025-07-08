@@ -1,7 +1,5 @@
 "use client";
 
-import * as React from "react";
-
 import { AIChatPlugin } from "@platejs/ai/react";
 import {
 	BLOCK_CONTEXT_MENU_ID,
@@ -10,6 +8,7 @@ import {
 } from "@platejs/selection/react";
 import { KEYS } from "platejs";
 import { useEditorPlugin, usePlateState } from "platejs/react";
+import * as React from "react";
 
 import {
 	ContextMenu,

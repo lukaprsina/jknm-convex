@@ -1,10 +1,8 @@
 "use client";
 
-import * as React from "react";
+import { PlaceholderPlugin } from "@platejs/media/react";
 
 import type { DropdownMenuProps } from "@radix-ui/react-dropdown-menu";
-
-import { PlaceholderPlugin } from "@platejs/media/react";
 import {
 	AudioLinesIcon,
 	FileUpIcon,
@@ -14,9 +12,10 @@ import {
 } from "lucide-react";
 import { isUrl, KEYS } from "platejs";
 import { useEditorRef } from "platejs/react";
+import * as React from "react";
 import { toast } from "sonner";
 import { useFilePicker } from "use-file-picker";
-
+import type { SelectedFilesOrErrors } from "use-file-picker/types";
 import {
 	AlertDialog,
 	AlertDialogAction,
@@ -35,13 +34,11 @@ import {
 	DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
 import { Input } from "~/components/ui/input";
-
 import {
 	ToolbarSplitButton,
 	ToolbarSplitButtonPrimary,
 	ToolbarSplitButtonSecondary,
 } from "../ui/toolbar";
-import type { SelectedFilesOrErrors } from "use-file-picker/types";
 
 const MEDIA_CONFIG: Record<
 	string,

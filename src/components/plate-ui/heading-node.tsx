@@ -1,8 +1,7 @@
 "use client";
 
+import { cva, type VariantProps } from "class-variance-authority";
 import type { PlateElementProps } from "platejs/react";
-
-import { type VariantProps, cva } from "class-variance-authority";
 import { PlateElement } from "platejs/react";
 
 const headingVariants = cva("relative mb-1", {

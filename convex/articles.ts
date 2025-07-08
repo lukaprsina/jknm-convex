@@ -3,7 +3,7 @@ import { paginationOptsValidator } from "convex/server";
 import { v } from "convex/values";
 import { getAll, getManyFrom } from "convex-helpers/server/relationships";
 import type { Doc, Id } from "./_generated/dataModel";
-import { type QueryCtx, mutation, query } from "./_generated/server";
+import { mutation, type QueryCtx, query } from "./_generated/server";
 
 /**
  * Get an article by its slug

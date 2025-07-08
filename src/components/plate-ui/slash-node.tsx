@@ -1,9 +1,5 @@
 "use client";
 
-import type * as React from "react";
-
-import type { PlateEditor, PlateElementProps } from "platejs/react";
-
 import {
 	CalendarIcon,
 	ChevronRightIcon,
@@ -22,8 +18,10 @@ import {
 	Table,
 	TableOfContentsIcon,
 } from "lucide-react";
-import { type TComboboxInputElement, KEYS } from "platejs";
+import { KEYS, type TComboboxInputElement } from "platejs";
+import type { PlateEditor, PlateElementProps } from "platejs/react";
 import { PlateElement } from "platejs/react";
+import type * as React from "react";
 
 import {
 	insertBlock,

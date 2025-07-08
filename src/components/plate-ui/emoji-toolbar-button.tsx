@@ -1,14 +1,11 @@
 "use client";
 
-import * as React from "react";
-
 import type { Emoji } from "@emoji-mart/data";
-
 import {
 	type EmojiCategoryList,
 	type EmojiIconList,
-	type GridRow,
 	EmojiSettings,
+	type GridRow,
 } from "@platejs/emoji";
 import {
 	type EmojiDropdownMenuOptions,
@@ -29,6 +26,7 @@ import {
 	StarIcon,
 	XIcon,
 } from "lucide-react";
+import * as React from "react";
 
 import { Button } from "~/components/ui/button";
 import { ToolbarButton } from "~/components/ui/toolbar";
