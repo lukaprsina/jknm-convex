@@ -1,12 +1,11 @@
-import { convexQuery, useConvexMutation } from "@convex-dev/react-query";
-import { useMutation } from "@tanstack/react-query";
+import { convexQuery } from "@convex-dev/react-query";
 import {
 	createFileRoute,
 	getRouteApi,
+	Link,
 	stripSearchParams,
 } from "@tanstack/react-router";
 import { fallback, zodValidator } from "@tanstack/zod-adapter";
-import { EmptyObject } from "better-auth/react";
 import { api } from "convex/_generated/api";
 import { usePaginatedQuery } from "convex/react";
 import { useEffect } from "react";
@@ -78,18 +77,6 @@ function Home() {
 		{ initialNumItems: DEFAULT_NUM_ITEMS },
 	)
 
-	const { mutate } = useMutation<typeof api.articles.create_draft._returnType, void, EmptyObject | undefined>({
-		mutationFn: useConvexMutation(api.articles.create_draft),
-		onSuccess: (new_draft) => {
-			/* if (typeof new_draft === "string") {
-
-			} else {
-				new_draft
-			} */
-			console.log("New draft created:", new_draft);
-		}
-	});
-
 	// Sentinel for infinite loading
 	const { isIntersecting, ref } = useIntersectionObserver({ threshold: 0.5 });
 
@@ -105,11 +92,9 @@ function Home() {
 			<Navbar1 />
 			<div className="w-full p-4">
 				<FilterAccordion />
-				<Button
-					onClick={() => {
-						mutate({})
-					}}
-				>Create draft article</Button>
+				<Button asChild>
+					<Link to="/admin/osnutki">Admin osnutki</Link>
+				</Button>
 			</div>
 			<main className="w-full flex-grow">
 

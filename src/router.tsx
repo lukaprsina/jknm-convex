@@ -34,6 +34,8 @@ export function createRouter() {
 			queries: {
 				queryKeyHashFn: convexQueryClient.hashFn(),
 				queryFn: convexQueryClient.queryFn(),
+				refetchOnWindowFocus: false,
+				staleTime: 1000 * 60 * 2, // 2 minutes				
 			},
 		},
 		mutationCache: new MutationCache({
@@ -52,11 +54,11 @@ export function createRouter() {
 			defaultErrorComponent: DefaultCatchBoundary,
 			defaultNotFoundComponent: () => <NotFound />,
 			context: { queryClient, convexClient: convex, convexQueryClient },
-			defaultStructuralSharing: true,
-			scrollRestoration: true,
 			// react-query will handle data fetching & caching
 			// https://tanstack.com/router/latest/docs/framework/react/guide/data-loading#passing-all-loader-events-to-an-external-cache
 			defaultPreloadStaleTime: 0,
+			defaultStructuralSharing: true,
+			scrollRestoration: true,
 		}),
 		queryClient,
 	);

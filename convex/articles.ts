@@ -183,7 +183,7 @@ export const create_draft = mutation({
 			throw new Error("User must be authenticated to create a draft article.");
 		}
 
-		const new_article = await ctx.db.insert("articles", {
+		const new_draft_id = await ctx.db.insert("articles", {
 			status: "draft",
 			title: "Neimenovana novica",
 			slug: "",
@@ -193,11 +193,13 @@ export const create_draft = mutation({
 			created_at: Date.now()
 		});
 
-		await ctx.db.patch(new_article, {
-			slug: `neimenovana-novica-${new_article}`,
+		const slug = `neimenovana-novica-${new_draft_id}`
+
+		await ctx.db.patch(new_draft_id, {
+			slug,
 		});
 
-		return new_article;
+		return slug;
 	},
 });
 

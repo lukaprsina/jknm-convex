@@ -4,11 +4,11 @@ import { createFileRoute, getRouteApi } from '@tanstack/react-router'
 import { api } from 'convex/_generated/api';
 import { PlateEditorFromMarkdown } from '~/components/plate-editor-from-markdown';
 
-export const Route = createFileRoute('/admin/osnutki/$draft_id/')({
+export const Route = createFileRoute('/admin/osnutki/$draft_id/uredi/')({
   component: RouteComponent,
 })
 
-const draft_id_route_api = getRouteApi("/admin/osnutki/$draft_id/")
+const draft_id_route_api = getRouteApi("/admin/osnutki/$draft_id/uredi/")
 
 function RouteComponent() {
   const { draft_id } = draft_id_route_api.useParams();
@@ -22,6 +22,8 @@ function RouteComponent() {
   }
 
   return (
-    <PlateEditorFromMarkdown markdown={article.content_markdown} />
+    <div className="overflow-hidden flex w-full flex-grow m-2 outline-2 outline-red-400">
+    	<PlateEditorFromMarkdown markdown={article.content_markdown} />
+    </div>
   );
 }

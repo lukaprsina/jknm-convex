@@ -1,6 +1,5 @@
-import { isServer } from "@tanstack/react-query";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { Authenticated, Unauthenticated, useConvexAuth } from "convex/react";
+import { Authenticated, Unauthenticated } from "convex/react";
 import { Home } from "lucide-react";
 import { useState } from "react";
 import { Button } from "~/components/ui/button";
@@ -16,9 +15,6 @@ function RouteComponent() {
 
 	const [isLoading, setIsLoading] = useState(false);
 	const [errorMessage, setErrorMessage] = useState("");
-
-	const { userId } = Route.useRouteContext()
-	const convexAuth = useConvexAuth();
 
 	return (
 		<div className="flex flex-col gap-6">

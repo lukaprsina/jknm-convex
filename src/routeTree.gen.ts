@@ -15,8 +15,8 @@ import { Route as AdminRouteRouteImport } from './routes/admin/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as PrijavaIndexRouteImport } from './routes/prijava.index'
 import { Route as NovicaArticle_slugIndexRouteImport } from './routes/novica/$article_slug/index'
-import { Route as AdminOsnutkiIndexRouteImport } from './routes/admin/osnutki.index'
-import { Route as AdminOsnutkiDraft_idIndexRouteImport } from './routes/admin/osnutki.$draft_id.index'
+import { Route as AdminOsnutkiIndexRouteImport } from './routes/admin/osnutki/index'
+import { Route as AdminOsnutkiDraft_idUrediIndexRouteImport } from './routes/admin/osnutki/$draft_id.uredi.index'
 import { ServerRoute as ApiAuthSplatServerRouteImport } from './routes/api/auth.$'
 
 const rootServerRouteImport = createServerRootRoute()
@@ -46,10 +46,10 @@ const AdminOsnutkiIndexRoute = AdminOsnutkiIndexRouteImport.update({
   path: '/osnutki/',
   getParentRoute: () => AdminRouteRoute,
 } as any)
-const AdminOsnutkiDraft_idIndexRoute =
-  AdminOsnutkiDraft_idIndexRouteImport.update({
-    id: '/osnutki/$draft_id/',
-    path: '/osnutki/$draft_id/',
+const AdminOsnutkiDraft_idUrediIndexRoute =
+  AdminOsnutkiDraft_idUrediIndexRouteImport.update({
+    id: '/osnutki/$draft_id/uredi/',
+    path: '/osnutki/$draft_id/uredi/',
     getParentRoute: () => AdminRouteRoute,
   } as any)
 const ApiAuthSplatServerRoute = ApiAuthSplatServerRouteImport.update({
@@ -64,7 +64,7 @@ export interface FileRoutesByFullPath {
   '/prijava': typeof PrijavaIndexRoute
   '/admin/osnutki': typeof AdminOsnutkiIndexRoute
   '/novica/$article_slug': typeof NovicaArticle_slugIndexRoute
-  '/admin/osnutki/$draft_id': typeof AdminOsnutkiDraft_idIndexRoute
+  '/admin/osnutki/$draft_id/uredi': typeof AdminOsnutkiDraft_idUrediIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -72,7 +72,7 @@ export interface FileRoutesByTo {
   '/prijava': typeof PrijavaIndexRoute
   '/admin/osnutki': typeof AdminOsnutkiIndexRoute
   '/novica/$article_slug': typeof NovicaArticle_slugIndexRoute
-  '/admin/osnutki/$draft_id': typeof AdminOsnutkiDraft_idIndexRoute
+  '/admin/osnutki/$draft_id/uredi': typeof AdminOsnutkiDraft_idUrediIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -81,7 +81,7 @@ export interface FileRoutesById {
   '/prijava/': typeof PrijavaIndexRoute
   '/admin/osnutki/': typeof AdminOsnutkiIndexRoute
   '/novica/$article_slug/': typeof NovicaArticle_slugIndexRoute
-  '/admin/osnutki/$draft_id/': typeof AdminOsnutkiDraft_idIndexRoute
+  '/admin/osnutki/$draft_id/uredi/': typeof AdminOsnutkiDraft_idUrediIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -91,7 +91,7 @@ export interface FileRouteTypes {
     | '/prijava'
     | '/admin/osnutki'
     | '/novica/$article_slug'
-    | '/admin/osnutki/$draft_id'
+    | '/admin/osnutki/$draft_id/uredi'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -99,7 +99,7 @@ export interface FileRouteTypes {
     | '/prijava'
     | '/admin/osnutki'
     | '/novica/$article_slug'
-    | '/admin/osnutki/$draft_id'
+    | '/admin/osnutki/$draft_id/uredi'
   id:
     | '__root__'
     | '/'
@@ -107,7 +107,7 @@ export interface FileRouteTypes {
     | '/prijava/'
     | '/admin/osnutki/'
     | '/novica/$article_slug/'
-    | '/admin/osnutki/$draft_id/'
+    | '/admin/osnutki/$draft_id/uredi/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -175,11 +175,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminOsnutkiIndexRouteImport
       parentRoute: typeof AdminRouteRoute
     }
-    '/admin/osnutki/$draft_id/': {
-      id: '/admin/osnutki/$draft_id/'
-      path: '/osnutki/$draft_id'
-      fullPath: '/admin/osnutki/$draft_id'
-      preLoaderRoute: typeof AdminOsnutkiDraft_idIndexRouteImport
+    '/admin/osnutki/$draft_id/uredi/': {
+      id: '/admin/osnutki/$draft_id/uredi/'
+      path: '/osnutki/$draft_id/uredi'
+      fullPath: '/admin/osnutki/$draft_id/uredi'
+      preLoaderRoute: typeof AdminOsnutkiDraft_idUrediIndexRouteImport
       parentRoute: typeof AdminRouteRoute
     }
   }
@@ -198,12 +198,12 @@ declare module '@tanstack/react-start/server' {
 
 interface AdminRouteRouteChildren {
   AdminOsnutkiIndexRoute: typeof AdminOsnutkiIndexRoute
-  AdminOsnutkiDraft_idIndexRoute: typeof AdminOsnutkiDraft_idIndexRoute
+  AdminOsnutkiDraft_idUrediIndexRoute: typeof AdminOsnutkiDraft_idUrediIndexRoute
 }
 
 const AdminRouteRouteChildren: AdminRouteRouteChildren = {
   AdminOsnutkiIndexRoute: AdminOsnutkiIndexRoute,
-  AdminOsnutkiDraft_idIndexRoute: AdminOsnutkiDraft_idIndexRoute,
+  AdminOsnutkiDraft_idUrediIndexRoute: AdminOsnutkiDraft_idUrediIndexRoute,
 }
 
 const AdminRouteRouteWithChildren = AdminRouteRoute._addFileChildren(
