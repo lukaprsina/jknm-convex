@@ -25,6 +25,8 @@ uporabi 5 referralov da dobiš 3.5 GB file storage, 6M function callov na mesec,
 
 `b2 bucket get --show-size jknm-novice > out.json` -> 956 MB
 
+preberi https://docs.convex.dev/client/react/deployment-urls in optimistic
+
 ## Ostalo
 
 ```

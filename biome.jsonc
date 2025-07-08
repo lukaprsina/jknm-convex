@@ -21,7 +21,7 @@
 	"linter": {
 		"enabled": true,
 		"rules": {
-			"nursery": {
+			/* "nursery": {
 				"useSortedClasses": {
 					"level": "on",
 					"fix": "safe",
@@ -59,7 +59,7 @@
 			"complexity": {
 				"noBannedTypes": "off"
 			},
-			"recommended": true
+			"recommended": true */
 		}
 	},
 	"assist": {
