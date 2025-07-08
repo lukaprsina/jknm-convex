@@ -6,6 +6,7 @@ diceui in fumadocs za sidebar in TOC
 "react-player": "^2.16.0"
 
 uporabi "virtual file routes" za:
+
 - Zgodovina
 - Raziskovanje
 - Publiciranje
@@ -14,17 +15,20 @@ uporabi "virtual file routes" za:
 
 uporabi 5 referralov da dobiš 3.5 GB file storage, 6M function callov na mesec, 6GB file bandwidtha lolll
 
-+ ne uporabit Unauthorized pa Authorized, ker med ssr se še nalaga (verjetno gre dvakrat na server po userja)
+- ne uporabit Unauthorized pa Authorized, ker med ssr se še nalaga (verjetno gre dvakrat na server po userja)
 
 `8.7.`
 [](https://tweakcn.com/editor/theme)
-- caffeine
-- claude
 
+- caffeine
+- claude <-
+
+`b2 bucket get --show-size jknm-novice > out.json` -> 956 MB
 
 ## Ostalo
+
 ```
-// to je v serverju, se še nalaga, češrav imamo user_id
+// to je v serverju, se še nalaga, čeprav imamo user_id
 prijava {
   user_id_from_route: 'ks7c6q8jsfnjbm8xh8gdtdas5d7k9ah0',
   convexAuth: { isLoading: true, isAuthenticated: false },

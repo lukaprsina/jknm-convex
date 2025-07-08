@@ -25,8 +25,8 @@ export function AdminSidebar({
 	return (
 		<Sidebar collapsible="icon" {...props}>
 			{/* <SidebarHeader>
-        <TeamSwitcher teams={data.teams} />
-      </SidebarHeader> */}
+				<TeamSwitcher teams={data.teams} />
+			</SidebarHeader> */}
 			<SidebarContent>
 				{/* <NavMain items={data.navMain} /> */}
 				<NavProjects projects={data.projects} />

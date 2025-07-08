@@ -2,7 +2,11 @@
 	"servers": {
 		"plate": {
 			"command": "bunx",
-			"args": ["-y", "shadcn@canary", "registry:mcp"],
+			"args": [
+				"-y",
+				"shadcn@canary",
+				"registry:mcp"
+			],
 			"env": {
 				"REGISTRY_URL": "https://platejs.org/r/registry.json"
 			},
@@ -10,11 +14,24 @@
 		},
 		"playwright": {
 			"command": "bunx",
-			"args": ["@playwright/mcp@latest"],
+			"args": [
+				"@playwright/mcp@latest"
+			],
 		},
-		"convex":{
+		"convex": {
 			"command": "bunx",
-			"args": ["convex@latest", "mcp", "start"],
+			"args": [
+				"convex@latest",
+				"mcp",
+				"start"
+			],
+		},
+		"lucide-icons": {
+			"command": "bunx",
+			"args": [
+				"lucide-icons-mcp@latest",
+				"--stdio"
+			]
 		}
 	}
 }

@@ -80,7 +80,7 @@ const editorVariants = cva(
 				fullWidth: "size-full px-16 pt-4 pb-72 text-base sm:px-24",
 				none: "",
 				select: "px-3 py-2 text-base data-readonly:w-fit",
-				article: "size-full flex-grow px-3 py-2",
+				article: "size-full flex-grow px-16 pt-4 pb-16 text-base sm:px-24",
 			},
 		},
 	},

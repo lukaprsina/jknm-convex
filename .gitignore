@@ -16,4 +16,5 @@ yarn.lock
 .env.sentry-build-plugin
 
 .env*
+src/env/
 !.env.local.example
