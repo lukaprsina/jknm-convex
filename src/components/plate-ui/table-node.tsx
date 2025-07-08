@@ -68,7 +68,6 @@ import {
 	DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
 import { Popover, PopoverContent } from "~/components/ui/popover";
-import { cn } from "~/lib/utils";
 import {
 	BorderAllIcon,
 	BorderBottomIcon,
@@ -76,13 +75,14 @@ import {
 	BorderNoneIcon,
 	BorderRightIcon,
 	BorderTopIcon,
-} from "../ui/table-icons";
+} from "~/components/ui/table-icons";
 import {
 	Toolbar,
 	ToolbarButton,
 	ToolbarGroup,
 	ToolbarMenuGroup,
-} from "../ui/toolbar";
+} from "~/components/ui/toolbar";
+import { cn } from "~/lib/utils";
 import { blockSelectionVariants } from "./block-selection";
 import {
 	ColorDropdownMenuItems,
@@ -101,12 +101,13 @@ export const TableElement = withHOC(
 			"isSelectionAreaVisible",
 		);
 		const hasControls = !readOnly && !isSelectionAreaVisible;
-		const selected = useSelected();
 		const {
 			isSelectingCell,
 			marginLeft,
 			props: tableProps,
 		} = useTableElement();
+
+		const isSelectingTable = useBlockSelected(props.element.id as string);
 
 		const content = (
 			<PlateElement
@@ -127,11 +128,15 @@ export const TableElement = withHOC(
 					>
 						<tbody className="min-w-full">{children}</tbody>
 					</table>
+
+					{isSelectingTable && (
+						<div className={blockSelectionVariants()} contentEditable={false} />
+					)}
 				</div>
 			</PlateElement>
 		);
 
-		if (readOnly || !selected) {
+		if (readOnly) {
 			return content;
 		}
 
@@ -144,14 +149,18 @@ function TableFloatingToolbar({
 	...props
 }: React.ComponentProps<typeof PopoverContent>) {
 	const { tf } = useEditorPlugin(TablePlugin);
+	const selected = useSelected();
 	const element = useElement<TTableElement>();
 	const { props: buttonProps } = useRemoveNodeButton({ element });
-	const collapsed = useEditorSelector((editor) => !editor.api.isExpanded(), []);
+	const collapsedInside = useEditorSelector(
+		(editor) => selected && editor.api.isCollapsed(),
+		[selected],
+	);
 
 	const { canMerge, canSplit } = useTableMergeState();
 
 	return (
-		<Popover open={canMerge || canSplit || collapsed} modal={false}>
+		<Popover open={canMerge || canSplit || collapsedInside} modal={false}>
 			<PopoverAnchor asChild>{children}</PopoverAnchor>
 			<PopoverContent
 				asChild
@@ -198,7 +207,7 @@ function TableFloatingToolbar({
 							</DropdownMenuPortal>
 						</DropdownMenu>
 
-						{collapsed && (
+						{collapsedInside && (
 							<ToolbarGroup>
 								<ToolbarButton tooltip="Delete table" {...buttonProps}>
 									<Trash2Icon />
@@ -207,7 +216,7 @@ function TableFloatingToolbar({
 						)}
 					</ToolbarGroup>
 
-					{collapsed && (
+					{collapsedInside && (
 						<ToolbarGroup>
 							<ToolbarButton
 								onClick={() => {
@@ -239,7 +248,7 @@ function TableFloatingToolbar({
 						</ToolbarGroup>
 					)}
 
-					{collapsed && (
+					{collapsedInside && (
 						<ToolbarGroup>
 							<ToolbarButton
 								onClick={() => {
@@ -593,7 +602,7 @@ export function TableCellElement({
 									className={cn(
 										"absolute top-0 z-30 h-full w-1 bg-ring",
 										"left-[-1.5px]",
-										"fade-in group-has-[[data-resizer-left][data-resizing= hidden animate-in group-has-[[data-resizer-left]:hover]/table:block"true"]]/table:block",
+										'fade-in hidden animate-in group-has-[[data-resizer-left]:hover]/table:block group-has-[[data-resizer-left][data-resizing="true"]]/table:block',
 									)}
 								/>
 							)}
