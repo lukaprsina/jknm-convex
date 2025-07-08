@@ -18,3 +18,5 @@ yarn.lock
 .env*
 src/env/
 !.env.local.example
+
+scripts/llms/
