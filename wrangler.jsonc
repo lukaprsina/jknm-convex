@@ -12,7 +12,6 @@
   },
   "vars": {
     "SITE_URL": "https://new.jknm.site",
-    "CONVEX_DEPLOY_KEY": "prod:tremendous-malamute-773|eyJ2MiI6ImU0ZTQ1NzMwMzcxODQyMDI5OGRkNTU2ODUyYzE2ZDBmIn0=",
     // "VITE_CONVEX_SITE_URL": "https://glorious-mallard-943.convex.site"
   }
   /* "kv_namespaces": [
