@@ -41,7 +41,7 @@ I am making a Slovenian blog with Tanstack Start and Convex. The web article edi
 #web #plate #default
 ```
 
-meaningless change
+https://developers.cloudflare.com/workers/configuration/secrets/
 
 ## Ostalo
 
