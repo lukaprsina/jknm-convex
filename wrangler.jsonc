@@ -3,7 +3,7 @@
   "name": "jknm-convex",
   "build": {
     "watch_dir": "./src",
-    "command": "bun x convex deploy -y --cmd-url-env-var-name VITE_CONVEX_URL --cmd \"bun run build\""
+    "command": "npx convex deploy -y --cmd-url-env-var-name VITE_CONVEX_URL --cmd \"bun run build\""
   },
   "main": ".output/server/index.mjs",
   "compatibility_date": "2025-07-09",
