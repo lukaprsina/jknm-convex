@@ -1,9 +1,13 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "jknm-convex",
-  "main": ".output/server/index.mjs",
+  "main": ".output/server/index.mjs",  
   "compatibility_date": "2025-07-09",
   "compatibility_flags": ["nodejs_compat"],
+  "build": {
+    "command": "npx convex deploy -y --cmd-url-env-var-name VITE_CONVEX_URL --cmd 'bun run build'",
+    "watch_dir": "./src"
+  },
   "assets": {
     "directory": ".output/public"
   },

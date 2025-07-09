@@ -43,6 +43,10 @@ I am making a Slovenian blog with Tanstack Start and Convex. The web article edi
 
 https://developers.cloudflare.com/workers/configuration/secrets/
 
+https://copilot.microsoft.com/shares/HHtz7UrqtMHMjE2RXm2g2
+
+npx convex deploy -y --cmd-url-env-var-name VITE_CONVEX_URL --cmd 'bun --max-old-space-size=4096 run build'
+
 ## Ostalo
 
 ```
