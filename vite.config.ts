@@ -39,6 +39,7 @@ export default defineConfig({
 	},
 	server: {
 		port: 3000,
+		
 	},
 	plugins: [
 		tailwindcss(),
@@ -46,5 +47,5 @@ export default defineConfig({
 			projects: ["./tsconfig.json"],
 		}),
 		tanstackStart(),
-	],
+	],	
 });

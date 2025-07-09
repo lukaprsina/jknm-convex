@@ -1,5 +1,13 @@
 {
-	"servers": {
+	"inputs": [
+		{
+			"type": "promptString",
+			"id": "OPENMEMORY_API_KEY",
+			"description": "Enter your OpenMemory API key",
+			"password": true
+		}
+	],
+	"servers": {		
 		"plate": {
 			"command": "bunx",
 			"args": [
@@ -32,6 +40,16 @@
 				"lucide-icons-mcp@latest",
 				"--stdio"
 			]
+		},
+		"openmemory": {
+			"command": "bunx",
+			"args": [
+				"openmemory@latest",
+			],
+			"env": {
+				"OPENMEMORY_API_KEY": "${input:OPENMEMORY_API_KEY}",
+				"CLIENT_NAME": "openmemory"
+			}
 		}
 	}
 }

@@ -78,7 +78,8 @@ const Footer2 = ({
 }: Footer2Props) => {
 	return (
 		<section className="py-32">
-			<div className="container">
+			{/* https://v3.tailwindcss.com/docs/container - you have to center it manually now */}
+			<div className="container mx-auto px-4">
 				<footer>
 					<div className="grid grid-cols-2 gap-8 lg:grid-cols-6">
 						<div className="col-span-2 mb-8 lg:mb-0">
@@ -96,12 +97,12 @@ const Footer2 = ({
 							<p className="mt-4 font-bold">{tagline}</p>
 						</div>
 						{menuItems.map((section, sectionIdx) => (
-							<div key={sectionIdx}>
+							<div key={`${section.title}-${sectionIdx}`}>
 								<h3 className="mb-4 font-bold">{section.title}</h3>
 								<ul className="space-y-4 text-muted-foreground">
 									{section.links.map((link, linkIdx) => (
 										<li
-											key={linkIdx}
+											key={`${link.url}-${linkIdx}`}
 											className="font-medium hover:text-primary"
 										>
 											<a href={link.url}>{link.text}</a>
@@ -115,7 +116,10 @@ const Footer2 = ({
 						<p>{copyright}</p>
 						<ul className="flex gap-4">
 							{bottomLinks.map((link, linkIdx) => (
-								<li key={linkIdx} className="underline hover:text-primary">
+								<li
+									key={`${link.url}-${linkIdx}`}
+									className="underline hover:text-primary"
+								>
 									<a href={link.url}>{link.text}</a>
 								</li>
 							))}

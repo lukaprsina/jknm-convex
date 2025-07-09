@@ -19,4 +19,4 @@ yarn.lock
 src/env/
 !.env.local.example
 
-scripts/llms/
+src/content/

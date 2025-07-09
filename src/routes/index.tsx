@@ -90,30 +90,30 @@ function Home() {
 	return (
 		<>
 			<Navbar1 />
-			<div className="w-full p-4">
-				<FilterAccordion />
-				<Button asChild>
-					<Link to="/admin/osnutki">Admin osnutki</Link>
-				</Button>
-			</div>
 			<main className="w-full flex-grow">
-				{search_api.results?.map(({ _id, title }) => (
-					<div key={_id}>{title}</div>
-				))}
-				{/* Sentinel for infinite scroll */}
-				{search_api.status === "CanLoadMore" && (
-					<div
-						ref={ref}
-						style={{
-							height: 32,
-							display: "flex",
-							alignItems: "center",
-							justifyContent: "center",
-						}}
-					>
-						<span>Loading more...</span>
-					</div>
-				)}
+				<div className="container mx-auto px-4">
+					<FilterAccordion />
+					<Button asChild>
+						<Link to="/admin/osnutki">Admin osnutki</Link>
+					</Button>
+					{search_api.results?.map(({ _id, title }) => (
+						<div key={_id}>{title}</div>
+					))}
+					{/* Sentinel for infinite scroll */}
+					{search_api.status === "CanLoadMore" && (
+						<div
+							ref={ref}
+							style={{
+								height: 32,
+								display: "flex",
+								alignItems: "center",
+								justifyContent: "center",
+							}}
+						>
+							<span>Loading more...</span>
+						</div>
+					)}
+				</div>
 			</main>
 			<Footer2 />
 		</>

@@ -137,7 +137,8 @@ const Navbar1 = ({
 }: Navbar1Props) => {
 	return (
 		<section className="py-4">
-			<div className="container">
+			{/* https://v3.tailwindcss.com/docs/container - you have to center it manually now */}
+			<div className="container mx-auto px-4">
 				{/* Desktop Menu */}
 				<nav className="hidden justify-between lg:flex">
 					<div className="flex items-center gap-6">

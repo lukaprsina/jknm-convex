@@ -8,7 +8,6 @@ import { BasicBlocksKit } from "./plugins/basic-blocks-kit";
 import { BasicMarksKit } from "./plugins/basic-marks-kit";
 import { BlockMenuKit } from "./plugins/block-menu-kit";
 import { BlockPlaceholderKit } from "./plugins/block-placeholder-kit";
-import { CursorOverlayKit } from "./plugins/cursor-overlay-kit";
 import { DndKit } from "./plugins/dnd-kit";
 import { DocxKit } from "./plugins/docx-kit";
 import { EmojiKit } from "./plugins/emoji-kit";
@@ -26,7 +25,7 @@ import { TocSidebarKit } from "./plugins/toc-sidebar-kit";
 import { ToggleKit } from "./plugins/toggle-kit";
 
 export const EditorKit = [
-	...BlockMenuKit,
+	...BlockMenuKit, // TODO: beautify this
 
 	// Elements
 	...BasicBlocksKit,
@@ -59,7 +58,7 @@ export const EditorKit = [
 	// Editing
 	...SlashKit,
 	...AutoformatKit,
-	...CursorOverlayKit,
+	// ...CursorOverlayKit, // idk what this is, but it has AI
 	...DndKit,
 	...EmojiKit,
 	...ExitBreakKit,
