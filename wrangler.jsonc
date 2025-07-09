@@ -15,7 +15,7 @@
     "enabled": true
   },
   "vars": {
-    "SITE_URL": "https://new.jknm.site",
+    "SITE_URL": "https://cf.jknm.site",
     // "VITE_CONVEX_SITE_URL": "https://glorious-mallard-943.convex.site"
   }
   /* "kv_namespaces": [
