@@ -17,6 +17,7 @@ yarn.lock
 
 .env*
 src/env/
+.dev.vars*
 !.env.local.example
 
 src/content/

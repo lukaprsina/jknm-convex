@@ -14,21 +14,19 @@ const problematicPackages = [
 This plugin ignores CSS files from specific packages in the SSR build which causes an "unknown extension error".
 The offending packages are: @platejs/math, react-lite-youtube-embed, react-tweet
 */
-function ssrIgnoreCss(): Plugin {
+/* function ssrIgnoreCss(): Plugin {
 	return {
 		name: "ssr-ignore-css",
 		load(id, options) {
 			if (options?.ssr && id.endsWith(".css")) {
 				// Only ignore CSS from problematic packages, allow Tailwind and other CSS through
-
-
 				if (problematicPackages.some(pkg => id.includes(pkg))) {
 					return "";
 				}
 			}
 		},
 	};
-}
+} */
 
 export default defineConfig({
 	ssr: {
@@ -39,13 +37,14 @@ export default defineConfig({
 	},
 	server: {
 		port: 3000,
-		
 	},
 	plugins: [
 		tailwindcss(),
 		tsConfigPaths({
 			projects: ["./tsconfig.json"],
 		}),
-		tanstackStart(),
+		tanstackStart({
+			target: "cloudflare-module"
+		}),
 	],	
 });

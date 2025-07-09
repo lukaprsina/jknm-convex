@@ -7,8 +7,9 @@
 		"dev": "concurrently npm:dev:web npm:dev:server",
 		"dev:web": "vite dev",
 		"dev:server": "convex dev --local",
-		"build": "vite build && tsc --noEmit",
-		"deploy": "convex deploy -y",
+		"build": "vite build",
+		"deploy": "concurrently \"convex deploy -y\" \"wrangler deploy\"",
+		"cf-typegen": "wrangler types --env-interface Env",
 		"start": "vite start",
 		"format": "biome format --write .",
 		"lint": "biome lint --write .",
@@ -133,6 +134,7 @@
 		"tailwindcss": "^4.1.11",
 		"typescript": "^5.8.3",
 		"vite": "^7.0.2",
-		"vite-tsconfig-paths": "^5.1.4"
+		"vite-tsconfig-paths": "^5.1.4",
+		"wrangler": "^4.24.0"
 	}
 }
