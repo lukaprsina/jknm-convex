@@ -50,6 +50,7 @@ export default defineConfig({
 		}),
 		tanstackStart({
 			// target: process.env.NODE_ENV === 'production' ?"vercel":"node"
+			target: "node"
 		}),
 	],	
 });
