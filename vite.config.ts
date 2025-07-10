@@ -30,10 +30,10 @@ The offending packages are: @platejs/math, react-lite-youtube-embed, react-tweet
 
 export default defineConfig({
 	// Set base path for GitHub Pages deployment
-	/* base: process.env.NODE_ENV === 'production' ? '/jknm-convex/' : '/',
+	// base: process.env.NODE_ENV === 'production' ? '/jknm-convex/' : '/',
 	build: {
-		outDir: 'dist',
-	}, */
+		outDir: '.output',
+	},
 	ssr: {
 		noExternal: problematicPackages,
 	},
@@ -50,7 +50,6 @@ export default defineConfig({
 		}),
 		tanstackStart({
 			// target: process.env.NODE_ENV === 'production' ?"vercel":"node"
-			target: "node"
 		}),
 	],	
 });
