@@ -48,16 +48,18 @@ export function useUploadFile({
 				size_bytes: file.size,
 			});
 
-			// Step 2: Upload file to S3 using presigned URL
+			/* // Step 2: Upload file to S3 using presigned URL
 			const formData = new FormData();
 
 			// Add all fields from presigned URL response
-			Object.entries(presignedData.fields).forEach(([key, value]) => {
+			Object.entries(presignedData).forEach(([key, value]) => {
 				formData.append(key, value as string);
 			});
 
 			// Add the file last (as required by S3)
-			formData.append("file", file);
+			formData.append("file", file); */
+
+			const file_content = await file.arrayBuffer();
 
 			// Upload to S3 with progress tracking using XMLHttpRequest
 			await new Promise<void>((resolve, reject) => {
@@ -75,7 +77,11 @@ export function useUploadFile({
 					if (xhr.status >= 200 && xhr.status < 300) {
 						resolve();
 					} else {
-						reject(new Error(`Upload failed with status ${xhr.status}`));
+						reject(
+							new Error(
+								`Upload failed with status ${xhr.status}: ${xhr.statusText}, ${xhr.responseText}, ${xhr.response}`,
+							),
+						);
 					}
 				});
 
@@ -88,7 +94,8 @@ export function useUploadFile({
 				// https://github.com/backblaze-b2-samples/b2-browser-upload
 				// B2 doesn't support POST for presigned URLs, so we use PUT
 				xhr.open("PUT", presignedData.url);
-				xhr.send(formData);
+				xhr.setRequestHeader("Content-Type", file.type);
+				xhr.send(file_content);
 			});
 
 			// Step 3: Construct the final file URL

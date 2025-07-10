@@ -1,5 +1,5 @@
-import { S3Client } from "@aws-sdk/client-s3";
-import { createPresignedPost } from "@aws-sdk/s3-presigned-post";
+import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { v } from "convex/values";
 import { mutation } from "./_generated/server";
 
@@ -34,12 +34,13 @@ export const generate_presigned_upload_url = mutation({
 		const variant = "original";
 		const ext = `.${args.filename.split(".").pop()}`;
 
-		const key = `media/${media_db_id}/${variant}${ext}`;
+		const key = `${media_db_id}/${variant}${ext}`;
 
 		await ctx.db.patch(media_db_id, {
 			storage_path: key,
 		});
 
+		/* 
 		const { url, fields } = await createPresignedPost(client, {
 			Bucket: process.env.AWS_BUCKET_NAME!,
 			Key: key,
@@ -50,10 +51,20 @@ export const generate_presigned_upload_url = mutation({
 				// ["starts-with", "$Content-Type", args.content_type],
 			],
 		});
+		*/
+
+		const putObjectCommand = new PutObjectCommand({
+			Bucket: process.env.AWS_BUCKET_NAME,
+			Key: key,
+			// ContentType: args.content_type,
+		});
+
+		const presignedUrl = await getSignedUrl(client, putObjectCommand, {
+			expiresIn: 3600,
+		});
 
 		return {
-			url,
-			fields,
+			url: presignedUrl,
 			key,
 			media_db_id,
 		};

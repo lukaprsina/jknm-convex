@@ -47,6 +47,9 @@ https://copilot.microsoft.com/shares/HHtz7UrqtMHMjE2RXm2g2
 
 npx convex deploy -y --cmd-url-env-var-name VITE_CONVEX_URL --cmd 'bun --max-old-space-size=4096 run build'
 
+`10.07`
+b2 bucket update --cors-rules (Get-Content "d:\dev\js\jknm-convex\b2-browser-upload.json" -Raw) jknm-gradivo
+
 ## Ostalo
 
 ```
