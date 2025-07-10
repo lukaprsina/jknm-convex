@@ -49,7 +49,7 @@ export default defineConfig({
 			projects: ["./tsconfig.json"],
 		}),
 		tanstackStart({
-			target: process.env.NODE_ENV === 'production' ?"vercel":"node"
+			// target: process.env.NODE_ENV === 'production' ?"vercel":"node"
 		}),
 	],	
 });
