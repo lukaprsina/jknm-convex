@@ -44,7 +44,7 @@ export default defineConfig({
 			projects: ["./tsconfig.json"],
 		}),
 		tanstackStart({
-			target: "cloudflare-module"
+			target: "github-pages"
 		}),
 	],	
 });
