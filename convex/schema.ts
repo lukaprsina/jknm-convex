@@ -65,6 +65,40 @@ const schema = defineSchema({
 	})
 		.index("by_article_and_order", ["article_id", "order"])
 		.index("by_author", ["author_id"]),
+
+	media: defineTable({
+		filename: v.string(),
+		content_type: v.string(),
+		size_bytes: v.number(),
+		storage_path: v.string(), // B2 path: /media/${media_db_id}/${variant}.${ext}
+		variants: v.optional(
+			v.object({
+				original: v.object({
+					width: v.optional(v.number()),
+					height: v.optional(v.number()),
+				}),
+				// Size variants for images (e.g., "400w", "800w", "1200w")
+				size_variants: v.optional(
+					v.record(
+						v.string(),
+						v.object({
+							width: v.number(),
+							height: v.number(),
+							size_bytes: v.number(),
+							format: v.union(v.literal("avif"), v.literal("jpeg")),
+						}),
+					),
+				),
+			}),
+		),
+		upload_status: v.union(
+			v.literal("pending"),
+			v.literal("processing"),
+			v.literal("completed"),
+			v.literal("failed"),
+		),
+		created_at: v.number(),
+	}).index("by_status", ["upload_status"]),
 });
 export default schema;
 

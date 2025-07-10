@@ -12,6 +12,7 @@ import type * as articles from "../articles.js";
 import type * as auth from "../auth.js";
 import type * as authors from "../authors.js";
 import type * as http from "../http.js";
+import type * as media from "../media.js";
 
 import type {
   ApiFromModules,
@@ -32,6 +33,7 @@ declare const fullApi: ApiFromModules<{
   auth: typeof auth;
   authors: typeof authors;
   http: typeof http;
+  media: typeof media;
 }>;
 declare const fullApiWithMounts: typeof fullApi;
 

@@ -13,6 +13,7 @@ import { PlateElement, useEditorPlugin, withHOC } from "platejs/react";
 import * as React from "react";
 import { useFilePicker } from "use-file-picker";
 import type { SelectedFilesOrErrors } from "use-file-picker/types";
+import { useUploadFile } from "~/hooks/use-upload-file";
 import { cn } from "~/lib/utils";
 
 const CONTENT: Record<
@@ -52,10 +53,11 @@ export const PlaceholderElement = withHOC(
 
 		const { api } = useEditorPlugin(PlaceholderPlugin);
 
-		// TODO: Dummy values for useUploadFile
-		/* const { isUploading, progress, uploadedFile, uploadFile, uploadingFile } =
-	  useUploadFile(); */
-		const isUploading = false;
+		const { isUploading, progress, uploadedFile, uploadFile, uploadingFile } =
+			useUploadFile();
+
+		// Dummy values for useUploadFile
+		/* const isUploading = false;
 		const progress = 0;
 		const uploadedFile = new File([""], "placeholder.txt", {
 			type: "text/plain",
@@ -73,7 +75,7 @@ export const PlaceholderElement = withHOC(
 		);
 		const uploadingFile = new File([""], "placeholder.txt", {
 			type: "text/plain",
-		});
+		}); */
 
 		const loading = isUploading && uploadingFile;
 
@@ -144,7 +146,18 @@ export const PlaceholderElement = withHOC(
 
 			api.placeholder.removeUploadingFile(element.id as string);
 			// eslint-disable-next-line react-hooks/exhaustive-deps
-		}, [uploadedFile, element.id]);
+		}, [
+			uploadedFile,
+			element.id,
+			editor,
+			editor.api.findPath,
+			editor.tf.withoutSaving,
+			editor.tf.insertNodes,
+			element,
+			element.mediaType,
+			editor.tf.removeNodes,
+			api.placeholder.removeUploadingFile,
+		]);
 
 		// React dev mode will call React.useEffect twice
 		const isReplaced = React.useRef(false);
@@ -161,9 +174,11 @@ export const PlaceholderElement = withHOC(
 			if (!currentFiles) return;
 
 			replaceCurrentPlaceholder(currentFiles);
-
-			// eslint-disable-next-line react-hooks/exhaustive-deps
-		}, [isReplaced]);
+		}, [
+			element.id,
+			replaceCurrentPlaceholder,
+			api.placeholder.getUploadingFile,
+		]);
 
 		return (
 			<PlateElement className="my-1" {...props}>

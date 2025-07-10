@@ -1,0 +1,47 @@
+{
+	"accountId": "38893f0e1a5f",
+	"bucketId": "4378c899536ff00e917a051f",
+	"bucketInfo": {},
+	"bucketName": "jknm-gradivo",
+	"bucketType": "allPublic",
+	"corsRules": [
+		{
+			"allowedHeaders": ["*"],
+			"allowedOperations": [
+				"s3_head",
+				"s3_put",
+				"s3_delete",
+				"s3_post",
+				"s3_get"
+			],
+			"allowedOrigins": [
+				"http://localhost:3000",
+				"https://new.jknm.site",
+				"https://jknm.si"
+			],
+			"corsRuleName": "allowS3Uploads",
+			"exposeHeaders": ["x-bz-content-sha1", "etag"],
+			"maxAgeSeconds": 3600
+		}
+	],
+	"defaultRetention": {
+		"mode": null
+	},
+	"defaultServerSideEncryption": {
+		"mode": "none"
+	},
+	"isFileLockEnabled": false,
+	"lifecycleRules": [
+		{
+			"daysFromHidingToDeleting": 1,
+			"daysFromUploadingToHiding": null,
+			"fileNamePrefix": ""
+		}
+	],
+	"options": ["s3"],
+	"replication": {
+		"asReplicationDestination": null,
+		"asReplicationSource": null
+	},
+	"revision": 8
+}

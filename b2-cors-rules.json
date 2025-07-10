@@ -1,0 +1,20 @@
+[
+	{
+		"corsRuleName": "allowS3Uploads",
+		"allowedOrigins": [
+			"http://localhost:3000",
+			"https://new.jknm.site",
+			"https://jknm.si"
+		],
+		"allowedHeaders": ["*"],
+		"allowedOperations": [
+			"s3_delete",
+			"s3_get",
+			"s3_head",
+			"s3_post",
+			"s3_put"
+		],
+		"exposeHeaders": ["x-bz-content-sha1", "ETag"],
+		"maxAgeSeconds": 3600
+	}
+]

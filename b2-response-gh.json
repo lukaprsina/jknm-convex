@@ -1,0 +1,49 @@
+{
+	"accountId": "38893f0e1a5f",
+	"bucketId": "4378c899536ff00e917a051f",
+	"bucketInfo": {},
+	"bucketName": "jknm-gradivo",
+	"bucketType": "allPublic",
+	"corsRules": [
+		{
+			"allowedHeaders": [
+				"authorization",
+				"content-type",
+				"x-bz-file-name",
+				"x-bz-content-sha1"
+			],
+			"allowedOperations": [
+				"b2_download_file_by_id",
+				"b2_upload_part",
+				"b2_upload_file",
+				"s3_put",
+				"b2_download_file_by_name",
+				"s3_get"
+			],
+			"allowedOrigins": ["*"],
+			"corsRuleName": "downloadFromAnyOriginWithUpload",
+			"exposeHeaders": null,
+			"maxAgeSeconds": 3600
+		}
+	],
+	"defaultRetention": {
+		"mode": null
+	},
+	"defaultServerSideEncryption": {
+		"mode": "none"
+	},
+	"isFileLockEnabled": false,
+	"lifecycleRules": [
+		{
+			"daysFromHidingToDeleting": 1,
+			"daysFromUploadingToHiding": null,
+			"fileNamePrefix": ""
+		}
+	],
+	"options": ["s3"],
+	"replication": {
+		"asReplicationDestination": null,
+		"asReplicationSource": null
+	},
+	"revision": 10
+}
