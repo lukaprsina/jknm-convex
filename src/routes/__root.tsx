@@ -24,7 +24,7 @@ import appCss from "~/app.css?url";
 import { DefaultCatchBoundary } from "~/components/default-catch-boundary";
 import { NotFound } from "~/components/not-found";
 import { auth_client } from "~/lib/auth-client";
-import { seo } from "~/utils/seo";
+import { seo } from "~/lib/seo";
 import { createAuth } from "../../convex/auth";
 
 // Server side session request
