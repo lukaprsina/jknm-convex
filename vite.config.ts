@@ -29,6 +29,11 @@ The offending packages are: @platejs/math, react-lite-youtube-embed, react-tweet
 } */
 
 export default defineConfig({
+	// Set base path for GitHub Pages deployment
+	/* base: process.env.NODE_ENV === 'production' ? '/jknm-convex/' : '/',
+	build: {
+		outDir: 'dist',
+	}, */
 	ssr: {
 		noExternal: problematicPackages,
 	},
