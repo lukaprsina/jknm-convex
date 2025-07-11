@@ -67,6 +67,7 @@ As a workaround for the bundling limitations above, Convex provides an escape ha
 ```
 
 bunx convex dev --configure existing --dev-deployment local
+http://localhost:3000/admin/osnutki/neimenovana-novica-j57ezwdxt23w9gbjfnmhrhzv1h7kh8as/undefined/jh7cjf65417dzjv79dp7r5bm957khdzr/original.jpg
 
 ## Ostalo
 

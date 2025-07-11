@@ -49,27 +49,14 @@ export const generate_presigned_upload_url = mutation({
 			storage_path: key,
 		});
 
-		/* 
-		const { url, fields } = await createPresignedPost(client, {
-			Bucket: process.env.AWS_BUCKET_NAME!,
-			Key: key,
-			Expires: 600, // URL valid for 10 minutes
-			Conditions: [
-				["content-length-range", 0, 100 * 1024 * 1024], // Limit to 100MB
-				["starts-with", "$Content-Type", ""],
-				// ["starts-with", "$Content-Type", args.content_type],
-			],
-		});
-		*/
-
 		const putObjectCommand = new PutObjectCommand({
 			Bucket: process.env.AWS_BUCKET_NAME,
 			Key: key,
-			// ContentType: args.content_type,
+			ContentType: args.content_type,
 		});
 
 		const presignedUrl = await getSignedUrl(client, putObjectCommand, {
-			expiresIn: 3600,
+			expiresIn: 10 * 60, // 10 minutes
 		});
 
 		return {

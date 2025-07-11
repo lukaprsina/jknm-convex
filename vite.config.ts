@@ -1,13 +1,14 @@
-import { tanstackStart } from "@tanstack/react-start/plugin/vite";
-import { defineConfig, Plugin } from "vite";
-import tsConfigPaths from "vite-tsconfig-paths";
 import tailwindcss from "@tailwindcss/vite";
+import { tanstackStart } from "@tanstack/react-start/plugin/vite";
+import viteReact from "@vitejs/plugin-react";
+import { defineConfig } from "vite";
+import tsConfigPaths from "vite-tsconfig-paths";
 
 const problematicPackages = [
 	"@platejs/math",
 	"react-lite-youtube-embed",
 	"react-tweet",
-	"katex" // KaTeX CSS is often problematic too
+	"katex", // KaTeX CSS is often problematic too
 ];
 
 /*
@@ -29,11 +30,6 @@ The offending packages are: @platejs/math, react-lite-youtube-embed, react-tweet
 } */
 
 export default defineConfig({
-	// Set base path for GitHub Pages deployment
-	// base: process.env.NODE_ENV === 'production' ? '/jknm-convex/' : '/',
-	build: {
-		outDir: '.output',
-	},
 	ssr: {
 		noExternal: problematicPackages,
 	},
@@ -49,7 +45,8 @@ export default defineConfig({
 			projects: ["./tsconfig.json"],
 		}),
 		tanstackStart({
-			// target: process.env.NODE_ENV === 'production' ?"vercel":"node"
+			customViteReactPlugin: true,
 		}),
-	],	
+		viteReact(),
+	],
 });

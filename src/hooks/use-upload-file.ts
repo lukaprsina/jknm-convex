@@ -48,17 +48,6 @@ export function useUploadFile({
 				size_bytes: file.size,
 			});
 
-			/* // Step 2: Upload file to S3 using presigned URL
-			const formData = new FormData();
-
-			// Add all fields from presigned URL response
-			Object.entries(presignedData).forEach(([key, value]) => {
-				formData.append(key, value as string);
-			});
-
-			// Add the file last (as required by S3)
-			formData.append("file", file); */
-
 			const file_content = await file.arrayBuffer();
 
 			// Upload to S3 with progress tracking using XMLHttpRequest
@@ -90,7 +79,6 @@ export function useUploadFile({
 				});
 
 				// https://www.backblaze.com/docs/cloud-storage-s3-compatible-api
-				// https://www.reddit.com/r/backblaze/comments/1f4zplk/backblaze_multipart_upload_with_presigned_url/
 				// https://github.com/backblaze-b2-samples/b2-browser-upload
 				// B2 doesn't support POST for presigned URLs, so we use PUT
 				xhr.open("PUT", presignedData.url);
@@ -98,13 +86,9 @@ export function useUploadFile({
 				xhr.send(file_content);
 			});
 
-			// Step 3: Construct the final file URL
-			// This depends on your S3 configuration
-			const fileUrl = `${process.env.NEXT_PUBLIC_AWS_S3_BASE_URL}/${presignedData.key}`;
-
 			return {
 				key: presignedData.media_db_id,
-				url: fileUrl,
+				url: presignedData.media_db_id,
 				name: file.name,
 				size: file.size,
 				type: file.type,
