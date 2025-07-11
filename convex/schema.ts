@@ -102,15 +102,17 @@ const schema = defineSchema({
 });
 export default schema;
 
-export const article = schema.tables.articles.validator;
-export const author = schema.tables.authors.validator;
-export const articles_to_authors = schema.tables.articles_to_authors.validator;
+export const article_validator = schema.tables.articles.validator;
+export const author_validato = schema.tables.authors.validator;
+export const articles_to_authors_validator =
+	schema.tables.articles_to_authors.validator;
+export const media_validator = schema.tables.media.validator;
 
 export const update_article_schema = v.object({
-	title: article.fields.title,
-	status: article.fields.status,
-	content_json: article.fields.content_json,
-	thumbnail_crop: article.fields.thumbnail_crop,
+	title: article_validator.fields.title,
+	status: article_validator.fields.status,
+	content_json: article_validator.fields.content_json,
+	thumbnail_crop: article_validator.fields.thumbnail_crop,
 	author_ids: v.optional(v.array(v.id("authors"))),
 });
 

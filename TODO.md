@@ -50,6 +50,22 @@ npx convex deploy -y --cmd-url-env-var-name VITE_CONVEX_URL --cmd 'bun --max-old
 `10.07`
 b2 bucket update --cors-rules (Get-Content "d:\dev\js\jknm-convex\b2-browser-upload.json" -Raw) jknm-gradivo
 
+```
+Code size limits
+The total size of your bundled function code in your convex/ folder is limited to 32MiB (~33.55MB). Other platform limits can be found here.
+
+While this limit in itself is quite high for just source code, certain dependencies can quickly make your bundle size cross over this limit, particularly if they are not effectively tree-shakeable (such as aws-sdk or snowflake-sdk)
+
+External packages
+As a workaround for the bundling limitations above, Convex provides an escape hatch: external packages. This feature is currently exclusive to Convex's Node.js runtime.
+
+{
+  "node": {
+    "externalPackages": ["aws-sdk", "sharp"]
+  }
+}
+```
+
 ## Ostalo
 
 ```

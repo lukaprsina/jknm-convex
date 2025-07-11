@@ -1,7 +1,8 @@
 import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { v } from "convex/values";
-import { mutation } from "./_generated/server";
+import { internalAction, mutation } from "./_generated/server";
+import { media_validator } from "./schema";
 
 export const generate_presigned_upload_url = mutation({
 	args: {
@@ -10,6 +11,14 @@ export const generate_presigned_upload_url = mutation({
 		size_bytes: v.number(),
 	},
 	handler: async (ctx, args) => {
+		const user_id = await ctx.auth.getUserIdentity();
+
+		if (!user_id) {
+			throw new Error(
+				"User must be authenticated to generate a presigned URL.",
+			);
+		}
+
 		// B2 S3-compatible endpoint
 		const client = new S3Client({
 			endpoint: `https://s3.${process.env.AWS_REGION}.backblazeb2.com`,
@@ -67,6 +76,38 @@ export const generate_presigned_upload_url = mutation({
 			url: presignedUrl,
 			key,
 			media_db_id,
+		};
+	},
+});
+
+export const confirm_upload = mutation({
+	args: {
+		media_db_id: v.id("media"),
+	},
+	handler: async (ctx, args) => {
+		const media = await ctx.db.get(args.media_db_id);
+
+		if (!media) {
+			throw new Error(`Media with ID ${args.media_db_id} not found.`);
+		}
+
+		if (media.upload_status !== "pending") {
+			throw new Error(
+				`Media with ID ${args.media_db_id} is not in pending state.`,
+			);
+		}
+
+		// const is_image = media.content_type.startsWith("image/");
+
+		await ctx.db.patch(args.media_db_id, {
+			// TODO
+			// upload_status: is_image ? "processing" : "completed",
+			upload_status: "completed",
+		});
+
+		return {
+			status: "success",
+			message: "Upload confirmed successfully.",
 		};
 	},
 });

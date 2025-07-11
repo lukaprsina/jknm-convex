@@ -78,6 +78,9 @@ export const Route = createRootRouteWithContext<{
 			{ rel: "stylesheet", href: appCss },
 			{ rel: "icon", href: "/favicon.ico" },
 		],
+		scripts: [
+			// { src: "https://unpkg.com/@styleglide/theme-editor" },
+		],
 	}),
 	errorComponent: (props) => {
 		return (
