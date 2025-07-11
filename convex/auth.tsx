@@ -7,7 +7,7 @@ import { convex } from "@convex-dev/better-auth/plugins";
 import { betterAuth } from "better-auth";
 import { components, internal } from "./_generated/api";
 import type { DataModel, Id } from "./_generated/dataModel";
-import { type GenericCtx, query } from "./_generated/server";
+import type { GenericCtx } from "./_generated/server";
 
 // Typesafe way to pass Convex functions defined in this file
 const authFunctions: AuthFunctions = internal.auth;
@@ -51,6 +51,7 @@ export const createAuth = (ctx: GenericCtx) =>
 		],
 	});
 
+// TODO: Convex functions should not be imported in the browser. This will throw an error in future versions of `convex`. If this is a false negative, please report it to Convex support.
 // These are required named exports
 export const { createUser, updateUser, deleteUser, createSession } =
 	betterAuthComponent.createAuthFunctions<DataModel>({
@@ -67,7 +68,7 @@ export const { createUser, updateUser, deleteUser, createSession } =
 
 // Example function for getting the current user
 // Feel free to edit, omit, etc.
-export const getCurrentUser = query({
+/* export const getCurrentUser = query({
 	args: {},
 	handler: async (ctx) => {
 		// Get user data from Better Auth - email, name, image, etc.
@@ -83,4 +84,4 @@ export const getCurrentUser = query({
 			...userMetadata,
 		};
 	},
-});
+}); */

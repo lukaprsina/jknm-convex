@@ -1,6 +1,5 @@
 "use node";
 
-import sharp from "sharp";
 import { internalAction } from "./_generated/server";
 import { media_validator } from "./schema";
 
@@ -8,7 +7,8 @@ export const optimize_image = internalAction({
 	args: {
 		image: media_validator,
 	},
-	handler(_ctx, _args) {
+	async handler(_ctx, _args) {
+		const { default: sharp } = await import("sharp");
 		// Optimize the image using a third-party service
 		// This is just a placeholder implementation
 

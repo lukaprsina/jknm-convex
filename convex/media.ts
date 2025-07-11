@@ -1,8 +1,8 @@
 import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { v } from "convex/values";
-import { internalAction, mutation } from "./_generated/server";
-import { media_validator } from "./schema";
+import { internal } from "./_generated/api";
+import { mutation } from "./_generated/server";
 
 export const generate_presigned_upload_url = mutation({
 	args: {
@@ -103,6 +103,10 @@ export const confirm_upload = mutation({
 			// TODO
 			// upload_status: is_image ? "processing" : "completed",
 			upload_status: "completed",
+		});
+
+		ctx.scheduler.runAfter(0, internal.media_sharp.optimize_image, {
+			image: media,
 		});
 
 		return {

@@ -93,9 +93,14 @@ function Home() {
 			<main className="w-full flex-grow">
 				<div className="container mx-auto px-4">
 					<FilterAccordion />
-					<Button asChild>
-						<Link to="/admin/osnutki">Admin osnutki</Link>
-					</Button>
+					<div className="flex grow-0 flex-row justify-center gap-4">
+						<Button asChild>
+							<Link to="/prijava">Prijava</Link>
+						</Button>
+						<Button asChild>
+							<Link to="/admin/osnutki">Admin osnutki</Link>
+						</Button>
+					</div>
 					{search_api.results?.map(({ _id, title }) => (
 						<div key={_id}>{title}</div>
 					))}

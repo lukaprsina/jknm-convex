@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { Authenticated, Unauthenticated } from "convex/react";
+import { Authenticated, Unauthenticated, useConvexAuth } from "convex/react";
 import { Home } from "lucide-react";
 import { useState } from "react";
 import { Button } from "~/components/ui/button";
@@ -8,13 +8,21 @@ import { auth_client } from "~/lib/auth-client";
 
 export const Route = createFileRoute("/prijava/")({
 	component: RouteComponent,
+	/* loader: async ({ context }) => {
+		// context.convexClient
+	}, */
 });
 
 function RouteComponent() {
 	const navigate = useNavigate();
+	const auth = useConvexAuth();
 
 	const [isLoading, setIsLoading] = useState(false);
 	const [errorMessage, setErrorMessage] = useState("");
+
+	if (auth.isLoading) {
+		return null;
+	}
 
 	return (
 		<div className="flex flex-col gap-6">

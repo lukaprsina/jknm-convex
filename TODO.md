@@ -66,6 +66,8 @@ As a workaround for the bundling limitations above, Convex provides an escape ha
 }
 ```
 
+bunx convex dev --configure existing --dev-deployment local
+
 ## Ostalo
 
 ```
