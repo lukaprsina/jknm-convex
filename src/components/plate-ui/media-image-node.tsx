@@ -1,11 +1,21 @@
 "use client";
 
 import { useDraggable } from "@platejs/dnd";
-import { Image, ImagePlugin, useMediaState } from "@platejs/media/react";
+import {
+	ImagePlugin,
+	openImagePreview,
+	useMediaState,
+} from "@platejs/media/react";
 import { ResizableProvider, useResizableValue } from "@platejs/resizable";
-import type { TImageElement } from "platejs";
+import type { TImageElement, TMediaElement } from "platejs";
 import type { PlateElementProps } from "platejs/react";
-import { PlateElement, withHOC } from "platejs/react";
+import {
+	createPrimitiveComponent,
+	PlateElement,
+	useEditorRef,
+	useElement,
+	withHOC,
+} from "platejs/react";
 
 import { cn } from "~/lib/utils";
 
@@ -16,6 +26,29 @@ import {
 	Resizable,
 	ResizeHandle,
 } from "./resize-handle";
+
+// packages/media/src/react/image/components/Image.tsx
+const useImage = () => {
+	const element = useElement<TMediaElement>();
+	const editor = useEditorRef();
+
+	// https://jknm-gradivo.s3.eu-central-003.backblazeb2.com/jh79zr5b0sb7w7b7td8ckz0msh7khebn/original.jpg
+	return {
+		props: {
+			draggable: true,
+			src: element.url,
+			// src: `https://${import.meta.env.VITE_AWS_BUCKET_NAME}.s3.${import.meta.env.VITE_AWS_REGION}.backblazeb2.com/${element.url}`,
+			// src: `https://gradivo.jknm.site/${element.url}`,
+			onDoubleClickCapture: () => {
+				openImagePreview(editor, element);
+			},
+		},
+	};
+};
+
+const Image = createPrimitiveComponent("img")({
+	propsHook: useImage,
+});
 
 export const ImageElement = withHOC(
 	ResizableProvider,

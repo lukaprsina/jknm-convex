@@ -21,8 +21,8 @@ export const generate_presigned_upload_url = mutation({
 
 		// B2 S3-compatible endpoint
 		const client = new S3Client({
-			endpoint: `https://s3.${process.env.AWS_REGION}.backblazeb2.com`,
-			region: process.env.AWS_REGION,
+			endpoint: `https://s3.${process.env.VITE_AWS_REGION}.backblazeb2.com`,
+			region: process.env.VITE_AWS_REGION,
 			credentials: {
 				accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
 				secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
@@ -50,7 +50,7 @@ export const generate_presigned_upload_url = mutation({
 		});
 
 		const putObjectCommand = new PutObjectCommand({
-			Bucket: process.env.AWS_BUCKET_NAME,
+			Bucket: process.env.VITE_AWS_BUCKET_NAME,
 			Key: key,
 			ContentType: args.content_type,
 		});
@@ -60,9 +60,10 @@ export const generate_presigned_upload_url = mutation({
 		});
 
 		return {
-			url: presignedUrl,
+			presigned_url: presignedUrl,
 			key,
-			media_db_id,
+			// This must be hardcoded because I need to change every article if I change the domain
+			src: `https://gradivo.jknm.site/${key}`,
 		};
 	},
 });

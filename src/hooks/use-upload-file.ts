@@ -42,7 +42,7 @@ export function useUploadFile({
 	const mutation = useMutation<UploadedFile, Error, File>({
 		mutationFn: async (file: File) => {
 			// Step 1: Get presigned URL from Convex
-			const presignedData = await getPresignedUrl({
+			const upload_info = await getPresignedUrl({
 				filename: file.name,
 				content_type: file.type,
 				size_bytes: file.size,
@@ -81,14 +81,14 @@ export function useUploadFile({
 				// https://www.backblaze.com/docs/cloud-storage-s3-compatible-api
 				// https://github.com/backblaze-b2-samples/b2-browser-upload
 				// B2 doesn't support POST for presigned URLs, so we use PUT
-				xhr.open("PUT", presignedData.url);
+				xhr.open("PUT", upload_info.presigned_url);
 				xhr.setRequestHeader("Content-Type", file.type);
 				xhr.send(file_content);
 			});
 
 			return {
-				key: presignedData.media_db_id,
-				url: presignedData.media_db_id,
+				key: upload_info.src,
+				url: upload_info.key,
 				name: file.name,
 				size: file.size,
 				type: file.type,
