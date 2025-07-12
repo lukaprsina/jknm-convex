@@ -20,6 +20,6 @@
 		"isolatedModules": true,
 		"noEmit": true
 	},
-	"include": ["./**/*"],
+	"include": ["./**/*", "../scripts/media_sharp.ts"],
 	"exclude": ["./_generated"]
 }

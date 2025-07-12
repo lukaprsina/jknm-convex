@@ -4,6 +4,7 @@ import { createFileRoute, getRouteApi, Link } from "@tanstack/react-router";
 import type { EmptyObject } from "better-auth/react";
 import { api } from "convex/_generated/api";
 import { Button } from "~/components/ui/button";
+import { DraftCard } from "./-draft-card";
 
 export const Route = createFileRoute("/admin/osnutki/")({
 	component: RouteComponent,
@@ -43,13 +44,7 @@ function RouteComponent() {
 			<Button onClick={() => mutate({})}>Create Draft</Button>
 			<div>
 				{drafts.map((draft) => (
-					<Link
-						key={draft._id}
-						to="/admin/osnutki/$draft_id/uredi"
-						params={{ draft_id: draft.slug }}
-					>
-						{draft.title}
-					</Link>
+					<DraftCard key={draft._id} draft={draft} />
 				))}
 			</div>
 		</div>

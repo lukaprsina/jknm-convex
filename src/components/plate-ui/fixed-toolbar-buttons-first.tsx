@@ -30,7 +30,11 @@ import { MarkToolbarButton } from "./mark-toolbar-button";
 import { MediaToolbarButton } from "./media-toolbar-button";
 import { ModeToolbarButton } from "./mode-toolbar-button";
 import { MoreToolbarButton } from "./more-toolbar-button";
-import { PublishToolbarButton, SaveToolbarButton } from "./save-toolbar-button";
+import {
+	LogToolbarButton,
+	PublishToolbarButton,
+	SaveToolbarButton,
+} from "./save-toolbar-button";
 import { TableToolbarButton } from "./table-toolbar-button";
 import { TurnIntoToolbarButton } from "./turn-into-toolbar-button";
 
@@ -44,6 +48,7 @@ export function FixedToolbarButtonsFirst() {
 					<ToolbarGroup>
 						<SaveToolbarButton />
 						<PublishToolbarButton />
+						<LogToolbarButton />
 					</ToolbarGroup>
 					<ToolbarGroup>
 						<UndoToolbarButton />

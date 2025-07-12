@@ -2,6 +2,7 @@ import type { PaginationResult } from "convex/server";
 import { paginationOptsValidator } from "convex/server";
 import { v } from "convex/values";
 import { getAll, getManyFrom } from "convex-helpers/server/relationships";
+import type { Value } from "platejs";
 import type { Doc, Id } from "./_generated/dataModel";
 import { mutation, type QueryCtx, query } from "./_generated/server";
 
@@ -165,6 +166,17 @@ export const get_draft_by_slug = query({
 	},
 });
 
+/* function slugify_title(title: string, id: Id<"articles">): string {
+	const new_title = `${title ?? "Neimenovana novica"}-${id}`;
+
+	return slugify(new_title, {
+		lower: true,
+		strict: true,
+		replacement: "-",
+		remove: /[*+~.();'"!:@]/g,
+	});
+} */
+
 export const create_draft = mutation({
 	args: {},
 	handler: async (ctx) => {
@@ -174,23 +186,126 @@ export const create_draft = mutation({
 			throw new Error("User must be authenticated to create a draft article.");
 		}
 
+		const title = "Neimenovana novica"; // Default title
+
 		const new_draft_id = await ctx.db.insert("articles", {
 			status: "draft",
-			title: "Neimenovana novica",
-			slug: "",
-			content_markdown: "# Neimenovana novica",
+			title,
+			slug: "ERROR",
+			content_json: JSON.stringify([
+				{
+					type: "h1",
+					children: [{ text: title }],
+				},
+			]),
 			view_count: 0,
 			updated_at: Date.now(),
 			created_at: Date.now(),
 		});
 
-		const slug = `neimenovana-novica-${new_draft_id}`;
+		const slug = new_draft_id;
 
 		await ctx.db.patch(new_draft_id, {
 			slug,
 		});
 
 		return slug;
+	},
+});
+
+/* export const update_draft = mutation({
+	args: {
+		id: v.id("articles"),
+		content_json: v.string(),
+	},
+	handler: async (ctx, args) => {
+		const user_id = await ctx.auth.getUserIdentity();
+		if (!user_id) {
+			throw new Error("User must be authenticated to update a draft article.");
+		}
+
+		const article = await ctx.db.get(args.id);
+
+		if (!article || article.status !== "draft") {
+			throw new Error("Article not found or is not a draft.");
+		}
+
+		let title = "Neimenovana novica"; // Default title
+		let slug = slugify_title(title, article._id);
+		let content_json: Value | undefined;
+		try {
+			content_json = JSON.parse(args.content_json);
+		} catch (error) {
+			throw new Error(`Failed to parse content JSON: ${error}`);
+		}
+
+		if (Array.isArray(content_json) && content_json.length > 0) {
+			const firstNode = content_json[0];
+			if (firstNode.type === "h1" && firstNode.children.length > 0) {
+				const descendant = firstNode.children[0];
+				title = descendant.text as string;
+
+				slug = slugify_title(title, article._id);
+			} else {
+				throw new Error("First node is not an H1 with text children.");
+			}
+		} else {
+			throw new Error("Content JSON is not a valid array or is empty.");
+		}
+
+		// Update the article with the new values
+		ctx.db.patch(article._id, {
+			title: title,
+			slug: slug,
+			content_json: args.content_json ?? article.content_json,
+			updated_at: Date.now(),
+		});
+	},
+}); */
+
+export const update_draft = mutation({
+	args: {
+		id: v.id("articles"),
+		content_json: v.string(),
+	},
+	handler: async (ctx, args) => {
+		const user_id = await ctx.auth.getUserIdentity();
+		if (!user_id) {
+			throw new Error("User must be authenticated to update a draft article.");
+		}
+
+		const article = await ctx.db.get(args.id);
+
+		if (!article || article.status !== "draft") {
+			throw new Error("Article not found or is not a draft.");
+		}
+
+		let title = "Neimenovana novica"; // Default title
+		let content_json: Value | undefined;
+		try {
+			content_json = JSON.parse(args.content_json);
+		} catch (error) {
+			throw new Error(`Failed to parse content JSON: ${error}`);
+		}
+
+		if (Array.isArray(content_json) && content_json.length > 0) {
+			const firstNode = content_json[0];
+			if (firstNode.type === "h1" && firstNode.children.length > 0) {
+				const descendant = firstNode.children[0];
+				title = descendant.text as string;
+			} else {
+				throw new Error("First node is not an H1 with text children.");
+			}
+		} else {
+			throw new Error("Content JSON is not a valid array or is empty.");
+		}
+
+		// Update the article with the new values
+		ctx.db.patch(article._id, {
+			title: title,
+			content_json: args.content_json ?? article.content_json,
+			updated_at: Date.now(),
+		});
 	},
 });
 

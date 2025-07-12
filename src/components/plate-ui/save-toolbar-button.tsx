@@ -1,4 +1,4 @@
-import { CloudUploadIcon, SaveIcon } from "lucide-react";
+import { CloudUploadIcon, SaveIcon, ScrollTextIcon } from "lucide-react";
 import { useEditorRef } from "platejs/react";
 import { ToolbarButton } from "../ui/toolbar";
 
@@ -36,6 +36,25 @@ export function PublishToolbarButton(
 			tooltip="Publish"
 		>
 			<CloudUploadIcon />
+		</ToolbarButton>
+	);
+}
+
+export function LogToolbarButton(
+	props: React.ComponentProps<typeof ToolbarButton>,
+) {
+	const editor = useEditorRef();
+
+	return (
+		<ToolbarButton
+			{...props}
+			onClick={() => {
+				console.log("Logging", editor.children);
+			}}
+			onMouseDown={(e) => e.preventDefault()}
+			tooltip="Log"
+		>
+			<ScrollTextIcon />
 		</ToolbarButton>
 	);
 }

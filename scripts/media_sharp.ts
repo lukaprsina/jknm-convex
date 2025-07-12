@@ -1,7 +1,7 @@
 "use node";
 
-import { internalAction } from "./_generated/server";
-import { media_validator } from "./schema";
+import { internalAction } from "../convex/_generated/server";
+import { media_validator } from "../convex/schema";
 
 export const optimize_image = internalAction({
 	args: {

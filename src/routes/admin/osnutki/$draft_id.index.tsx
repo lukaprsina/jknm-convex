@@ -4,7 +4,7 @@ import { createFileRoute, getRouteApi } from "@tanstack/react-router";
 import { api } from "convex/_generated/api";
 import { ArticlePlateEditor } from "~/components/article-plate-editor";
 
-export const Route = createFileRoute("/admin/osnutki/$draft_id/uredi/")({
+export const Route = createFileRoute("/admin/osnutki/$draft_id/")({
 	component: RouteComponent,
 });
 
@@ -15,9 +15,9 @@ function RouteComponent() {
 
 	const { data: article } = useSuspenseQuery(
 		convexQuery(api.articles.get_draft_by_slug, { slug: draft_id }),
-	);
+	)
 
 	return (
 		<ArticlePlateEditor value={article.content_json} article_id={article._id} />
-	);
+	)
 }

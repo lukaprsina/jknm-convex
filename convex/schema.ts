@@ -14,7 +14,7 @@ const schema = defineSchema({
 		title: v.string(),
 		slug: v.string(),
 		status: article_status_validator,
-		content_json: v.optional(v.any()), // PlateJS Value type
+		content_json: v.string(), // PlateJS Value type
 		content_markdown: v.optional(v.string()), // For full-text search
 		excerpt: v.optional(v.string()), // For previews/SEO
 		view_count: v.number(),
