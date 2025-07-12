@@ -1,17 +1,19 @@
 import { CloudUploadIcon, SaveIcon, ScrollTextIcon } from "lucide-react";
 import { useEditorRef } from "platejs/react";
+import { SavePlugin } from "../plugins/save";
 import { ToolbarButton } from "../ui/toolbar";
 
 export function SaveToolbarButton(
 	props: React.ComponentProps<typeof ToolbarButton>,
 ) {
 	const editor = useEditorRef();
+	const save_plugin = editor.getApi(SavePlugin).save;
 
 	return (
 		<ToolbarButton
 			{...props}
 			onClick={() => {
-				console.log("Saving", editor.children);
+				save_plugin.save();
 			}}
 			onMouseDown={(e) => e.preventDefault()}
 			tooltip="Save"
@@ -25,12 +27,13 @@ export function PublishToolbarButton(
 	props: React.ComponentProps<typeof ToolbarButton>,
 ) {
 	const editor = useEditorRef();
+	const save_plugin = editor.getApi(SavePlugin).save;
 
 	return (
 		<ToolbarButton
 			{...props}
 			onClick={() => {
-				console.log("Publishing", editor.children);
+				save_plugin.publish();
 			}}
 			onMouseDown={(e) => e.preventDefault()}
 			tooltip="Publish"

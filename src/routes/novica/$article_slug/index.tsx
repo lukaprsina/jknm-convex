@@ -45,7 +45,7 @@ function RouteComponent() {
 
 	const editor = createSlateEditor({
 		plugins: BaseEditorKit,
-		nodeId: false, // Disable NodeIdPlugin to prevent hydration mismatches
+		// nodeId: false, // Disable NodeIdPlugin to prevent hydration mismatches
 		value: (editor: PlateEditor) => {
 			return editor
 				.getApi(MarkdownPlugin)

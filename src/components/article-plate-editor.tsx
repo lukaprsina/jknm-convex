@@ -58,12 +58,23 @@ function ConfiguredPlateEditor({ article_id }: { article_id: Id<"articles"> }) {
 		mutationFn: useConvexMutation(api.articles.update_draft),
 	});
 
+	const publish_draft = useMutation({
+		mutationFn: useConvexMutation(api.articles.publish_draft),
+	});
+
 	useEffect(() => {
 		if (!is_mounted) return;
 
 		editor.setOption(SavePlugin, "article_id", article_id);
 		editor.setOption(SavePlugin, "update_draft", update_draft.mutate);
-	}, [is_mounted, editor, update_draft.mutate, article_id]);
+		editor.setOption(SavePlugin, "publish_draft", publish_draft.mutate);
+	}, [
+		is_mounted,
+		editor,
+		article_id,
+		update_draft.mutate,
+		publish_draft.mutate,
+	]);
 
 	return (
 		<EditorContainer>

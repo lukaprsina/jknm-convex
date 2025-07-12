@@ -3,8 +3,60 @@ import { paginationOptsValidator } from "convex/server";
 import { v } from "convex/values";
 import { getAll, getManyFrom } from "convex-helpers/server/relationships";
 import type { Value } from "platejs";
+import slugify from "slugify";
 import type { Doc, Id } from "./_generated/dataModel";
 import { mutation, type QueryCtx, query } from "./_generated/server";
+
+/**
+ * Helper function to load authors for an article in the correct order
+ */
+async function load_authors_for_article(
+	ctx: QueryCtx,
+	articleId: Id<"articles">,
+) {
+	const authorLinks = await ctx.db
+		.query("articles_to_authors")
+		.withIndex("by_article_and_order", (q) => q.eq("article_id", articleId))
+		.collect();
+
+	const authors = await Promise.all(
+		authorLinks.map(async (link) => {
+			const author = await ctx.db.get(link.author_id);
+			return author ? { ...author, order: link.order } : null;
+		}),
+	);
+
+	return authors
+		.filter((author): author is NonNullable<typeof author> => author !== null)
+		.sort((a, b) => a.order - b.order);
+}
+
+/**
+ * Helper function to load authors for multiple articles and apply author filtering
+ */
+async function load_authors_and_filter<T extends Doc<"articles">>(
+	ctx: QueryCtx,
+	articles: T[],
+	authorFilter: string[],
+) {
+	const articlesWithAuthors = await Promise.all(
+		articles.map(async (article) => {
+			const authors = await load_authors_for_article(ctx, article._id);
+			return {
+				...article,
+				authors,
+			};
+		}),
+	);
+
+	// Filter by authors if specified
+	const hasAuthorFilter = authorFilter.length > 0;
+	return hasAuthorFilter
+		? articlesWithAuthors.filter((article) =>
+				article.authors.some((author) => authorFilter.includes(author._id)),
+			)
+		: articlesWithAuthors;
+}
 
 /**
  * Get an article by its slug
@@ -166,7 +218,7 @@ export const get_draft_by_slug = query({
 	},
 });
 
-/* function slugify_title(title: string, id: Id<"articles">): string {
+function slugify_title(title: string, id: Id<"articles">): string {
 	const new_title = `${title ?? "Neimenovana novica"}-${id}`;
 
 	return slugify(new_title, {
@@ -175,7 +227,7 @@ export const get_draft_by_slug = query({
 		replacement: "-",
 		remove: /[*+~.();'"!:@]/g,
 	});
-} */
+}
 
 export const create_draft = mutation({
 	args: {},
@@ -212,56 +264,6 @@ export const create_draft = mutation({
 		return slug;
 	},
 });
-
-/* export const update_draft = mutation({
-	args: {
-		id: v.id("articles"),
-		content_json: v.string(),
-	},
-	handler: async (ctx, args) => {
-		const user_id = await ctx.auth.getUserIdentity();
-		if (!user_id) {
-			throw new Error("User must be authenticated to update a draft article.");
-		}
-
-		const article = await ctx.db.get(args.id);
-
-		if (!article || article.status !== "draft") {
-			throw new Error("Article not found or is not a draft.");
-		}
-
-		let title = "Neimenovana novica"; // Default title
-		let slug = slugify_title(title, article._id);
-		let content_json: Value | undefined;
-		try {
-			content_json = JSON.parse(args.content_json);
-		} catch (error) {
-			throw new Error(`Failed to parse content JSON: ${error}`);
-		}
-
-		if (Array.isArray(content_json) && content_json.length > 0) {
-			const firstNode = content_json[0];
-			if (firstNode.type === "h1" && firstNode.children.length > 0) {
-				const descendant = firstNode.children[0];
-				title = descendant.text as string;
-
-				slug = slugify_title(title, article._id);
-			} else {
-				throw new Error("First node is not an H1 with text children.");
-			}
-		} else {
-			throw new Error("Content JSON is not a valid array or is empty.");
-		}
-
-		// Update the article with the new values
-		ctx.db.patch(article._id, {
-			title: title,
-			slug: slug,
-			content_json: args.content_json ?? article.content_json,
-			updated_at: Date.now(),
-		});
-	},
-}); */
 
 export const update_draft = mutation({
 	args: {
@@ -309,53 +311,55 @@ export const update_draft = mutation({
 	},
 });
 
-/**
- * Helper function to load authors for an article in the correct order
- */
-async function load_authors_for_article(
-	ctx: QueryCtx,
-	articleId: Id<"articles">,
-) {
-	const authorLinks = await ctx.db
-		.query("articles_to_authors")
-		.withIndex("by_article_and_order", (q) => q.eq("article_id", articleId))
-		.collect();
+export const publish_draft = mutation({
+	args: {
+		id: v.id("articles"),
+		content_json: v.string(),
+	},
+	handler: async (ctx, args) => {
+		const user_id = await ctx.auth.getUserIdentity();
+		if (!user_id) {
+			throw new Error("User must be authenticated to update a draft article.");
+		}
 
-	const authors = await Promise.all(
-		authorLinks.map(async (link) => {
-			const author = await ctx.db.get(link.author_id);
-			return author ? { ...author, order: link.order } : null;
-		}),
-	);
+		const article = await ctx.db.get(args.id);
 
-	return authors
-		.filter((author): author is NonNullable<typeof author> => author !== null)
-		.sort((a, b) => a.order - b.order);
-}
+		if (!article || article.status !== "draft") {
+			throw new Error("Article not found or is not a draft.");
+		}
 
-/**
- * Helper function to load authors for multiple articles and apply author filtering
- */
-async function load_authors_and_filter<T extends Doc<"articles">>(
-	ctx: QueryCtx,
-	articles: T[],
-	authorFilter: string[],
-) {
-	const articlesWithAuthors = await Promise.all(
-		articles.map(async (article) => {
-			const authors = await load_authors_for_article(ctx, article._id);
-			return {
-				...article,
-				authors,
-			};
-		}),
-	);
+		let title = "Neimenovana novica"; // Default title
+		let slug = slugify_title(title, article._id);
+		let content_json: Value | undefined;
 
-	// Filter by authors if specified
-	const hasAuthorFilter = authorFilter.length > 0;
-	return hasAuthorFilter
-		? articlesWithAuthors.filter((article) =>
-				article.authors.some((author) => authorFilter.includes(author._id)),
-			)
-		: articlesWithAuthors;
-}
+		try {
+			content_json = JSON.parse(args.content_json);
+		} catch (error) {
+			throw new Error(`Failed to parse content JSON: ${error}`);
+		}
+
+		if (Array.isArray(content_json) && content_json.length > 0) {
+			const firstNode = content_json[0];
+			if (firstNode.type === "h1" && firstNode.children.length > 0) {
+				const descendant = firstNode.children[0];
+				title = descendant.text as string;
+				slug = slugify_title(title, article._id);
+			} else {
+				throw new Error("First node is not an H1 with text children.");
+			}
+		} else {
+			throw new Error("Content JSON is not a valid array or is empty.");
+		}
+
+		// Update the article with the new values
+		ctx.db.patch(article._id, {
+			title: title,
+			slug: slug,
+			content_json: args.content_json,
+			status: "published",
+			published_at: Date.now(),
+			published_year: new Date().getFullYear(),
+			updated_at: Date.now(),
+		});
+	},
+});

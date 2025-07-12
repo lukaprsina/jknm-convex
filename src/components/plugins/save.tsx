@@ -15,10 +15,15 @@ const autosave_atom = atomWithStorage<AutoSaveStorage | undefined>(
 	"autosave",
 	undefined,
 );
+
 const autosave_store = createStore();
 
 type UpdateDraftMutation = (
 	args: typeof api.articles.update_draft._args,
+) => void;
+
+type PublishDraftMutation = (
+	args: typeof api.articles.publish_draft._args,
 ) => void;
 
 export const SavePlugin = createPlatePlugin({
@@ -26,6 +31,7 @@ export const SavePlugin = createPlatePlugin({
 	options: {
 		article_id: undefined as Id<"articles"> | undefined,
 		update_draft: undefined as UpdateDraftMutation | undefined,
+		publish_draft: undefined as PublishDraftMutation | undefined,
 	},
 	handlers: {
 		/* onBlur: (context) => {
@@ -55,7 +61,18 @@ export const SavePlugin = createPlatePlugin({
 		publish: async () => {
 			const value = context.editor.children;
 			autosave_store.set(autosave_atom, { value, timestamp: new Date() });
-			console.log("Data published:", value);
+			const publish_draft = context.getOption("publish_draft");
+			const article_id = context.getOption("article_id");
+
+			if (!publish_draft || !article_id) {
+				console.error("Publish draft function or article ID is not set.");
+				return;
+			}
+
+			publish_draft({
+				id: article_id,
+				content_json: JSON.stringify(value),
+			});
 		},
 	}))
 	.extend(() => ({
