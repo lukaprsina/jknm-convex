@@ -1,11 +1,11 @@
 import type { PaginationResult } from "convex/server";
 import { paginationOptsValidator } from "convex/server";
 import { v } from "convex/values";
-import { getAll, getManyFrom } from "convex-helpers/server/relationships";
 import type { Value } from "platejs";
 import slugify from "slugify";
 import type { Doc, Id } from "./_generated/dataModel";
 import { mutation, type QueryCtx, query } from "./_generated/server";
+import { article_validator } from "./schema";
 
 /**
  * Helper function to load authors for an article in the correct order
@@ -62,46 +62,27 @@ async function load_authors_and_filter<T extends Doc<"articles">>(
  * Get an article by its slug
  */
 export const get_by_slug = query({
-	args: { slug: v.string(), user_id: v.optional(v.string()) },
+	args: { slug: article_validator.fields.slug },
 	handler: async (ctx, args) => {
+		const user_id = await ctx.auth.getUserIdentity();
+
 		const article_unfiltered = ctx.db
 			.query("articles")
 			.withIndex("by_slug", (q) => q.eq("slug", args.slug))
 			.order("desc");
 
-		const article = args.user_id
+		const article = user_id
 			? await article_unfiltered.first()
 			: await article_unfiltered
-					.filter((q) => q.eq("status", "published"))
+					.filter((q) => q.eq(q.field("status"), "published"))
 					.first();
 
 		if (!article) {
+			console.warn(`Article with slug "${args.slug}" not found.`, { args });
 			return null;
 		}
 
-		// Use getManyFrom helper for cleaner code
-		const authorLinks = await getManyFrom(
-			ctx.db,
-			"articles_to_authors",
-			"by_article_and_order",
-			article._id,
-			"article_id",
-		);
-
-		// Get all authors in parallel using getAll helper
-		const authorIds = authorLinks.map((link) => link.author_id);
-		const authorsData = await getAll(ctx.db, authorIds);
-
-		// Combine author data with order information
-		const authors = authorLinks
-			.map((link) => {
-				const authorData = authorsData.find(
-					(author) => author?._id === link.author_id,
-				);
-				return authorData ? { ...authorData, order: link.order } : null;
-			})
-			.filter((author): author is NonNullable<typeof author> => author !== null)
-			.sort((a, b) => a.order - b.order);
+		const authors = await load_authors_for_article(ctx, article._id);
 
 		return {
 			...article,
@@ -171,17 +152,31 @@ export const search_articles_unified = query({
 	},
 });
 
-export const get_all_drafts = query({
-	args: {},
-	handler: async (ctx) => {
+export const get_all_of_status = query({
+	args: {
+		status: article_validator.fields.status,
+	},
+	handler: async (ctx, args) => {
+		const user_id = await ctx.auth.getUserIdentity();
+
+		console.log(
+			`Fetching articles with status "${args.status}" for user ${user_id}.`,
+		);
+
+		if (!user_id) {
+			throw new Error(
+				`User must be authenticated to get articles of status ${args.status}.`,
+			);
+		}
+
 		const drafts = await ctx.db
 			.query("articles")
-			.withIndex("by_status_and_updated_at", (q) => q.eq("status", "draft"))
+			.withIndex("by_status_and_updated_at", (q) => q.eq("status", args.status))
 			.order("desc")
 			.collect();
 
 		// Load authors for each draft article
-		const draftsWithAuthors = await Promise.all(
+		const drafts_with_authors = await Promise.all(
 			drafts.map(async (draft) => {
 				const authors = await load_authors_for_article(ctx, draft._id);
 				return {
@@ -191,30 +186,7 @@ export const get_all_drafts = query({
 			}),
 		);
 
-		return draftsWithAuthors;
-	},
-});
-
-export const get_draft_by_slug = query({
-	args: { slug: v.string() },
-	handler: async (ctx, args) => {
-		const draft = await ctx.db
-			.query("articles")
-			.withIndex("by_slug", (q) => q.eq("slug", args.slug))
-			// .filter((q) => q.eq("status", "draft")) // TODO: why doesn't this work?
-			.first();
-
-		if (!draft) {
-			throw new Error(`Draft with slug "${args.slug}" not found.`);
-		}
-
-		// Load authors for the draft article
-		const authors = await load_authors_for_article(ctx, draft._id);
-
-		return {
-			...draft,
-			authors,
-		};
+		return drafts_with_authors;
 	},
 });
 

@@ -101,8 +101,14 @@ function Home() {
 							<Link to="/admin/osnutki">Admin osnutki</Link>
 						</Button>
 					</div>
-					{search_api.results?.map(({ _id, title }) => (
-						<div key={_id}>{title}</div>
+					{search_api.results?.map((article) => (
+						<Link
+							key={article._id}
+							to="/novica/$article_slug"
+							params={{ article_slug: article.slug }}
+						>
+							{article.title}
+						</Link>
 					))}
 					{/* Sentinel for infinite scroll */}
 					{search_api.status === "CanLoadMore" && (

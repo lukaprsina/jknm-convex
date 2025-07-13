@@ -10,7 +10,7 @@ export const Route = createFileRoute("/admin/osnutki/")({
 	component: RouteComponent,
 	loader: async ({ context }) => {
 		const drafts = await context.queryClient.ensureQueryData(
-			convexQuery(api.articles.get_all_drafts, {}),
+			convexQuery(api.articles.get_all_of_status, { status: "draft" }),
 		);
 
 		return {

@@ -1,7 +1,7 @@
 {
 	"editor.codeActionsOnSave": {
 		"quickfix.biome": "explicit",
-		"source.organizeImports.biome": "always",
+		"source.organizeImports.biome": "always"
 	},
 	"editor.quickSuggestions": {
 		// https://marketplace.visualstudio.com/items?itemName=bradlc.vscode-tailwindcss#recommended-vs-code-settings
@@ -14,7 +14,7 @@
 		"vite.config.*": "jsconfig*, vitest.config.*, cypress.config.*, playwright.config.*"
 	},
 	// https://github.com/tailwindlabs/tailwindcss/discussions/5258
-	// 
+	//
 	"css.lint.unknownAtRules": "ignore",
 	// use LF line endings
 	"files.eol": "\n",
@@ -35,4 +35,5 @@
 	},
 	// always choose typescript from node_modules
 	"typescript.tsdk": "./node_modules/typescript/lib",
+	"typescript.experimental.useTsgo": false
 }

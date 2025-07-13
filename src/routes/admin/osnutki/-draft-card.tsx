@@ -18,10 +18,6 @@ export function DraftCard({ draft }: { draft: Doc<"articles"> }) {
 						<CardTitle className="font-bold text-lg">
 							{draft.title || "Neimenovana novica"}
 						</CardTitle>
-						{/* Edit button removed from here */}
-						<div className="">
-							{/* Keep Trash button inside, as it’s not a Link */}
-						</div>
 					</CardHeader>
 					<CardContent className="text-gray-700">
 						{new Date(draft.updated_at).toLocaleDateString("sl-SI", {
@@ -32,7 +28,7 @@ export function DraftCard({ draft }: { draft: Doc<"articles"> }) {
 					</CardContent>
 				</Card>
 			</Link>
-			{/* Edit Link positioned absolutely */}
+			{/* Buttons positioned absolutely */}
 			<div className="absolute top-4 right-4 ml-auto flex gap-2">
 				<Button variant="outline" asChild>
 					<Link
