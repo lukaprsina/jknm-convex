@@ -14,7 +14,7 @@ import { z } from "zod";
 import { Footer2 } from "~/components/layout/footer2";
 import { Navbar1 } from "~/components/layout/navbar1";
 import { Button } from "~/components/ui/button";
-
+import { auth_client } from "~/lib/auth-client";
 import { FilterAccordion } from "./-filter-accordion";
 
 const DEFAULT_NUM_ITEMS = 10;
@@ -99,6 +99,14 @@ function Home() {
 						</Button>
 						<Button asChild>
 							<Link to="/admin/osnutki">Admin osnutki</Link>
+						</Button>
+						<Button
+							onClick={async () => {
+								const result = await auth_client.deleteUser();
+								console.log("Delete user result:", result);
+							}}
+						>
+							Odstrani uporabnika
 						</Button>
 					</div>
 					{search_api.results?.map((article) => (

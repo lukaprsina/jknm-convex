@@ -6,7 +6,7 @@ import {
 } from "@tanstack/react-query";
 import { createRouter as createTanStackRouter } from "@tanstack/react-router";
 import { routerWithQueryClient } from "@tanstack/react-router-with-query";
-import { ConvexReactClient } from "convex/react";
+import { ConvexProvider, ConvexReactClient } from "convex/react";
 import toast from "react-hot-toast";
 import { DefaultCatchBoundary } from "./components/DefaultCatchBoundary";
 import { NotFound } from "./components/NotFound";
@@ -58,6 +58,11 @@ export function createRouter() {
 			defaultPreloadStaleTime: 0,
 			defaultStructuralSharing: true,
 			scrollRestoration: true,
+			Wrap: ({ children }) => (
+				<ConvexProvider client={convexQueryClient.convexClient}>
+					{children}
+				</ConvexProvider>
+			),
 		}),
 		queryClient,
 	);

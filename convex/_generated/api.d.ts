@@ -47,30 +47,6 @@ export declare const internal: FilterApi<
 >;
 
 export declare const components: {
-  shardedCounter: {
-    public: {
-      add: FunctionReference<
-        "mutation",
-        "internal",
-        { count: number; name: string; shard?: number; shards?: number },
-        number
-      >;
-      count: FunctionReference<"query", "internal", { name: string }, number>;
-      estimateCount: FunctionReference<
-        "query",
-        "internal",
-        { name: string; readFromShards?: number; shards?: number },
-        any
-      >;
-      rebalance: FunctionReference<
-        "mutation",
-        "internal",
-        { name: string; shards?: number },
-        any
-      >;
-      reset: FunctionReference<"mutation", "internal", { name: string }, any>;
-    };
-  };
   betterAuth: {
     adapterTest: {
       count: FunctionReference<"query", "internal", any, any>;

@@ -2,34 +2,46 @@ import {
 	type AuthFunctions,
 	BetterAuth,
 	convexAdapter,
+	type PublicAuthFunctions,
 } from "@convex-dev/better-auth";
 import { convex } from "@convex-dev/better-auth/plugins";
 import { betterAuth } from "better-auth";
-import { components, internal } from "./_generated/api";
+import { api, components, internal } from "./_generated/api";
 import type { DataModel, Id } from "./_generated/dataModel";
-import type { GenericCtx } from "./_generated/server";
+import { type GenericCtx, query } from "./_generated/server";
 
 // Typesafe way to pass Convex functions defined in this file
 const authFunctions: AuthFunctions = internal.auth;
+const publicAuthFunctions: PublicAuthFunctions = api.auth;
 
 // Initialize the component
 export const betterAuthComponent = new BetterAuth(components.betterAuth, {
 	authFunctions,
+	publicAuthFunctions,
+	verbose: true,
 });
 
 export const createAuth = (ctx: GenericCtx) =>
 	// Configure your Better Auth instance here
 	betterAuth({
 		// All auth requests will be proxied through your TanStack Start server
-		baseURL: process.env.SITE_URL!, // "http://localhost:3000" or "https://cf.jknm.site"
+		baseURL: process.env.SITE_URL!, // "http://localhost:3000" or "https://new.jknm.site"
 		database: convexAdapter(ctx, betterAuthComponent),
-
-		/* // Simple non-verified email/password to get started
-        emailAndPassword: {
-            enabled: true,
-            requireEmailVerification: false,
-        }, */
-		session: {
+		emailAndPassword: {
+			enabled: true,
+			requireEmailVerification: false,
+		},
+		user: {
+			deleteUser: {
+				enabled: true,
+			},
+		},
+		account: {
+			accountLinking: {
+				enabled: true,
+			},
+		},
+		/* session: {
 			expiresIn: 60 * 60 * 24 * 365, // 1 year
 			updateAge: 60 * 60 * 24 * 30, // refresh every 30 days
 			disableSessionRefresh: false, // allow auto-refresh
@@ -38,7 +50,7 @@ export const createAuth = (ctx: GenericCtx) =>
 				enabled: true,
 				maxAge: 60 * 60 * 24 * 30, // cache for 30 days
 			},
-		},
+		}, */
 		socialProviders: {
 			google: {
 				clientId: process.env.GOOGLE_CLIENT_ID!,
@@ -68,7 +80,7 @@ export const { createUser, updateUser, deleteUser, createSession } =
 
 // Example function for getting the current user
 // Feel free to edit, omit, etc.
-/* export const getCurrentUser = query({
+export const getCurrentUser = query({
 	args: {},
 	handler: async (ctx) => {
 		// Get user data from Better Auth - email, name, image, etc.
@@ -84,4 +96,4 @@ export const { createUser, updateUser, deleteUser, createSession } =
 			...userMetadata,
 		};
 	},
-}); */
+});

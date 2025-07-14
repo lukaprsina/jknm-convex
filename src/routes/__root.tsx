@@ -10,6 +10,7 @@ import {
 	HeadContent,
 	Outlet,
 	Scripts,
+	useRouteContext,
 } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import { createServerFn } from "@tanstack/react-start";
@@ -27,7 +28,6 @@ const fetchAuth = createServerFn({ method: "GET" }).handler(async () => {
 	const sessionCookieName = await getCookieName();
 	const token = getCookie(sessionCookieName);
 	const request = getWebRequest();
-	// const { session } = await fetchSession(createAuth, request);
 	const { session } = await fetchSession(request);
 	return {
 		userId: session?.user.id,
@@ -88,10 +88,11 @@ export const Route = createRootRouteWithContext<{
 	component: RootComponent,
 });
 
-const root_route = getRouteApi("__root__");
+const _root_route = getRouteApi("__root__");
 
 function RootComponent() {
-	const context = root_route.useRouteContext();
+	// const context = root_route.useRouteContext();
+	const context = useRouteContext({ from: Route.id });
 
 	return (
 		<ConvexBetterAuthProvider

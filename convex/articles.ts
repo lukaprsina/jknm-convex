@@ -3,6 +3,7 @@ import { paginationOptsValidator } from "convex/server";
 import { v } from "convex/values";
 import type { Value } from "platejs";
 import slugify from "slugify";
+import { api } from "./_generated/api";
 import type { Doc, Id } from "./_generated/dataModel";
 import { mutation, type QueryCtx, query } from "./_generated/server";
 import { article_validator } from "./schema";
@@ -158,9 +159,11 @@ export const get_all_of_status = query({
 	},
 	handler: async (ctx, args) => {
 		const user_id = await ctx.auth.getUserIdentity();
+		const current_user = await ctx.runQuery(api.auth.getCurrentUser);
 
 		console.log(
 			`Fetching articles with status "${args.status}" for user ${user_id}.`,
+			current_user,
 		);
 
 		if (!user_id) {

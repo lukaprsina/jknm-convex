@@ -10,7 +10,6 @@ export const Route = createFileRoute("/novica/$article_slug/")({
 		const article = await context.queryClient.ensureQueryData(
 			convexQuery(api.articles.get_by_slug, {
 				slug: params.article_slug,
-				user_id: context.userId,
 			}),
 		);
 
