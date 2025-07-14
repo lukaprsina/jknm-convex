@@ -260,7 +260,7 @@ export const update_draft = mutation({
 		let title = "Neimenovana novica"; // Default title
 		let content_json: Value | undefined;
 		try {
-			content_json = JSON.parse(args.content_json);
+			content_json = JSON.parse(args.content_json) as Value;
 		} catch (error) {
 			throw new Error(`Failed to parse content JSON: ${error}`);
 		}
@@ -308,7 +308,7 @@ export const publish_draft = mutation({
 		let content_json: Value | undefined;
 
 		try {
-			content_json = JSON.parse(args.content_json);
+			content_json = JSON.parse(args.content_json) as Value;
 		} catch (error) {
 			throw new Error(`Failed to parse content JSON: ${error}`);
 		}

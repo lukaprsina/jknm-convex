@@ -9,7 +9,9 @@ const article_status_validator = v.union(
 );
 
 const schema = defineSchema({
-	users: defineTable({}),
+	users: defineTable({
+		email: v.string(),
+	}).index("email", ["email"]),
 	articles: defineTable({
 		title: v.string(),
 		slug: v.string(),

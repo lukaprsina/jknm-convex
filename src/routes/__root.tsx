@@ -20,8 +20,9 @@ import { Toaster } from "react-hot-toast";
 import appCss from "~/app.css?url";
 import { DefaultCatchBoundary } from "~/components/default-catch-boundary";
 import { NotFound } from "~/components/not-found";
-import { auth_client, fetchSession, getCookieName } from "~/lib/auth-client";
+import { auth_client } from "~/lib/auth-client";
 import { seo } from "~/lib/seo";
+import { fetchSession, getCookieName } from "~/lib/utils";
 
 // Server side session request
 const fetchAuth = createServerFn({ method: "GET" }).handler(async () => {
@@ -41,8 +42,6 @@ export const Route = createRootRouteWithContext<{
 	convexQueryClient: ConvexQueryClient;
 }>()({
 	beforeLoad: async (ctx) => {
-		// all queries, mutations and action made with TanStack Query will be
-		// authenticated by an identity token.
 		const auth = await fetchAuth();
 		const { userId, token } = auth;
 
@@ -91,7 +90,6 @@ export const Route = createRootRouteWithContext<{
 const _root_route = getRouteApi("__root__");
 
 function RootComponent() {
-	// const context = root_route.useRouteContext();
 	const context = useRouteContext({ from: Route.id });
 
 	return (

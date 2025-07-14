@@ -18,7 +18,7 @@ import { Route as NovicaArticle_slugIndexRouteImport } from './routes/novica/$ar
 import { Route as AdminOsnutkiIndexRouteImport } from './routes/admin/osnutki/index'
 import { Route as AdminOsnutkiDraft_idIndexRouteImport } from './routes/admin/osnutki/$draft_id.index'
 import { Route as AdminOsnutkiDraft_idUrediIndexRouteImport } from './routes/admin/osnutki/$draft_id.uredi.index'
-import { ServerRoute as ApiAuthSplatServerRouteImport } from './routes/api/auth.$'
+import { ServerRoute as ApiAuthSplatServerRouteImport } from './routes/api/auth/$'
 
 const rootServerRouteImport = createServerRootRoute()
 
