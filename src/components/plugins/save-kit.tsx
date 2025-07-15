@@ -4,7 +4,7 @@ import { createStore } from "jotai";
 import { atomWithStorage } from "jotai/utils";
 import type { Value } from "platejs";
 import { createPlatePlugin, Key } from "platejs/react";
-import { PublishDialogue } from "../plate-ui/publish-dialog";
+import { PublishDialog } from "../plate-ui/publish-dialog";
 
 type AutoSaveStorage = {
 	value: Value;
@@ -100,7 +100,7 @@ export const SaveKit = [
 	SavePlugin,
 	PublishPlugin.configure({
 		render: {
-			afterEditable: () => <PublishDialogue />,
+			afterEditable: () => <PublishDialog />,
 		},
 	}),
 ];

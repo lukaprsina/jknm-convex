@@ -75,7 +75,7 @@ export const get_by_slug = query({
 		const article = user_id
 			? await article_unfiltered.first()
 			: await article_unfiltered
-					.filter((q) => q.eq(q.field("status"), "published"))
+					// .filter((q) => q.eq(q.field("status"), "published")) // TODO
 					.first();
 
 		if (!article) {
