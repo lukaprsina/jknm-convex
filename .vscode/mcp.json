@@ -7,14 +7,10 @@
 			"password": true
 		}
 	],
-	"servers": {		
+	"servers": {
 		"plate": {
 			"command": "bunx",
-			"args": [
-				"-y",
-				"shadcn@canary",
-				"registry:mcp"
-			],
+			"args": ["-y", "shadcn@canary", "registry:mcp"],
 			"env": {
 				"REGISTRY_URL": "https://platejs.org/r/registry.json"
 			},
@@ -22,30 +18,19 @@
 		},
 		"playwright": {
 			"command": "bunx",
-			"args": [
-				"@playwright/mcp@latest"
-			],
+			"args": ["@playwright/mcp@latest"]
 		},
 		"convex": {
 			"command": "bunx",
-			"args": [
-				"convex@latest",
-				"mcp",
-				"start"
-			],
+			"args": ["convex@latest", "mcp", "start"]
 		},
 		"lucide-icons": {
 			"command": "bunx",
-			"args": [
-				"lucide-icons-mcp@latest",
-				"--stdio"
-			]
+			"args": ["lucide-icons-mcp@latest", "--stdio"]
 		},
 		"openmemory": {
 			"command": "bunx",
-			"args": [
-				"openmemory@latest",
-			],
+			"args": ["openmemory@latest"],
 			"env": {
 				"OPENMEMORY_API_KEY": "${input:OPENMEMORY_API_KEY}",
 				"CLIENT_NAME": "openmemory"

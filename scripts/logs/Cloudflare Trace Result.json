@@ -1,1 +1,96 @@
-{"trace":[{"step_name":"http_request_transform","type":"phase","matched":true,"public_name":"Transform Rules - URL Rewrites","trace":[{"step_name":"1f05be0148e043b2bfffbb9df85195e9","type":"ruleset","matched":true,"name":"default","kind":"zone","trace":[{"step_name":"7fb2db6a1c4440a79a3b9f760fc5ebf9","type":"rule","matched":true,"action_parameter":{"uri":{"path":{"expression":"concat(\"/file/jknm-novice\", http.request.uri.path)"}}},"expression":"(http.host eq \"cdn.jknm.site\")","description":"CDN rewrite to Backblaze B2","action":"rewrite"}]}],"zoneName":"jknm.site"},{"step_name":"file_upload_scan","type":"product","matched":false,"public_name":"Uploaded Content Scanning","zoneName":"jknm.site"},{"step_name":"http_request_firewall_managed","type":"phase","matched":false,"public_name":"WAF Managed Rules","trace":[{"step_name":"77454fe2d30c4220b5701f6fdfb893ba","type":"ruleset","matched":false,"description":"Created by the Cloudflare security team, this ruleset is designed to provide protection for free zones","name":"Cloudflare Managed Free Ruleset","kind":"managed"}],"zoneName":"jknm.site"},{"step_name":"request_managed_headers","type":"product","matched":false,"managed_headers":[{"id":"add_client_certificate_headers","enabled":false},{"id":"add_visitor_location_headers","enabled":false},{"id":"remove_visitor_ip_headers","enabled":false},{"id":"add_waf_credential_check_status_header","enabled":false}],"zoneName":"jknm.site"},{"type":"snippets","matched":false,"public_name":"Snippets","zoneName":"jknm.site"},{"type":"cloud_connector","matched":false,"public_name":"Cloud Connector","zoneName":"jknm.site"},{"step_name":"response_managed_headers","type":"product","matched":false,"managed_headers":[{"id":"remove_x-powered-by_header","enabled":false},{"id":"add_security_headers","enabled":false}],"zoneName":"jknm.site"}],"status_code":200}
+{
+	"trace": [
+		{
+			"step_name": "http_request_transform",
+			"type": "phase",
+			"matched": true,
+			"public_name": "Transform Rules - URL Rewrites",
+			"trace": [
+				{
+					"step_name": "1f05be0148e043b2bfffbb9df85195e9",
+					"type": "ruleset",
+					"matched": true,
+					"name": "default",
+					"kind": "zone",
+					"trace": [
+						{
+							"step_name": "7fb2db6a1c4440a79a3b9f760fc5ebf9",
+							"type": "rule",
+							"matched": true,
+							"action_parameter": {
+								"uri": {
+									"path": {
+										"expression": "concat(\"/file/jknm-novice\", http.request.uri.path)"
+									}
+								}
+							},
+							"expression": "(http.host eq \"cdn.jknm.site\")",
+							"description": "CDN rewrite to Backblaze B2",
+							"action": "rewrite"
+						}
+					]
+				}
+			],
+			"zoneName": "jknm.site"
+		},
+		{
+			"step_name": "file_upload_scan",
+			"type": "product",
+			"matched": false,
+			"public_name": "Uploaded Content Scanning",
+			"zoneName": "jknm.site"
+		},
+		{
+			"step_name": "http_request_firewall_managed",
+			"type": "phase",
+			"matched": false,
+			"public_name": "WAF Managed Rules",
+			"trace": [
+				{
+					"step_name": "77454fe2d30c4220b5701f6fdfb893ba",
+					"type": "ruleset",
+					"matched": false,
+					"description": "Created by the Cloudflare security team, this ruleset is designed to provide protection for free zones",
+					"name": "Cloudflare Managed Free Ruleset",
+					"kind": "managed"
+				}
+			],
+			"zoneName": "jknm.site"
+		},
+		{
+			"step_name": "request_managed_headers",
+			"type": "product",
+			"matched": false,
+			"managed_headers": [
+				{ "id": "add_client_certificate_headers", "enabled": false },
+				{ "id": "add_visitor_location_headers", "enabled": false },
+				{ "id": "remove_visitor_ip_headers", "enabled": false },
+				{ "id": "add_waf_credential_check_status_header", "enabled": false }
+			],
+			"zoneName": "jknm.site"
+		},
+		{
+			"type": "snippets",
+			"matched": false,
+			"public_name": "Snippets",
+			"zoneName": "jknm.site"
+		},
+		{
+			"type": "cloud_connector",
+			"matched": false,
+			"public_name": "Cloud Connector",
+			"zoneName": "jknm.site"
+		},
+		{
+			"step_name": "response_managed_headers",
+			"type": "product",
+			"matched": false,
+			"managed_headers": [
+				{ "id": "remove_x-powered-by_header", "enabled": false },
+				{ "id": "add_security_headers", "enabled": false }
+			],
+			"zoneName": "jknm.site"
+		}
+	],
+	"status_code": 200
+}

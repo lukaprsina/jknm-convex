@@ -1,3 +1,6 @@
 {
-	"recommendations": ["bradlc.vscode-tailwindcss", "mattpocock.ts-error-translator"]
+	"recommendations": [
+		"bradlc.vscode-tailwindcss",
+		"mattpocock.ts-error-translator"
+	]
 }

@@ -1,4 +1,4 @@
-import * as React from "react";
+import type * as React from "react";
 import {
 	createContext,
 	useCallback,
@@ -203,7 +203,7 @@ const CropperRoot: React.FC<CropperRootProps> = ({
 		const element = containerRef.current;
 		if (!element) return;
 		const observer = new ResizeObserver((entries) => {
-			for (let entry of entries) {
+			for (const entry of entries) {
 				const { width, height } = entry.contentRect;
 				if (width > 0 && height > 0) updateCropAreaDimensions(width, height);
 			}
@@ -532,8 +532,8 @@ const CropperRoot: React.FC<CropperRootProps> = ({
 
 	const getPinchDistance = (touches: TouchList): number =>
 		Math.sqrt(
-			Math.pow(touches[1].clientX - touches[0].clientX, 2) +
-				Math.pow(touches[1].clientY - touches[0].clientY, 2),
+			(touches[1].clientX - touches[0].clientX) ** 2 +
+				(touches[1].clientY - touches[0].clientY) ** 2,
 		);
 	const getPinchCenter = (touches: TouchList): { x: number; y: number } => ({
 		x: (touches[0].clientX + touches[1].clientX) / 2,
@@ -900,7 +900,7 @@ const CropperCropArea: React.FC<React.HTMLAttributes<HTMLDivElement>> = ({
 			style={{ ...areaProps.style, ...style, ...areaStyle }}
 			className={className}
 			{...restProps}
-		></div>
+		/>
 	);
 };
 
