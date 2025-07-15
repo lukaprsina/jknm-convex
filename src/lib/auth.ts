@@ -1,8 +1,8 @@
+import type { GenericCtx } from "@convex/_generated/server";
+import { betterAuthComponent } from "@convex/auth";
 import { convexAdapter } from "@convex-dev/better-auth";
 import { convex } from "@convex-dev/better-auth/plugins";
 import { betterAuth } from "better-auth";
-import type { GenericCtx } from "~/../convex/_generated/server";
-import { betterAuthComponent } from "../../convex/auth";
 
 export const createAuth = (ctx: GenericCtx) =>
 	betterAuth({
@@ -13,29 +13,7 @@ export const createAuth = (ctx: GenericCtx) =>
 				enabled: true,
 			},
 		},
-		/* emailVerification: {
-			sendVerificationEmail: async ({ user, url }) => {
-				await sendEmailVerification({
-					to: user.email,
-					url,
-				});
-			},
-		},
-		emailAndPassword: {
-			enabled: true,
-			requireEmailVerification: false,
-			sendResetPassword: async ({ user, url }) => {
-				await sendResetPassword({
-					to: user.email,
-					url,
-				});
-			},
-		}, */
 		socialProviders: {
-			/* github: {
-        clientId: process.env.GITHUB_CLIENT_ID as string,
-        clientSecret: process.env.GITHUB_CLIENT_SECRET as string,
-      }, */
 			google: {
 				clientId: process.env.GOOGLE_CLIENT_ID as string,
 				clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
@@ -46,24 +24,5 @@ export const createAuth = (ctx: GenericCtx) =>
 				enabled: true,
 			},
 		},
-		plugins: [
-			/* magicLink({
-				sendMagicLink: async ({ email, url }) => {
-					await sendMagicLink({
-						to: email,
-						url,
-					});
-				},
-			}),
-			emailOTP({
-				async sendVerificationOTP({ email, otp }) {
-					await sendOTPVerification({
-						to: email,
-						code: otp,
-					});
-				},
-			}),
-			twoFactor(), */
-			convex(),
-		],
+		plugins: [convex()],
 	});

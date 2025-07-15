@@ -67,6 +67,9 @@ export declare const components: {
           input:
             | {
                 data: {
+                  banExpires?: number;
+                  banReason?: string;
+                  banned?: boolean;
                   createdAt: number;
                   displayUsername?: string;
                   email: string;
@@ -76,6 +79,7 @@ export declare const components: {
                   name: string;
                   phoneNumber?: string;
                   phoneNumberVerified?: boolean;
+                  role?: string;
                   stripeCustomerId?: string;
                   twoFactorEnabled?: boolean;
                   updatedAt: number;
@@ -111,6 +115,7 @@ export declare const components: {
                   activeOrganizationId?: string;
                   createdAt: number;
                   expiresAt: number;
+                  impersonatedBy?: string;
                   ipAddress?: string;
                   token: string;
                   updatedAt: number;
@@ -865,6 +870,9 @@ export declare const components: {
                 sortBy?: { direction: "asc" | "desc"; field: string };
                 unique?: boolean;
                 update: {
+                  banExpires?: number;
+                  banReason?: string;
+                  banned?: boolean;
                   createdAt?: number;
                   displayUsername?: string;
                   email?: string;
@@ -874,6 +882,7 @@ export declare const components: {
                   name?: string;
                   phoneNumber?: string;
                   phoneNumberVerified?: boolean;
+                  role?: string;
                   stripeCustomerId?: string;
                   twoFactorEnabled?: boolean;
                   updatedAt?: number;
@@ -922,6 +931,7 @@ export declare const components: {
                   activeOrganizationId?: string;
                   createdAt?: number;
                   expiresAt?: number;
+                  impersonatedBy?: string;
                   ipAddress?: string;
                   token?: string;
                   updatedAt?: number;
@@ -1717,6 +1727,9 @@ export declare const components: {
             | {
                 model: "user";
                 update: {
+                  banExpires?: number;
+                  banReason?: string;
+                  banned?: boolean;
                   createdAt?: number;
                   displayUsername?: string;
                   email?: string;
@@ -1726,6 +1739,7 @@ export declare const components: {
                   name?: string;
                   phoneNumber?: string;
                   phoneNumberVerified?: boolean;
+                  role?: string;
                   stripeCustomerId?: string;
                   twoFactorEnabled?: boolean;
                   updatedAt?: number;
@@ -1761,6 +1775,7 @@ export declare const components: {
                   activeOrganizationId?: string;
                   createdAt?: number;
                   expiresAt?: number;
+                  impersonatedBy?: string;
                   ipAddress?: string;
                   token?: string;
                   updatedAt?: number;

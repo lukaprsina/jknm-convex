@@ -17,15 +17,15 @@ export function createRouter() {
 		unsavedChangesWarning: false,
 	});
 
-	const convexQueryClient = new ConvexQueryClient(CONVEX_URL);
+	const convexQueryClient = new ConvexQueryClient(convex);
 
 	const queryClient: QueryClient = new QueryClient({
 		defaultOptions: {
 			queries: {
 				queryKeyHashFn: convexQueryClient.hashFn(),
 				queryFn: convexQueryClient.queryFn(),
-				refetchOnWindowFocus: false,
-				staleTime: 1000 * 60 * 2, // 2 minutes
+				// refetchOnWindowFocus: false,
+				// staleTime: 1000 * 60 * 2, // 2 minutes
 			},
 		},
 	});
