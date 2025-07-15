@@ -303,7 +303,7 @@ export const publish_draft = mutation({
 			throw new Error("Article not found or is not a draft.");
 		}
 
-		let title = "Neimenovana novica"; // Default title
+		let title = "ERROR";
 		let slug = slugify_title(title, article._id);
 		let content_json: Value | undefined;
 

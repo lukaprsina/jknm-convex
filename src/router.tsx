@@ -17,6 +17,8 @@ export function createRouter() {
 		unsavedChangesWarning: false,
 	});
 
+	// don't pass CONVEX_URL, use convex.client directly
+	// otherwise it creates a new ConvexQueryClient instance
 	const convexQueryClient = new ConvexQueryClient(convex);
 
 	const queryClient: QueryClient = new QueryClient({
@@ -24,8 +26,8 @@ export function createRouter() {
 			queries: {
 				queryKeyHashFn: convexQueryClient.hashFn(),
 				queryFn: convexQueryClient.queryFn(),
-				// refetchOnWindowFocus: false,
-				// staleTime: 1000 * 60 * 2, // 2 minutes
+				refetchOnWindowFocus: false,
+				staleTime: 1000 * 60 * 2, // 2 minutes
 			},
 		},
 	});

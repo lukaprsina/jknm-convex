@@ -12,7 +12,7 @@ import {
 import { useEffect } from "react";
 import { EditorKit } from "~/components/editor-kit";
 import { Editor, EditorContainer } from "~/components/plate-ui/editor";
-import { SavePlugin } from "./plugins/save";
+import { PublishPlugin, SavePlugin } from "./plugins/save-kit";
 
 function initial_value(string_value: string): Value {
 	const value = JSON.parse(string_value) as Value;
@@ -67,7 +67,8 @@ function ConfiguredPlateEditor({ article_id }: { article_id: Id<"articles"> }) {
 
 		editor.setOption(SavePlugin, "article_id", article_id);
 		editor.setOption(SavePlugin, "update_draft", update_draft.mutate);
-		editor.setOption(SavePlugin, "publish_draft", publish_draft.mutate);
+		editor.setOption(PublishPlugin, "article_id", article_id);
+		editor.setOption(PublishPlugin, "publish_draft", publish_draft.mutate);
 	}, [
 		is_mounted,
 		editor,

@@ -19,7 +19,7 @@ import { ListKit } from "./plugins/list-kit";
 import { MarkdownKit } from "./plugins/markdown-kit";
 import { MathKit } from "./plugins/math-kit";
 import { MediaKit } from "./plugins/media-kit";
-import { SavePlugin } from "./plugins/save";
+import { SaveKit } from "./plugins/save-kit";
 import { SlashKit } from "./plugins/slash-kit";
 import { TableKit } from "./plugins/table-kit";
 import { TocSidebarKit } from "./plugins/toc-sidebar-kit";
@@ -76,7 +76,7 @@ export const EditorKit = [
 
 	// Mine
 	...TocSidebarKit,
-	SavePlugin,
+	...SaveKit,
 ];
 
 export type MyEditor = TPlateEditor<Value, (typeof EditorKit)[number]>;

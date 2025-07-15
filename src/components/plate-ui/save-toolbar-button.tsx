@@ -1,6 +1,6 @@
 import { CloudUploadIcon, SaveIcon, ScrollTextIcon } from "lucide-react";
 import { useEditorRef } from "platejs/react";
-import { SavePlugin } from "../plugins/save";
+import { PublishPlugin, SavePlugin } from "../plugins/save-kit";
 import { ToolbarButton } from "../ui/toolbar";
 
 export function SaveToolbarButton(
@@ -27,13 +27,13 @@ export function PublishToolbarButton(
 	props: React.ComponentProps<typeof ToolbarButton>,
 ) {
 	const editor = useEditorRef();
-	const save_plugin = editor.getApi(SavePlugin).save;
+	const publish_plugin = editor.getApi(PublishPlugin).publish;
 
 	return (
 		<ToolbarButton
 			{...props}
 			onClick={() => {
-				save_plugin.publish();
+				publish_plugin.publish();
 			}}
 			onMouseDown={(e) => e.preventDefault()}
 			tooltip="Publish"

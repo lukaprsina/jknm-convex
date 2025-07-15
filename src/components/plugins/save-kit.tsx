@@ -4,6 +4,7 @@ import { createStore } from "jotai";
 import { atomWithStorage } from "jotai/utils";
 import type { Value } from "platejs";
 import { createPlatePlugin, Key } from "platejs/react";
+import { PublishDialogue } from "../plate-ui/publish-dialogue";
 
 type AutoSaveStorage = {
 	value: Value;
@@ -31,7 +32,6 @@ export const SavePlugin = createPlatePlugin({
 	options: {
 		article_id: undefined as Id<"articles"> | undefined,
 		update_draft: undefined as UpdateDraftMutation | undefined,
-		publish_draft: undefined as PublishDraftMutation | undefined,
 	},
 	handlers: {
 		/* onBlur: (context) => {
@@ -58,22 +58,6 @@ export const SavePlugin = createPlatePlugin({
 				content_json: JSON.stringify(value),
 			});
 		},
-		publish: async () => {
-			const value = context.editor.children;
-			autosave_store.set(autosave_atom, { value, timestamp: new Date() });
-			const publish_draft = context.getOption("publish_draft");
-			const article_id = context.getOption("article_id");
-
-			if (!publish_draft || !article_id) {
-				console.error("Publish draft function or article ID is not set.");
-				return;
-			}
-
-			publish_draft({
-				id: article_id,
-				content_json: JSON.stringify(value),
-			});
-		},
 	}))
 	.extend(() => ({
 		shortcuts: {
@@ -83,3 +67,40 @@ export const SavePlugin = createPlatePlugin({
 			},
 		},
 	}));
+
+export const PublishPlugin = createPlatePlugin({
+	key: "publish",
+	options: {
+		article_id: undefined as Id<"articles"> | undefined,
+		publish_draft: undefined as PublishDraftMutation | undefined,
+		open_dialogue: false,
+	},
+}).extendApi((context) => ({
+	publish: async () => {
+		const value = context.editor.children;
+		autosave_store.set(autosave_atom, { value, timestamp: new Date() });
+		const publish_draft = context.getOption("publish_draft");
+		const article_id = context.getOption("article_id");
+
+		if (!publish_draft || !article_id) {
+			console.error("Publish draft function or article ID is not set.");
+			return;
+		}
+
+		/* publish_draft({
+			id: article_id,
+			content_json: JSON.stringify(value),
+		}); */
+		context.setOption("open_dialogue", true);
+		console.log("Publishing draft...", { context, opts: context.getOptions() });
+	},
+}));
+
+export const SaveKit = [
+	SavePlugin,
+	PublishPlugin.configure({
+		render: {
+			afterEditable: () => <PublishDialogue />,
+		},
+	}),
+];
