@@ -12,6 +12,7 @@
         "@convex-dev/sharded-counter": "^0.1.8",
         "@emoji-mart/data": "1.2.1",
         "@faker-js/faker": "^9.9.0",
+        "@origin-space/image-cropper": "^0.1.9",
         "@platejs/ai": "^49.1.6",
         "@platejs/autoformat": "^49.0.0",
         "@platejs/basic-nodes": "^49.0.0",
@@ -577,6 +578,8 @@
     "@open-draft/logger": ["@open-draft/logger@0.3.0", "", { "dependencies": { "is-node-process": "^1.2.0", "outvariant": "^1.4.0" } }, "sha512-X2g45fzhxH238HKO4xbSr7+wBS8Fvw6ixhTDuvLd5mqh6bJJCFAPwU9mPDxbcrRtfxv4u5IHCEH77BmxvXmmxQ=="],
 
     "@open-draft/until": ["@open-draft/until@2.1.0", "", {}, "sha512-U69T3ItWHvLwGg5eJ0n3I62nWuE6ilHlmz7zM0npLBRvPRd7e6NYmg54vvRtP5mZG7kZqZCFVdsTWo7BPtBujg=="],
+
+    "@origin-space/image-cropper": ["@origin-space/image-cropper@0.1.9", "", { "peerDependencies": { "react": "^19.1.0", "react-dom": "^19.1.0" } }, "sha512-Ebl57I6beh7uKjSv8+r3VObEoOXIXhx4SicDUdxa9U7NVY18SzEGfqPDuhNyXuFIB5G/S8nYUToNlIRp9wwB9Q=="],
 
     "@oslojs/asn1": ["@oslojs/asn1@1.0.0", "", { "dependencies": { "@oslojs/binary": "1.0.0" } }, "sha512-zw/wn0sj0j0QKbIXfIlnEcTviaCzYOY3V5rAyjR6YtOByFtJiT574+8p9Wlach0lZH9fddD4yb9laEAIl4vXQA=="],
 
