@@ -15,17 +15,17 @@ async function load_authors_for_article(
 	ctx: QueryCtx,
 	articleId: Id<"articles">,
 ) {
-	const authorLinks = await ctx.db
+	const authors = await ctx.db
 		.query("articles_to_authors")
 		.withIndex("by_article_and_order", (q) => q.eq("article_id", articleId))
 		.collect();
 
-	const authors = await Promise.all(
+	/* const authors = await Promise.all(
 		authorLinks.map(async (link) => {
 			const author = await ctx.db.get(link.author_id);
 			return author ? { ...author, order: link.order } : null;
 		}),
-	);
+	); */
 
 	return authors
 		.filter((author): author is NonNullable<typeof author> => author !== null)

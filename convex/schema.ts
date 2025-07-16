@@ -118,7 +118,10 @@ const schema = defineSchema({
 	media_to_articles: defineTable({
 		article_id: v.id("articles"),
 		media_id: v.id("media"),
-	}),
+		order: v.number(),
+	})
+		.index("by_article_and_order", ["article_id", "order"])
+		.index("by_media", ["media_id"]),
 });
 
 export default schema;

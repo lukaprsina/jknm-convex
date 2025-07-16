@@ -1,7 +1,44 @@
 import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { v } from "convex/values";
-import { mutation, query } from "./_generated/server";
+import type { Id } from "./_generated/dataModel";
+import { mutation, type QueryCtx, query } from "./_generated/server";
+
+/**
+ * Helper function to load articles for a media item in the correct order
+ */
+async function load_articles_for_media(
+	ctx: QueryCtx,
+	article_id: Id<"articles">,
+) {
+	const mediaLinks = await ctx.db
+		.query("media_to_articles")
+		.withIndex("by_article_and_order", (q) => q.eq("article_id", article_id))
+		.collect();
+
+	const sorted = mediaLinks
+		.filter((ML): ML is NonNullable<typeof ML> => ML !== null)
+		.sort((a, b) => a.order - b.order);
+
+	// fetch article itself
+	const article = await ctx.db.get(article_id);
+	if (!article) throw new Error(`article ${article_id} not found`);
+
+	// fetch all media in parallel
+	const mediaList = await Promise.all(
+		sorted.map((link) =>
+			ctx.db.get(link.media_id).then((m) => {
+				if (!m) throw new Error(`media ${link.media_id} not found`);
+				return m;
+			}),
+		),
+	);
+
+	return {
+		article,
+		media: mediaList,
+	};
+}
 
 export const get_by_id = query({
 	args: { id: v.id("media") },
@@ -20,6 +57,20 @@ export const get_by_id = query({
 		if (result.upload_status === "pending") {
 			throw new Error(`Media with ID ${args.id} is still pending upload.`);
 		}
+
+		return result;
+	},
+});
+
+export const get_for_article = query({
+	args: { article_id: v.id("articles") },
+	handler: async (ctx, args) => {
+		const user_id = await ctx.auth.getUserIdentity();
+		if (!user_id) {
+			throw new Error("User must be authenticated to get media for article.");
+		}
+
+		const result = await load_articles_for_media(ctx, args.article_id);
 
 		return result;
 	},
@@ -92,6 +143,7 @@ export const generate_presigned_upload_url = mutation({
 
 export const confirm_upload = mutation({
 	args: {
+		article_id: v.id("articles"),
 		media_db_id: v.id("media"),
 	},
 	handler: async (ctx, args) => {
@@ -106,6 +158,12 @@ export const confirm_upload = mutation({
 				`Media with ID ${args.media_db_id} is not in pending state.`,
 			);
 		}
+
+		ctx.db.insert("media_to_articles", {
+			article_id: args.article_id,
+			media_id: args.media_db_id,
+			order: 0, // Default order, can be updated later
+		});
 
 		// const is_image = media.content_type.startsWith("image/");
 

@@ -2,7 +2,9 @@ import type { Id } from "@convex/_generated/dataModel";
 import { useConvexMutation } from "@convex-dev/react-query";
 import { useMutation } from "@tanstack/react-query";
 import { api } from "convex/_generated/api";
+import { usePluginOption } from "platejs/react";
 import { useState } from "react";
+import { SavePlugin } from "~/components/plugins/save-kit";
 
 interface UseUploadFileProps {
 	onUploadComplete?: (file: UploadedFile) => void;
@@ -33,6 +35,7 @@ export function useUploadFile({
 	const [uploadingFile, setUploadingFile] = useState<File | undefined>(
 		undefined,
 	);
+	const article_id = usePluginOption(SavePlugin, "article_id");
 
 	// Hook for getting presigned URL from Convex
 	const get_presigned_url = useConvexMutation(
@@ -103,8 +106,15 @@ export function useUploadFile({
 			setProgress(0);
 			onUploadBegin?.(file.name);
 		},
-		onSuccess: (uploadedFile) => {
-			confirm_upload({ media_db_id: uploadedFile.key as Id<"media"> });
+		onSuccess: async (uploadedFile) => {
+			if (!article_id) {
+				throw new Error("Article ID is required to confirm upload.");
+			}
+
+			await confirm_upload({
+				media_db_id: uploadedFile.key as Id<"media">,
+				article_id,
+			});
 			setUploadedFile(uploadedFile);
 			onUploadComplete?.(uploadedFile);
 		},
