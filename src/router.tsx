@@ -3,8 +3,6 @@ import { QueryClient } from "@tanstack/react-query";
 import { createRouter as createTanStackRouter } from "@tanstack/react-router";
 import { routerWithQueryClient } from "@tanstack/react-router-with-query";
 import { ConvexProvider, ConvexReactClient } from "convex/react";
-import { DefaultCatchBoundary } from "./components/DefaultCatchBoundary";
-import { NotFound } from "./components/NotFound";
 import { routeTree } from "./routeTree.gen";
 
 export function createRouter() {
@@ -38,8 +36,8 @@ export function createRouter() {
 		createTanStackRouter({
 			routeTree,
 			defaultPreload: "intent",
-			defaultErrorComponent: DefaultCatchBoundary,
-			defaultNotFoundComponent: () => <NotFound />,
+			/* defaultErrorComponent: DefaultCatchBoundary,
+			defaultNotFoundComponent: () => <NotFound />, */
 			context: { queryClient, convexClient: convex, convexQueryClient },
 			// react-query will handle data fetching & caching
 			// https://tanstack.com/router/latest/docs/framework/react/guide/data-loading#passing-all-loader-events-to-an-external-cache

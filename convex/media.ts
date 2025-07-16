@@ -1,7 +1,29 @@
 import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { v } from "convex/values";
-import { mutation } from "./_generated/server";
+import { mutation, query } from "./_generated/server";
+
+export const get_by_id = query({
+	args: { id: v.id("media") },
+	handler: async (ctx, args) => {
+		const user_id = await ctx.auth.getUserIdentity();
+		if (!user_id) {
+			throw new Error("User must be authenticated to get media by ID.");
+		}
+
+		const result = await ctx.db.get(args.id);
+
+		if (!result) {
+			throw new Error(`Media with ID ${args.id} not found.`);
+		}
+
+		if (result.upload_status === "pending") {
+			throw new Error(`Media with ID ${args.id} is still pending upload.`);
+		}
+
+		return result;
+	},
+});
 
 export const generate_presigned_upload_url = mutation({
 	args: {
@@ -11,7 +33,6 @@ export const generate_presigned_upload_url = mutation({
 	},
 	handler: async (ctx, args) => {
 		const user_id = await ctx.auth.getUserIdentity();
-
 		if (!user_id) {
 			throw new Error(
 				"User must be authenticated to generate a presigned URL.",
@@ -44,8 +65,11 @@ export const generate_presigned_upload_url = mutation({
 
 		const key = `${media_db_id}/${variant}${ext}`;
 
+		// This must be hardcoded because I need to change every article if I change the domain
+		const storage_path = `https://gradivo.jknm.site/${key}`;
+
 		await ctx.db.patch(media_db_id, {
-			storage_path: key,
+			storage_path,
 		});
 
 		const putObjectCommand = new PutObjectCommand({
@@ -60,9 +84,8 @@ export const generate_presigned_upload_url = mutation({
 
 		return {
 			presigned_url: presignedUrl,
-			key,
-			// This must be hardcoded because I need to change every article if I change the domain
-			src: `https://gradivo.jknm.site/${key}`,
+			key: media_db_id,
+			src: storage_path,
 		};
 	},
 });

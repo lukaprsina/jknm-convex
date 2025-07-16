@@ -68,6 +68,8 @@ const frameworks: Option[] = [
 	},
 ];
 
+// Multiselect with placeholder and clear
+// https://originui.com/r/comp-235.json
 export default function Component() {
 	return (
 		<div className="*:not-first:mt-2">

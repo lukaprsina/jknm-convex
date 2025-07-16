@@ -1,3 +1,4 @@
+import type { Id } from "@convex/_generated/dataModel";
 import { useConvexMutation } from "@convex-dev/react-query";
 import { useMutation } from "@tanstack/react-query";
 import { api } from "convex/_generated/api";
@@ -34,15 +35,17 @@ export function useUploadFile({
 	);
 
 	// Hook for getting presigned URL from Convex
-	const getPresignedUrl = useConvexMutation(
+	const get_presigned_url = useConvexMutation(
 		api.media.generate_presigned_upload_url,
 	);
+
+	const confirm_upload = useConvexMutation(api.media.confirm_upload);
 
 	// The main upload mutation that chains both operations
 	const mutation = useMutation<UploadedFile, Error, File>({
 		mutationFn: async (file: File) => {
 			// Step 1: Get presigned URL from Convex
-			const upload_info = await getPresignedUrl({
+			const upload_info = await get_presigned_url({
 				filename: file.name,
 				content_type: file.type,
 				size_bytes: file.size,
@@ -87,8 +90,8 @@ export function useUploadFile({
 			});
 
 			return {
-				key: upload_info.src,
-				url: upload_info.key,
+				key: upload_info.key, // This is the media DB ID
+				url: upload_info.src,
 				name: file.name,
 				size: file.size,
 				type: file.type,
@@ -101,6 +104,7 @@ export function useUploadFile({
 			onUploadBegin?.(file.name);
 		},
 		onSuccess: (uploadedFile) => {
+			confirm_upload({ media_db_id: uploadedFile.key as Id<"media"> });
 			setUploadedFile(uploadedFile);
 			onUploadComplete?.(uploadedFile);
 		},

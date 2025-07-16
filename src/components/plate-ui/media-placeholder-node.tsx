@@ -13,7 +13,7 @@ import { PlateElement, useEditorPlugin, withHOC } from "platejs/react";
 import * as React from "react";
 import { useFilePicker } from "use-file-picker";
 import type { SelectedFilesOrErrors } from "use-file-picker/types";
-import { useUploadFile } from "~/hooks/use-upload-file";
+import { useUploadFile } from "~/hooks/use-file-upload-raw";
 import { cn } from "~/lib/utils";
 
 const CONTENT: Record<

@@ -1,16 +1,39 @@
+import { api } from "@convex/_generated/api";
+import type { Id } from "@convex/_generated/dataModel";
+import { convexQuery } from "@convex-dev/react-query";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import {
 	Cropper,
 	CropperCropArea,
 	CropperDescription,
 	CropperImage,
 } from "~/components/ui/cropper";
+import { cn } from "~/lib/utils";
 
-export default function PublishImageCropper() {
+type PublishImageCropperProps = Omit<
+	React.ComponentProps<typeof Cropper>,
+	"children" | "image"
+> & {
+	image_id: Id<"media">;
+};
+
+export default function PublishImageCropper({
+	className,
+	image_id,
+	...props
+}: PublishImageCropperProps) {
+	const { data: image_data } = useSuspenseQuery(
+		convexQuery(api.media.get_by_id, {
+			id: image_id,
+		}),
+	);
+
 	return (
 		<div className="flex flex-col items-center gap-2">
 			<Cropper
-				className="h-80"
-				image="https://raw.githubusercontent.com/origin-space/origin-images/refs/heads/main/cropper-01_bcxaic.jpg"
+				image={image_data.storage_path}
+				className={cn("h-80", className)}
+				{...props}
 			>
 				<CropperDescription />
 				<CropperImage />

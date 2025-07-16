@@ -20,8 +20,10 @@ const schema = defineSchema({
 		content_markdown: v.optional(v.string()), // For full-text search
 		excerpt: v.optional(v.string()), // For previews/SEO
 		view_count: v.number(),
-		thumbnail_crop: v.optional(
+		thumbnail: v.optional(
 			v.object({
+				original_id: v.id("media"),
+				cropped_id: v.id("media"),
 				x: v.number(),
 				y: v.number(),
 				width: v.number(),
@@ -52,22 +54,6 @@ const schema = defineSchema({
 			filterFields: ["status", "published_year"],
 		}),
 
-	authors: defineTable({
-		author_type: v.union(v.literal("member"), v.literal("guest")),
-		name: v.string(), // non-unique
-		google_id: v.optional(v.string()),
-		email: v.optional(v.string()),
-		image: v.optional(v.string()),
-	}).index("by_name", ["name"]),
-
-	articles_to_authors: defineTable({
-		article_id: v.id("articles"),
-		author_id: v.id("authors"),
-		order: v.number(),
-	})
-		.index("by_article_and_order", ["article_id", "order"])
-		.index("by_author", ["author_id"]),
-
 	media: defineTable({
 		filename: v.string(),
 		content_type: v.string(),
@@ -80,7 +66,18 @@ const schema = defineSchema({
 					height: v.optional(v.number()),
 				}),
 				// Size variants for images (e.g., "400w", "800w", "1200w")
-				size_variants: v.optional(
+				image_variants: v.optional(
+					v.record(
+						v.string(),
+						v.object({
+							width: v.number(),
+							height: v.number(),
+							size_bytes: v.number(),
+							format: v.union(v.literal("avif"), v.literal("jpeg")),
+						}),
+					),
+				),
+				thumbnail_variants: v.optional(
 					v.record(
 						v.string(),
 						v.object({
@@ -101,28 +98,35 @@ const schema = defineSchema({
 		),
 		created_at: v.number(),
 	}).index("by_status", ["upload_status"]),
+
+	authors: defineTable({
+		author_type: v.union(v.literal("member"), v.literal("guest")),
+		name: v.string(), // non-unique
+		google_id: v.optional(v.string()),
+		email: v.optional(v.string()),
+		image: v.optional(v.string()),
+	}).index("by_name", ["name"]),
+
+	articles_to_authors: defineTable({
+		article_id: v.id("articles"),
+		author_id: v.id("authors"),
+		order: v.number(),
+	})
+		.index("by_article_and_order", ["article_id", "order"])
+		.index("by_author", ["author_id"]),
+
+	media_to_articles: defineTable({
+		article_id: v.id("articles"),
+		media_id: v.id("media"),
+	}),
 });
+
 export default schema;
 
 export const article_validator = schema.tables.articles.validator;
-export const author_validato = schema.tables.authors.validator;
+export const author_validator = schema.tables.authors.validator;
+export const media_validator = schema.tables.media.validator;
 export const articles_to_authors_validator =
 	schema.tables.articles_to_authors.validator;
-export const media_validator = schema.tables.media.validator;
-
-export const update_article_schema = v.object({
-	title: article_validator.fields.title,
-	status: article_validator.fields.status,
-	content_json: article_validator.fields.content_json,
-	thumbnail_crop: article_validator.fields.thumbnail_crop,
-	author_ids: v.optional(v.array(v.id("authors"))),
-});
-
-export const create_draft_article_schema = v.object({
-	published_id: v.optional(v.id("articles")),
-});
-
-export const rename_guest_validator = v.object({
-	id: v.id("authors"),
-	name: v.string(),
-});
+export const media_to_articles_validator =
+	schema.tables.media_to_articles.validator;
