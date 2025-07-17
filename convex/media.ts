@@ -1,7 +1,9 @@
 import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import type { SystemTableNames } from "convex/server";
 import { v } from "convex/values";
-import type { Id } from "./_generated/dataModel";
+import { internal } from "./_generated/api";
+import type { Id, TableNames } from "./_generated/dataModel";
 import { mutation, type QueryCtx, query } from "./_generated/server";
 
 /**
@@ -141,6 +143,14 @@ export const generate_presigned_upload_url = mutation({
 	},
 });
 
+function without_system_fields<
+	T extends TableNames | SystemTableNames,
+	U extends { _creationTime: number; _id: Id<T> },
+>(doc: U) {
+	const { _id, _creationTime, ...rest } = doc;
+	return rest;
+}
+
 export const confirm_upload = mutation({
 	args: {
 		article_id: v.id("articles"),
@@ -173,9 +183,11 @@ export const confirm_upload = mutation({
 			upload_status: "completed",
 		});
 
-		/* ctx.scheduler.runAfter(0, internal.media_sharp.optimize_image, {
-			image: media,
-		}); */
+		console.warn("Running image optimization for media:", media.filename);
+		await ctx.scheduler.runAfter(0, internal.media_sharp.optimize_image, {
+			image: without_system_fields(media),
+		});
+		console.warn("After:", media.filename);
 
 		return {
 			status: "success",
