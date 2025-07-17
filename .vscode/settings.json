@@ -1,7 +1,8 @@
 {
 	"editor.codeActionsOnSave": {
 		"quickfix.biome": "explicit",
-		"source.organizeImports.biome": "always"
+		"source.organizeImports.biome": "always",
+		"source.removeUnused.ts": "never"
 	},
 	"editor.quickSuggestions": {
 		// https://marketplace.visualstudio.com/items?itemName=bradlc.vscode-tailwindcss#recommended-vs-code-settings

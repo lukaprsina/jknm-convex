@@ -19,8 +19,8 @@ export default function SingleImageUpload({
 	selectedImage: Doc<"media"> | undefined;
 	setSelectedImage: (imageId: Doc<"media"> | undefined) => void;
 }) {
-	const maxSizeMB = 5;
-	const maxSize = maxSizeMB * 1024 * 1024; // 5MB default
+	const max_size_gb = 5;
+	const maxSize = max_size_gb * 1024 ** 3; // 5GB limit by Backblaze B2
 
 	const initialFiles = useMemo(() => {
 		console.log("Initial image data:", { selectedImage });
@@ -167,7 +167,7 @@ export default function SingleImageUpload({
 								Drop your image here or click to browse
 							</p>
 							<p className="text-muted-foreground text-xs">
-								Max size: {maxSizeMB}MB
+								Max size: {max_size_gb}GB
 							</p>
 							{isUploading && (
 								<div className="mt-2 text-blue-600 text-sm">

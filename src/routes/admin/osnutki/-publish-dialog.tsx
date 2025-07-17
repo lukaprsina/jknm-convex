@@ -62,10 +62,10 @@ export function PublishDialog() {
 				aria-describedby={undefined}
 				className="flex flex-col gap-0 p-0 sm:max-h-[min(900px,80vh)] sm:max-w-3xl "
 			>
-				<div className="overflow-y-hidden">
-					<DialogHeader className="contents space-y-0 text-left">
-						<DialogTitle className="px-6 pt-6">Objavi novico</DialogTitle>
-					</DialogHeader>
+				<DialogHeader className="contents space-y-0 text-left">
+					<DialogTitle className="px-6 pt-6">Objavi novico</DialogTitle>
+				</DialogHeader>
+				<div className="overflow-y-auto">
 					{selectedImage && (
 						<PublishImageCropper className="m-10" image={selectedImage} />
 					)}
@@ -73,22 +73,22 @@ export function PublishDialog() {
 						selectedImage={selectedImage}
 						setSelectedImage={setSelectedImage}
 					/>
-					<DialogFooter className="px-6 pb-6 sm:justify-start">
-						<DialogClose asChild>
-							<Button variant="outline">Prekliči</Button>
-						</DialogClose>
-						<DialogClose
-							asChild
-							onClick={() => {
-								if (!article_id || !editor) return;
-								const content_json = JSON.stringify(editor.children);
-								publish_mutation.mutate({ article_id, content_json });
-							}}
-						>
-							<Button variant="destructive">Objavi</Button>
-						</DialogClose>
-					</DialogFooter>
 				</div>
+				<DialogFooter className="px-6 pb-6 sm:justify-start">
+					<DialogClose asChild>
+						<Button variant="outline">Prekliči</Button>
+					</DialogClose>
+					<DialogClose
+						asChild
+						onClick={() => {
+							if (!article_id || !editor) return;
+							const content_json = JSON.stringify(editor.children);
+							publish_mutation.mutate({ article_id, content_json });
+						}}
+					>
+						<Button variant="destructive">Objavi</Button>
+					</DialogClose>
+				</DialogFooter>
 			</DialogContent>
 		</Dialog>
 	);

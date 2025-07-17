@@ -1,3 +1,4 @@
+import type { Id } from "@convex/_generated/dataModel";
 import { BaseCaptionPlugin } from "@platejs/caption";
 import {
 	BaseAudioPlugin,
@@ -14,6 +15,14 @@ import { FileElementStatic } from "~/components/plate-ui/media-file-node-static"
 import { ImageElementStatic } from "~/components/plate-ui/media-image-node-static";
 import { VideoElementStatic } from "~/components/plate-ui/media-video-node-static";
 
+export const ExtendedBasePlaceholderPlugin = BasePlaceholderPlugin.extend(
+	() => ({
+		options: {
+			media_db_id: undefined as Id<"media"> | undefined,
+		},
+	}),
+);
+
 export const BaseMediaKit = [
 	BaseImagePlugin.withComponent(ImageElementStatic),
 	BaseVideoPlugin.withComponent(VideoElementStatic),
@@ -27,5 +36,6 @@ export const BaseMediaKit = [
 		},
 	}),
 	BaseMediaEmbedPlugin,
-	BasePlaceholderPlugin,
+	ExtendedBasePlaceholderPlugin,
+	// BasePlaceholderPlugin,
 ];

@@ -152,38 +152,38 @@ export function ImageSelector({
 							</p>
 						</div>
 					) : (
-						<ScrollArea className="h-[400px]">
-							<Masonry.Root
-								columnCount={3}
-								// gap={{ column: 12, row: 12 }}
-								gap={{ column: 8, row: 8 }}
-								className="w-full"
-								/* fallback={
+						// <ScrollArea className="h-[400px]">
+						<Masonry.Root
+							columnCount={3}
+							// gap={{ column: 12, row: 12 }}
+							gap={{ column: 8, row: 8 }}
+							className="w-full"
+							/* fallback={
 									<div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3">
 										{skeletonIds.map((id) => (
 											<SkeletonCard key={id} />
 										))}
 									</div>
 								} */
-							>
-								{images_for_article.media.map((image) => (
-									<Masonry.Item
-										key={image._id}
-										className="relative overflow-hidden transition-all duration-300 hover:scale-[1.02]"
-									>
-										<ImageCard
-											image={image}
-											isSelected={selectedImage?._id === image._id}
-											onSelect={() => {
-												setSelectedImage(
-													selectedImage?._id === image._id ? undefined : image,
-												);
-											}}
-										/>
-									</Masonry.Item>
-								))}
-							</Masonry.Root>
-						</ScrollArea>
+						>
+							{images_for_article.media.map((image) => (
+								<Masonry.Item
+									key={image._id}
+									className="relative overflow-hidden transition-all duration-300 hover:scale-[1.02]"
+								>
+									<ImageCard
+										image={image}
+										isSelected={selectedImage?._id === image._id}
+										onSelect={() => {
+											setSelectedImage(
+												selectedImage?._id === image._id ? undefined : image,
+											);
+										}}
+									/>
+								</Masonry.Item>
+							))}
+						</Masonry.Root>
+						// </ScrollArea>
 					)}
 				</TabsContent>
 

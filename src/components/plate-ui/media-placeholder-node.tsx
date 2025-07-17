@@ -53,6 +53,7 @@ export const PlaceholderElement = withHOC(
 
 		const { api } = useEditorPlugin(PlaceholderPlugin);
 
+		// https://platejs.org/docs/media#custom-upload-implementation
 		const { isUploading, progress, uploadedFile, uploadFile, uploadingFile } =
 			useUploadFile();
 

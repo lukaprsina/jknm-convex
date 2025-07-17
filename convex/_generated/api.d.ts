@@ -14,6 +14,7 @@ import type * as authors from "../authors.js";
 import type * as http from "../http.js";
 import type * as media from "../media.js";
 import type * as media_sharp from "../media_sharp.js";
+import type * as utils from "../utils.js";
 
 import type {
   ApiFromModules,
@@ -36,6 +37,7 @@ declare const fullApi: ApiFromModules<{
   http: typeof http;
   media: typeof media;
   media_sharp: typeof media_sharp;
+  utils: typeof utils;
 }>;
 declare const fullApiWithMounts: typeof fullApi;
 

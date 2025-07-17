@@ -2,6 +2,7 @@
 
 import { useDraggable } from "@platejs/dnd";
 import {
+	Image,
 	ImagePlugin,
 	openImagePreview,
 	useMediaState,
@@ -28,7 +29,7 @@ import {
 } from "./resize-handle";
 
 // packages/media/src/react/image/components/Image.tsx
-const useImage = () => {
+/* const useImage = () => {
 	const element = useElement<TMediaElement>();
 	const editor = useEditorRef();
 
@@ -48,7 +49,7 @@ const useImage = () => {
 
 const Image = createPrimitiveComponent("img")({
 	propsHook: useImage,
-});
+}); */
 
 export const ImageElement = withHOC(
 	ResizableProvider,

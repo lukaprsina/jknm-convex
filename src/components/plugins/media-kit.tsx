@@ -29,15 +29,15 @@ export const MediaKit = [
 	VideoPlugin.withComponent(VideoElement),
 	AudioPlugin.withComponent(AudioElement),
 	FilePlugin.withComponent(FileElement),
-	PlaceholderPlugin.configure({
-		options: { disableEmptyPlaceholder: true },
-		render: { afterEditable: MediaUploadToast, node: PlaceholderElement },
-	}),
 	CaptionPlugin.configure({
 		options: {
 			query: {
 				allow: [KEYS.img, KEYS.video, KEYS.audio, KEYS.file, KEYS.mediaEmbed],
 			},
 		},
+	}),
+	PlaceholderPlugin.configure({
+		options: { disableEmptyPlaceholder: true },
+		render: { afterEditable: MediaUploadToast, node: PlaceholderElement },
 	}),
 ];
