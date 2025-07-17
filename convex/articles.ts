@@ -27,9 +27,8 @@ async function load_authors_for_article(
 		}),
 	); */
 
-	return authors
-		.filter((author): author is NonNullable<typeof author> => author !== null)
-		.sort((a, b) => a.order - b.order);
+	// .filter((author): author is NonNullable<typeof author> => author !== null)
+	return authors.sort((a, b) => a.order - b.order);
 }
 
 /**
@@ -288,7 +287,7 @@ export const update_draft = mutation({
 
 export const publish_draft = mutation({
 	args: {
-		id: v.id("articles"),
+		article_id: v.id("articles"),
 		content_json: v.string(),
 	},
 	handler: async (ctx, args) => {
@@ -297,14 +296,14 @@ export const publish_draft = mutation({
 			throw new Error("User must be authenticated to update a draft article.");
 		}
 
-		const article = await ctx.db.get(args.id);
+		const article = await ctx.db.get(args.article_id);
 
 		if (!article || article.status !== "draft") {
 			throw new Error("Article not found or is not a draft.");
 		}
 
 		let title = "ERROR";
-		let slug = slugify_title(title, article._id);
+		let slug = slugify_title(title, args.article_id);
 		let content_json: Value | undefined;
 
 		try {
@@ -318,7 +317,7 @@ export const publish_draft = mutation({
 			if (firstNode.type === "h1" && firstNode.children.length > 0) {
 				const descendant = firstNode.children[0];
 				title = descendant.text as string;
-				slug = slugify_title(title, article._id);
+				slug = slugify_title(title, args.article_id);
 			} else {
 				throw new Error("First node is not an H1 with text children.");
 			}
@@ -327,7 +326,7 @@ export const publish_draft = mutation({
 		}
 
 		// Update the article with the new values
-		ctx.db.patch(article._id, {
+		ctx.db.patch(args.article_id, {
 			title: title,
 			slug: slug,
 			content_json: args.content_json,
@@ -336,5 +335,7 @@ export const publish_draft = mutation({
 			published_year: new Date().getFullYear(),
 			updated_at: Date.now(),
 		});
+
+		return ctx.db.get(args.article_id);
 	},
 });

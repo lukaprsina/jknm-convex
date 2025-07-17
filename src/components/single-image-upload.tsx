@@ -1,23 +1,41 @@
-import type { Id } from "@convex/_generated/dataModel";
+import type { Doc, Id } from "@convex/_generated/dataModel";
 import {
 	AlertCircleIcon,
 	CheckCircleIcon,
 	ImageUpIcon,
 	XIcon,
 } from "lucide-react";
-
+import { useMemo } from "react";
 import { useConvexFileUpload } from "~/hooks/use-file-upload-convex";
+import type { FileMetadata } from "~/hooks/use-file-upload-dnd";
+
+// TODO: selected se ne pojavi pri uploadedFiles
 
 // Single image uploader w/ max size and Convex backend integration
 export default function SingleImageUpload({
 	selectedImage,
 	setSelectedImage,
 }: {
-	selectedImage: Id<"media"> | undefined;
-	setSelectedImage: (imageId: Id<"media"> | undefined) => void;
+	selectedImage: Doc<"media"> | undefined;
+	setSelectedImage: (imageId: Doc<"media"> | undefined) => void;
 }) {
 	const maxSizeMB = 5;
 	const maxSize = maxSizeMB * 1024 * 1024; // 5MB default
+
+	const initialFiles = useMemo(() => {
+		console.log("Initial image data:", { selectedImage });
+		if (!selectedImage) return [];
+
+		return [
+			{
+				id: selectedImage._id,
+				name: selectedImage.filename,
+				size: selectedImage.size_bytes,
+				type: selectedImage.content_type,
+				url: selectedImage.storage_path,
+			} satisfies FileMetadata,
+		];
+	}, [selectedImage]);
 
 	const [
 		{ files, isDragging, errors, isUploading, progress, uploadedFiles },
@@ -31,12 +49,26 @@ export default function SingleImageUpload({
 			getInputProps,
 		},
 	] = useConvexFileUpload({
+		initialFiles,
 		accept: "image/*",
 		maxSize,
 		onUploadComplete: (file) => {
 			console.log("Upload completed:", file);
-			// Set the uploaded file as selected
-			setSelectedImage(file.key as Id<"media">);
+			const file_metadata = {
+				_id: file.key as Id<"media">,
+				filename: file.name,
+				size_bytes: file.size,
+				content_type: file.type,
+				storage_path: file.url,
+
+				// will ignore
+				created_at: Date.now(),
+				upload_status: "completed",
+				variants: undefined,
+				_creationTime: Date.now(),
+			} satisfies Doc<"media">;
+
+			setSelectedImage(file_metadata);
 		},
 		onUploadError: (error) => {
 			console.error("Upload error:", error);
@@ -113,7 +145,8 @@ export default function SingleImageUpload({
 							)}
 							{/* Selected as thumbnail indicator */}
 							{uploadedFiles.length > 0 &&
-								selectedImage === (uploadedFiles[0].key as Id<"media">) && (
+								selectedImage?._id ===
+									(uploadedFiles[0].key as Id<"media">) && (
 									<div className="absolute top-4 right-4">
 										<div className="flex items-center gap-1 rounded-full bg-blue-500 px-2 py-1 text-white text-xs">
 											<CheckCircleIcon className="size-3" />
@@ -153,7 +186,7 @@ export default function SingleImageUpload({
 								// If this uploaded file is selected as thumbnail, deselect it
 								if (
 									uploadedFiles.length > 0 &&
-									selectedImage === (uploadedFiles[0].key as Id<"media">)
+									selectedImage?._id === (uploadedFiles[0].key as Id<"media">)
 								) {
 									setSelectedImage(undefined);
 								}

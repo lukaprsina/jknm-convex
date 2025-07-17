@@ -1,5 +1,5 @@
 import { api } from "@convex/_generated/api";
-import type { Id } from "@convex/_generated/dataModel";
+import type { Doc } from "@convex/_generated/dataModel";
 import { convexQuery } from "@convex-dev/react-query";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import {
@@ -14,17 +14,17 @@ type PublishImageCropperProps = Omit<
 	React.ComponentProps<typeof Cropper>,
 	"children" | "image"
 > & {
-	image_id: Id<"media">;
+	image: Doc<"media">;
 };
 
 export default function PublishImageCropper({
 	className,
-	image_id,
+	image,
 	...props
 }: PublishImageCropperProps) {
 	const { data: image_data } = useSuspenseQuery(
 		convexQuery(api.media.get_by_id, {
-			id: image_id,
+			id: image._id,
 		}),
 	);
 

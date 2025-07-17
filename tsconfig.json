@@ -3,7 +3,8 @@
 		"**/*.ts",
 		"**/*.tsx",
 		"convex/schema.ts.old",
-		"convex/board.ts.old"
+		"convex/board.ts.old",
+		"src/routes/admin/osnutki/-publish-dialog.tsx"
 	],
 	"compilerOptions": {
 		"strict": true,

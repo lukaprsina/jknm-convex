@@ -1,10 +1,11 @@
 import { api } from "@convex/_generated/api";
-import type { Id } from "@convex/_generated/dataModel";
+import type { Doc, Id } from "@convex/_generated/dataModel";
+import type { media_validator } from "@convex/schema";
 import { convexQuery } from "@convex-dev/react-query";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { Check, ImageIcon, Upload } from "lucide-react";
 import { usePluginOption } from "platejs/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Card, CardContent } from "~/components/ui/card";
 import * as Masonry from "~/components/ui/masonry";
 import { ScrollArea } from "~/components/ui/scroll-area";
@@ -15,20 +16,7 @@ import { SavePlugin } from "../plugins/save-kit";
 import SingleImageUpload from "../single-image-upload";
 
 interface ImageCardProps {
-	image: {
-		_id: Id<"media">;
-		storage_path: string;
-		filename: string;
-		content_type: string;
-		size_bytes: number;
-		variants?: {
-			original: {
-				width?: number;
-				height?: number;
-			};
-			image_variants?: Record<string, { width: number; height: number }>;
-		};
-	};
+	image: typeof media_validator.type;
 	isSelected: boolean;
 	onSelect: () => void;
 }
@@ -94,7 +82,7 @@ function ImageCard({ image, isSelected, onSelect }: ImageCardProps) {
 	);
 }
 
-function SkeletonCard() {
+function _SkeletonCard() {
 	return (
 		<Card className="overflow-hidden">
 			<CardContent className="p-0">
@@ -108,8 +96,8 @@ export function ImageSelector({
 	selectedImage,
 	setSelectedImage,
 }: {
-	selectedImage: Id<"media"> | undefined;
-	setSelectedImage: (imageId: Id<"media"> | undefined) => void;
+	selectedImage: Doc<"media"> | undefined;
+	setSelectedImage: (imageId: Doc<"media"> | undefined) => void;
 }) {
 	const article_id = usePluginOption(SavePlugin, "article_id");
 
@@ -119,10 +107,17 @@ export function ImageSelector({
 		}),
 	);
 
-	const skeletonIds = Array.from(
+	const _skeletonIds = Array.from(
 		{ length: 6 },
 		() => `skeleton-${Math.random().toString(36).substring(2, 9)}`,
 	);
+
+	useEffect(() => {
+		const first_image = images_for_article.media.at(0);
+		if (!first_image || selectedImage) return;
+
+		setSelectedImage(first_image);
+	}, [selectedImage, setSelectedImage, images_for_article.media]);
 
 	return (
 		<div className="p-6">
@@ -130,9 +125,6 @@ export function ImageSelector({
 				<h3 className="mb-2 font-semibold text-lg">
 					Izberi sliko za naslovnico
 				</h3>
-				<p className="text-muted-foreground text-sm">
-					Izberi obstoječo sliko iz članka ali naloži novo sliko
-				</p>
 			</div>
 
 			<Tabs defaultValue="existing" className="w-full">
@@ -163,24 +155,28 @@ export function ImageSelector({
 						<ScrollArea className="h-[400px]">
 							<Masonry.Root
 								columnCount={3}
-								gap={{ column: 12, row: 12 }}
+								// gap={{ column: 12, row: 12 }}
+								gap={{ column: 8, row: 8 }}
 								className="w-full"
-								fallback={
+								/* fallback={
 									<div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3">
 										{skeletonIds.map((id) => (
 											<SkeletonCard key={id} />
 										))}
 									</div>
-								}
+								} */
 							>
 								{images_for_article.media.map((image) => (
-									<Masonry.Item key={image._id}>
+									<Masonry.Item
+										key={image._id}
+										className="relative overflow-hidden transition-all duration-300 hover:scale-[1.02]"
+									>
 										<ImageCard
 											image={image}
-											isSelected={selectedImage === image._id}
+											isSelected={selectedImage?._id === image._id}
 											onSelect={() => {
 												setSelectedImage(
-													selectedImage === image._id ? undefined : image._id,
+													selectedImage?._id === image._id ? undefined : image,
 												);
 											}}
 										/>
