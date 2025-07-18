@@ -11,13 +11,16 @@ import type {
 } from "platejs";
 import { NodeApi, SlateElement } from "platejs";
 import { usePluginOption } from "platejs/react";
-import { useEffect } from "react";
+import { use, useEffect } from "react";
 import { cn } from "~/lib/utils";
 import { ExtendedBasePlaceholderPlugin } from "../plugins/media-base-kit";
+import { MediaContext } from "../article-plate-static";
 
 export function ImageElementStatic(
 	props: SlateElementProps<TImageElement & TCaptionProps & TResizableProps>,
 ) {
+	const a = use(MediaContext)
+	console.log("ImageElementStatic", a);
 	/* const media_id = usePluginOption(
 		ExtendedBasePlaceholderPlugin,
 		"media_db_id",

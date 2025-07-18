@@ -36,6 +36,6 @@ export const BaseMediaKit = [
 		},
 	}),
 	BaseMediaEmbedPlugin,
-	ExtendedBasePlaceholderPlugin,
-	// BasePlaceholderPlugin,
+	// ExtendedBasePlaceholderPlugin,
+	BasePlaceholderPlugin,
 ];

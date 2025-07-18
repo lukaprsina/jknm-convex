@@ -29,8 +29,6 @@ function RouteComponent() {
 	if (!article) throw notFound();
 
 	return (
-		<ArticlePlateStatic
-			value={article.content_json} /* article_id={article._id} */
-		/>
+		<ArticlePlateStatic value={article.content_json} article_id={article._id} />
 	);
 }
