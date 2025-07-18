@@ -32,7 +32,7 @@ export default function SingleImageUpload({
 				name: selectedImage.filename,
 				size: selectedImage.size_bytes,
 				type: selectedImage.content_type,
-				url: selectedImage.storage_path,
+				url: selectedImage.original.url,
 			} satisfies FileMetadata,
 		];
 	}, [selectedImage]);
@@ -59,13 +59,17 @@ export default function SingleImageUpload({
 				filename: file.name,
 				size_bytes: file.size,
 				content_type: file.type,
-				storage_path: file.url,
+				original: {
+					url: file.url,
+					size_bytes: file.size,
+				},
 
 				// will ignore
 				created_at: Date.now(),
 				upload_status: "completed",
 				variants: undefined,
 				_creationTime: Date.now(),
+				base_url: "",
 			} satisfies Doc<"media">;
 
 			setSelectedImage(file_metadata);

@@ -1,22 +1,11 @@
 "use client";
 
 import { useDraggable } from "@platejs/dnd";
-import {
-	Image,
-	ImagePlugin,
-	openImagePreview,
-	useMediaState,
-} from "@platejs/media/react";
+import { Image, ImagePlugin, useMediaState } from "@platejs/media/react";
 import { ResizableProvider, useResizableValue } from "@platejs/resizable";
-import type { TImageElement, TMediaElement } from "platejs";
+import type { TImageElement } from "platejs";
 import type { PlateElementProps } from "platejs/react";
-import {
-	createPrimitiveComponent,
-	PlateElement,
-	useEditorRef,
-	useElement,
-	withHOC,
-} from "platejs/react";
+import { PlateElement, withHOC } from "platejs/react";
 
 import { cn } from "~/lib/utils";
 

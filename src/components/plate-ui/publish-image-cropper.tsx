@@ -31,7 +31,7 @@ export default function PublishImageCropper({
 	return (
 		<div className="flex flex-col items-center gap-2">
 			<Cropper
-				image={image_data.storage_path}
+				image={image_data.original.url}
 				className={cn("h-80", className)}
 				{...props}
 			>

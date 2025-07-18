@@ -8,17 +8,15 @@ import type { Id } from "./_generated/dataModel";
 import { internalAction } from "./_generated/server";
 import { media_validator } from "./schema";
 
-type VariantsType = typeof media_validator.fields.variants.type;
-
-interface ImageVariant {
+interface VariantData {
 	width: number;
 	height: number;
-	size_bytes: number;
 	format: "avif" | "jpeg";
+	url: string;
+	size_bytes: number;
 }
 
 interface VariantResult {
-	variant_name: string;
 	width: number;
 	height: number;
 	size_bytes: number;
@@ -72,7 +70,6 @@ async function create_and_upload_variant(
 	await s3_client.send(command);
 
 	return {
-		variant_name,
 		width: buffer.info.width!,
 		height: buffer.info.height!,
 		size_bytes: buffer.info.size,
@@ -80,12 +77,8 @@ async function create_and_upload_variant(
 	};
 }
 
-async function create_blur_placeholder(
-	image: sharp.Sharp,
-	s3_client: S3Client,
-	image_db_id: Id<"media">,
-): Promise<string> {
-	// Create a small blurred placeholder for lazy loading
+// Create a small blurred placeholder for lazy loading
+async function create_blur_placeholder(image: sharp.Sharp): Promise<string> {
 	const blur_width = 40; // Very small for fast loading
 	const blur_sigma = 20; // Heavy blur
 
@@ -100,18 +93,7 @@ async function create_blur_placeholder(
 		.jpeg({ quality: 50 }); // Low quality is fine for blur
 
 	const buffer = await transformer.toBuffer();
-	const key = `${image_db_id}/blur.jpeg`;
 
-	const command = new PutObjectCommand({
-		Bucket: process.env.VITE_AWS_BUCKET_NAME!,
-		Key: key,
-		Body: buffer,
-		ContentType: "image/jpeg",
-	});
-
-	await s3_client.send(command);
-
-	// Return as base64 data URL for inline embedding
 	const base64 = buffer.toString("base64");
 	return `data:image/jpeg;base64,${base64}`;
 }
@@ -124,12 +106,7 @@ export const optimize_image = internalAction({
 	},
 	handler: async (ctx, args) => {
 		try {
-			console.log("Starting image optimization:", {
-				image: args.image.filename,
-				image_db_id: args.image_db_id,
-			});
-
-			const response = await fetch(args.image.storage_path);
+			const response = await fetch(args.image.original.url);
 			if (!response.ok) {
 				throw new Error(`Failed to fetch image: ${response.statusText}`);
 			}
@@ -137,14 +114,6 @@ export const optimize_image = internalAction({
 			const buffer = await response.arrayBuffer();
 			const image = sharp(Buffer.from(buffer));
 			const metadata = await image.metadata();
-
-			console.log("Image metadata:", {
-				filename: args.image.filename,
-				width: metadata.width,
-				height: metadata.height,
-				format: metadata.format,
-				size: metadata.size,
-			});
 
 			// Skip optimization for non-image files
 			if (!metadata.width || !metadata.height) {
@@ -170,11 +139,7 @@ export const optimize_image = internalAction({
 			const formats = ["avif", "jpeg"] as const;
 
 			// Create blur placeholder for lazy loading
-			const blur_placeholder = await create_blur_placeholder(
-				image,
-				client,
-				args.image_db_id,
-			);
+			const blur_placeholder = await create_blur_placeholder(image);
 
 			// Generate all variants
 			const variant_promises: Promise<VariantResult>[] = [];
@@ -197,37 +162,60 @@ export const optimize_image = internalAction({
 
 			const variant_results = await Promise.all(variant_promises);
 
-			// Build variants object according to schema
-			const image_variants: Record<string, ImageVariant> = {};
+			// Build variants array according to new schema
+			const base_url = `https://gradivo.jknm.site/${args.image_db_id}`;
+			const variants: VariantData[] = [];
+
 			for (const result of variant_results) {
-				image_variants[result.variant_name] = {
+				const variant_name = `${result.width}w.${result.format}`;
+				variants.push({
 					width: result.width,
 					height: result.height,
-					size_bytes: result.size_bytes,
 					format: result.format,
-				};
+					url: `${base_url}/${variant_name}`,
+					size_bytes: result.size_bytes,
+				});
 			}
 
-			const variants_data: VariantsType = {
-				original: {
-					width: metadata.width,
-					height: metadata.height,
-				},
-				image_variants,
-			};
+			// Build srcsets
+			const avif_variants = variants.filter((v) => v.format === "avif");
+			const jpeg_variants = variants.filter((v) => v.format === "jpeg");
+
+			const avif_srcset = avif_variants
+				.map((v) => `${v.url} ${v.width}w`)
+				.join(", ");
+
+			const jpeg_srcset = jpeg_variants
+				.map((v) => `${v.url} ${v.width}w`)
+				.join(", ");
+
+			//"(max-width: 640px) 400px, (max-width: 1024px) 800px, 1200px";
+			// Dynamically build sizes attribute to match available variants
+			const availableWidths = Array.from(
+				new Set(variants.map((v) => v.width)),
+			).sort((a, b) => a - b);
+
+			// Example: (max-width: 400px) 400px, (max-width: 800px) 800px, 1200px
+			const sizes =
+				availableWidths
+					.slice(0, -1)
+					.map((w) => `(max-width: ${w}px) ${w}px`)
+					.join(", ") +
+				(availableWidths.length
+					? `, ${availableWidths[availableWidths.length - 1]}px`
+					: "");
 
 			// Update the media record with variants
 			await ctx.runMutation(internal.media.save_variants, {
 				media_id: args.image_db_id,
-				variants: variants_data,
+				variants,
+				srcsets: {
+					avif: avif_srcset,
+					jpeg: jpeg_srcset,
+					sizes,
+				},
 				blur_placeholder,
 				upload_status: "completed",
-			});
-
-			console.log("Image optimization completed:", {
-				filename: args.image.filename,
-				variants_generated: variant_results.length,
-				blur_placeholder_size: blur_placeholder.length,
 			});
 		} catch (error) {
 			console.error("Image optimization failed:", error);

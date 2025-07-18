@@ -8,7 +8,6 @@ import { usePluginOption } from "platejs/react";
 import { useEffect, useState } from "react";
 import { Card, CardContent } from "~/components/ui/card";
 import * as Masonry from "~/components/ui/masonry";
-import { ScrollArea } from "~/components/ui/scroll-area";
 import { Skeleton } from "~/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
 import { cn } from "~/lib/utils";
@@ -25,7 +24,7 @@ function ImageCard({ image, isSelected, onSelect }: ImageCardProps) {
 	const [imageLoaded, setImageLoaded] = useState(false);
 	const [imageError, setImageError] = useState(false);
 
-	const dimensions = image.variants?.original;
+	const dimensions = image.original;
 	const aspectRatio =
 		dimensions?.width && dimensions?.height
 			? dimensions.width / dimensions.height
@@ -48,7 +47,7 @@ function ImageCard({ image, isSelected, onSelect }: ImageCardProps) {
 				)}
 				{!imageError && (
 					<img
-						src={image.storage_path}
+						src={image.original.url}
 						alt={image.filename}
 						className={cn(
 							"w-full object-cover transition-opacity duration-300",

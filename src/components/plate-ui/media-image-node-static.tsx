@@ -1,8 +1,3 @@
-import { api } from "@convex/_generated/api";
-import type { Id } from "@convex/_generated/dataModel";
-import { convexQuery } from "@convex-dev/react-query";
-import { BasePlaceholderPlugin } from "@platejs/media";
-import { useSuspenseQuery } from "@tanstack/react-query";
 import type {
 	SlateElementProps,
 	TCaptionProps,
@@ -10,32 +5,17 @@ import type {
 	TResizableProps,
 } from "platejs";
 import { NodeApi, SlateElement } from "platejs";
-import { usePluginOption } from "platejs/react";
-import { use, useEffect } from "react";
-import { cn } from "~/lib/utils";
-import { ExtendedBasePlaceholderPlugin } from "../plugins/media-base-kit";
-import { MediaContext } from "../article-plate-static";
+import { use } from "react";
+import { MediaContext } from "~/lib/media-context";
 
 export function ImageElementStatic(
 	props: SlateElementProps<TImageElement & TCaptionProps & TResizableProps>,
 ) {
-	const a = use(MediaContext)
-	console.log("ImageElementStatic", a);
-	/* const media_id = usePluginOption(
-		ExtendedBasePlaceholderPlugin,
-		"media_db_id",
-	);
-
-	const { data: image_data } = useSuspenseQuery(
-		convexQuery(api.media.get_optimized_urls, {
-			media_id: media_id!,
-		}),
-	); */
 	const { align = "center", caption, url, width } = props.element;
+	const { media_map } = use(MediaContext);
 
-	/* useEffect(() => {
-		console.log("image_data", image_data);
-	}, [image_data]); */
+	const image = media_map.get(url);
+	if (!image) return null;
 
 	return (
 		<SlateElement {...props} className="py-2.5">
@@ -44,14 +24,37 @@ export function ImageElementStatic(
 					className="relative min-w-[92px] max-w-full"
 					style={{ textAlign: align }}
 				>
-					<img
-						className={cn(
-							"w-full max-w-full cursor-default object-cover px-0",
-							"rounded-sm",
+					<picture>
+						{image.srcsets?.avif && (
+							<source
+								srcSet={image.srcsets.avif}
+								sizes={image.srcsets.sizes}
+								type="image/avif"
+							/>
 						)}
-						alt={(props.attributes as any).alt}
-						src={url}
-					/>
+						{image.srcsets?.jpeg && (
+							<source
+								srcSet={image.srcsets.jpeg}
+								sizes={image.srcsets.sizes}
+								type="image/jpeg"
+							/>
+						)}
+						<img
+							src={image.original.url}
+							alt={caption ? NodeApi.string(caption[0]) : ""}
+							loading="lazy"
+							width={image.original.width}
+							height={image.original.height}
+							style={{
+								backgroundImage: image.blur_placeholder
+									? `url(${image.blur_placeholder})`
+									: undefined,
+								backgroundSize: "cover",
+								backgroundRepeat: "no-repeat",
+								backgroundPosition: "center",
+							}}
+						/>
+					</picture>
 					{caption && (
 						<figcaption className="mx-auto mt-2 h-[24px] max-w-full">
 							{NodeApi.string(caption[0])}

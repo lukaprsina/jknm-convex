@@ -1,14 +1,10 @@
 import { api } from "@convex/_generated/api";
-import type { Doc, Id } from "@convex/_generated/dataModel";
-import { convexQuery, useConvexQuery } from "@convex-dev/react-query";
-import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
+import type { Id } from "@convex/_generated/dataModel";
+import { convexQuery } from "@convex-dev/react-query";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { createSlateEditor, PlateStatic, type Value } from "platejs";
-import { createContext } from "react";
+import { MediaContext } from "~/lib/media-context";
 import { BaseEditorKit } from "./editor-base-kit";
-
-export const MediaContext = createContext<{
-	media_map: Map<string, Doc<"media">>;
-}>({ media_map: new Map() });
 
 export function ArticlePlateStatic({
 	value,
@@ -23,7 +19,7 @@ export function ArticlePlateStatic({
 		}),
 	);
 	const media_map = new Map(
-		article_with_media.media.map((m) => [m.storage_path, m]),
+		article_with_media.media.map((m) => [m.original.url, m]),
 	);
 
 	const editor = createSlateEditor({

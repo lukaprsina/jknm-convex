@@ -58,38 +58,43 @@ const schema = defineSchema({
 		filename: v.string(),
 		content_type: v.string(),
 		size_bytes: v.number(),
-		storage_path: v.string(), // B2 path: /media/${media_db_id}/${variant}.${ext}
+
+		// Store base URL pattern for consistent URL building
+		base_url: v.string(), // e.g., "https://gradivo.jknm.site/media123"
+
+		// Original image info
+		original: v.object({
+			url: v.string(), // Full URL to original image
+			width: v.optional(v.number()),
+			height: v.optional(v.number()),
+			size_bytes: v.number(),
+		}),
+
+		// Optimized variants - cleaner structure
 		variants: v.optional(
-			v.object({
-				original: v.object({
-					width: v.optional(v.number()),
-					height: v.optional(v.number()),
+			v.array(
+				v.object({
+					width: v.number(),
+					height: v.number(),
+					format: v.union(v.literal("avif"), v.literal("jpeg")),
+					url: v.string(), // Full URL - no manual construction needed
+					size_bytes: v.number(),
 				}),
-				// Size variants for images (e.g., "400w", "800w", "1200w")
-				image_variants: v.optional(
-					v.record(
-						v.string(),
-						v.object({
-							width: v.number(),
-							height: v.number(),
-							size_bytes: v.number(),
-							format: v.union(v.literal("avif"), v.literal("jpeg")),
-						}),
-					),
-				),
-				thumbnail_variants: v.optional(
-					v.record(
-						v.string(),
-						v.object({
-							width: v.number(),
-							height: v.number(),
-							size_bytes: v.number(),
-							format: v.union(v.literal("avif"), v.literal("jpeg")),
-						}),
-					),
-				),
+			),
+		),
+
+		// Pre-built srcsets for frontend convenience
+		srcsets: v.optional(
+			v.object({
+				avif: v.string(), // Ready-to-use srcset string
+				jpeg: v.string(), // Ready-to-use srcset string
+				sizes: v.string(), // Recommended sizes attribute
 			}),
 		),
+
+		// Blur placeholder for lazy loading
+		blur_placeholder: v.optional(v.string()), // base64 data URL
+
 		upload_status: v.union(
 			v.literal("pending"),
 			v.literal("processing"),

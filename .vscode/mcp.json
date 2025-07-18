@@ -10,7 +10,7 @@
 	"servers": {
 		"plate": {
 			"command": "bunx",
-			"args": ["-y", "shadcn@canary", "registry:mcp"],
+			"args": ["shadcn@canary", "registry:mcp"],
 			"env": {
 				"REGISTRY_URL": "https://platejs.org/r/registry.json"
 			},
