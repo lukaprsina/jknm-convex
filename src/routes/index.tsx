@@ -1,4 +1,5 @@
-import { convexQuery } from "@convex-dev/react-query";
+import { convexQuery, useConvexMutation } from "@convex-dev/react-query";
+import { useMutation } from "@tanstack/react-query";
 import {
 	createFileRoute,
 	getRouteApi,
@@ -78,6 +79,10 @@ function Home() {
 		{ initialNumItems: DEFAULT_NUM_ITEMS },
 	);
 
+	const delete_everything = useMutation({
+		mutationFn: useConvexMutation(api.articles.delete_everything),
+	});
+
 	// Sentinel for infinite loading
 	const { isIntersecting, ref } = useIntersectionObserver({ threshold: 0.5 });
 
@@ -110,6 +115,21 @@ function Home() {
 							}}
 						>
 							Odstrani uporabnika
+						</Button>
+						<Button
+							onClick={async (event) => {
+								if (!event.ctrlKey && !event.shiftKey) return;
+
+								const conformation = confirm(
+									"Are you sure you want to delete every article and media?",
+								);
+
+								if (!conformation) return;
+
+								delete_everything.mutate({});
+							}}
+						>
+							Izbriši vse
 						</Button>
 					</div>
 					<div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">

@@ -6,7 +6,7 @@ import type { EmptyObject } from "better-auth/react";
 import { api } from "convex/_generated/api";
 import type { Infer } from "convex/values";
 import { Button } from "~/components/ui/button";
-import { DraftCard } from "./-article-card";
+import { ArticleCard } from "./-article-card";
 
 export const Route = createFileRoute("/admin/$status/")({
 	component: RouteComponent,
@@ -54,8 +54,8 @@ function RouteComponent() {
 		<div>
 			<Button onClick={() => mutate({})}>Create Draft</Button>
 			<div>
-				{articles.map((draft) => (
-					<DraftCard key={draft._id} article={draft} />
+				{articles.map((article) => (
+					<ArticleCard key={article._id} article={article} />
 				))}
 			</div>
 		</div>

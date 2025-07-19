@@ -1,11 +1,16 @@
 "use node";
 
-import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
+import {
+	DeleteObjectsCommand,
+	ListObjectsV2Command,
+	PutObjectCommand,
+	S3Client,
+} from "@aws-sdk/client-s3";
 import { v } from "convex/values";
 import sharp from "sharp";
 import { internal } from "./_generated/api";
 import type { Id } from "./_generated/dataModel";
-import { internalAction } from "./_generated/server";
+import { internalAction, internalMutation } from "./_generated/server";
 import { media_validator } from "./schema";
 
 interface VariantData {
@@ -225,5 +230,36 @@ export const optimize_image = internalAction({
 			});
 			throw error;
 		}
+	},
+});
+
+export const empty_bucket = internalAction({
+	handler: async () => {
+		const client = new S3Client({
+			endpoint: `https://s3.${process.env.VITE_AWS_REGION}.backblazeb2.com`,
+			region: process.env.VITE_AWS_REGION,
+			credentials: {
+				accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
+				secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
+			},
+		});
+		const listCommand = new ListObjectsV2Command({
+			Bucket: process.env.VITE_AWS_BUCKET_NAME,
+		});
+		const listResponse = await client.send(listCommand);
+
+		await client.send(
+			new DeleteObjectsCommand({
+				Bucket: process.env.VITE_AWS_BUCKET_NAME,
+				Delete: {
+					Objects:
+						listResponse.Contents?.map((item) => ({
+							Key: item.Key!,
+						})) ?? [],
+				},
+			}),
+		);
+
+		console.log("Bucket emptied.", listResponse.Contents?.length ?? 0);
 	},
 });

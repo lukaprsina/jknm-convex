@@ -1,10 +1,21 @@
+import {
+	DeleteObjectsCommand,
+	ListObjectsV2Command,
+	S3Client,
+} from "@aws-sdk/client-s3";
 import type { PaginationResult } from "convex/server";
 import { paginationOptsValidator } from "convex/server";
 import { v } from "convex/values";
 import type { Value } from "platejs";
 import slugify from "slugify";
+import { internal } from "./_generated/api";
 import type { Doc, Id } from "./_generated/dataModel";
-import { mutation, type QueryCtx, query } from "./_generated/server";
+import {
+	internalAction,
+	mutation,
+	type QueryCtx,
+	query,
+} from "./_generated/server";
 import {
 	article_status_validator,
 	article_validator,
@@ -188,7 +199,7 @@ export const get_latest_of_status = query({
 	},
 });
 
-type ArticlesByStatus = Record<
+export type ArticlesByStatus = Record<
 	typeof article_status_validator.type,
 	Doc<"articles">[]
 >;
@@ -429,5 +440,50 @@ export const publish_draft = mutation({
 		}
 
 		return ctx.db.get(args.article_id);
+	},
+});
+
+export const delete_everything = mutation({
+	handler: async (ctx) => {
+		const user_id = await ctx.auth.getUserIdentity();
+		if (!user_id) {
+			throw new Error("User must be authenticated to delete everything.");
+		}
+
+		// Delete all articles
+		const articles = await ctx.db.query("articles").collect();
+		for (const article of articles) {
+			await ctx.db.delete(article._id);
+		}
+
+		// Delete all author links
+		const articles_to_authors = await ctx.db
+			.query("articles_to_authors")
+			.collect();
+		for (const link of articles_to_authors) {
+			await ctx.db.delete(link._id);
+		}
+
+		// Delete all media
+		const media = await ctx.db.query("media").collect();
+		for (const item of media) {
+			await ctx.db.delete(item._id);
+		}
+
+		// Delete all media links
+		const media_to_articles = await ctx.db.query("media_to_articles").collect();
+		for (const link of media_to_articles) {
+			await ctx.db.delete(link._id);
+		}
+
+		await ctx.scheduler.runAfter(0, internal.media_sharp.empty_bucket);
+
+		console.log("All articles, authors, media, and B2 bucket cleared.", {
+			user_id,
+			article_count: articles.length,
+			author_link_count: articles_to_authors.length,
+			media_count: media.length,
+			media_link_count: media_to_articles.length,
+		});
 	},
 });
