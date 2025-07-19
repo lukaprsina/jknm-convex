@@ -4,17 +4,19 @@ import { createFileRoute, getRouteApi, notFound } from "@tanstack/react-router";
 import { api } from "convex/_generated/api";
 import { ArticlePlateEditor } from "~/components/article-plate-editor";
 
-export const Route = createFileRoute("/admin/osnutki/$draft_slug/uredi/")({
+export const Route = createFileRoute("/admin/$status/$article_slug/uredi/")({
 	component: RouteComponent,
 });
 
-const draft_slug_route_api = getRouteApi("/admin/osnutki/$draft_slug/uredi/");
+const article_slug_route_api = getRouteApi(
+	"/admin/$status/$article_slug/uredi/",
+);
 
 function RouteComponent() {
-	const { draft_slug } = draft_slug_route_api.useParams();
+	const { article_slug } = article_slug_route_api.useParams();
 
 	const { data: article } = useSuspenseQuery(
-		convexQuery(api.articles.get_by_slug, { slug: draft_slug }),
+		convexQuery(api.articles.get_by_slug, { slug: article_slug }),
 	);
 
 	if (!article) throw notFound();

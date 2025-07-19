@@ -99,7 +99,9 @@ function Home() {
 							<Link to="/prijava">Prijava</Link>
 						</Button>
 						<Button asChild>
-							<Link to="/admin/osnutki">Admin osnutki</Link>
+							<Link to="/admin/$status" params={{ status: "draft" }}>
+								Admin osnutki
+							</Link>
 						</Button>
 						<Button
 							onClick={async () => {

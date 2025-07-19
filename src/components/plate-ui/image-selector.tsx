@@ -3,6 +3,7 @@ import type { Doc, Id } from "@convex/_generated/dataModel";
 import type { media_validator } from "@convex/schema";
 import { convexQuery } from "@convex-dev/react-query";
 import { useSuspenseQuery } from "@tanstack/react-query";
+import type { Infer } from "convex/values";
 import { Check, ImageIcon, Upload } from "lucide-react";
 import { usePluginOption } from "platejs/react";
 import { useEffect, useState } from "react";
@@ -15,7 +16,7 @@ import { SavePlugin } from "../plugins/save-kit";
 import SingleImageUpload from "../single-image-upload";
 
 interface ImageCardProps {
-	image: typeof media_validator.type;
+	image: Infer<typeof media_validator>;
 	isSelected: boolean;
 	onSelect: () => void;
 }

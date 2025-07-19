@@ -4,7 +4,7 @@ import { createStore } from "jotai";
 import { atomWithStorage } from "jotai/utils";
 import type { Value } from "platejs";
 import { createPlatePlugin, Key } from "platejs/react";
-import { PublishDialog } from "../../routes/admin/osnutki/-publish-dialog";
+import { PublishDialog } from "../../routes/admin/$status/-publish-dialog";
 
 type AutoSaveStorage = {
 	value: Value;

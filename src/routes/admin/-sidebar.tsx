@@ -2,13 +2,14 @@ import { api } from "@convex/_generated/api";
 import type { article_status_validator } from "@convex/schema";
 import { convexQuery } from "@convex-dev/react-query";
 import { useSuspenseQuery } from "@tanstack/react-query";
+import type { Infer } from "convex/values";
 import { FolderIcon } from "lucide-react";
 import { useMemo } from "react";
 import { NavMain, type NavMainItemType } from "~/components/nav-main";
 import { Sidebar, SidebarContent, SidebarRail } from "~/components/ui/sidebar";
 import { exhaustive_check } from "~/types/utils";
 
-function status_to_label(status: typeof article_status_validator.type) {
+function status_to_label(status: Infer<typeof article_status_validator>) {
 	switch (status) {
 		case "draft":
 			return "Osnutki";
@@ -34,7 +35,7 @@ export function AdminSidebar({
 		const items: NavMainItemType[] = [];
 
 		for (const status of Object.keys(articles_by_status)) {
-			const typesafe_status = status as typeof article_status_validator.type;
+			const typesafe_status = status as Infer<typeof article_status_validator>;
 			const articles = articles_by_status[typesafe_status];
 			if (articles.length === 0) continue; // Skip empty statuses
 

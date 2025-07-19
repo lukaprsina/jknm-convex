@@ -21,7 +21,7 @@ import {
 } from "~/components/ui/dialog";
 
 type PublishMutation = typeof api.articles.publish_draft;
-const admin_draft_route = getRouteApi("/admin/osnutki/$draft_slug/uredi/");
+const admin_draft_route = getRouteApi("/admin/$status/$article_slug/uredi/");
 
 export function PublishDialog() {
 	const open = usePluginOption(PublishPlugin, "open_dialogue");
@@ -42,8 +42,8 @@ export function PublishDialog() {
 			if (!data) return;
 
 			navigate({
-				from: "/admin/osnutki/$draft_slug/uredi",
-				to: "/novica/$article_slug",
+				from: "/admin/$status/$article_slug/uredi",
+				to: "/admin/$status/$article_slug",
 				params: {
 					article_slug: data.slug,
 				},

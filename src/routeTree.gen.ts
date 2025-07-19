@@ -14,10 +14,10 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as AdminRouteRouteImport } from './routes/admin/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as PrijavaIndexRouteImport } from './routes/prijava.index'
-import { Route as NovicaArticle_slugIndexRouteImport } from './routes/novica/$article_slug/index'
-import { Route as AdminOsnutkiIndexRouteImport } from './routes/admin/osnutki/index'
-import { Route as AdminOsnutkiDraft_slugIndexRouteImport } from './routes/admin/osnutki/$draft_slug.index'
-import { Route as AdminOsnutkiDraft_slugUrediIndexRouteImport } from './routes/admin/osnutki/$draft_slug.uredi.index'
+import { Route as NovicaArticle_slugIndexRouteImport } from './routes/novica/$article_slug.index'
+import { Route as AdminStatusIndexRouteImport } from './routes/admin/$status/index'
+import { Route as AdminStatusArticle_slugIndexRouteImport } from './routes/admin/$status/$article_slug.index'
+import { Route as AdminStatusArticle_slugUrediIndexRouteImport } from './routes/admin/$status/$article_slug.uredi.index'
 import { ServerRoute as ApiAuthSplatServerRouteImport } from './routes/api/auth/$'
 
 const rootServerRouteImport = createServerRootRoute()
@@ -42,21 +42,21 @@ const NovicaArticle_slugIndexRoute = NovicaArticle_slugIndexRouteImport.update({
   path: '/novica/$article_slug/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AdminOsnutkiIndexRoute = AdminOsnutkiIndexRouteImport.update({
-  id: '/osnutki/',
-  path: '/osnutki/',
+const AdminStatusIndexRoute = AdminStatusIndexRouteImport.update({
+  id: '/$status/',
+  path: '/$status/',
   getParentRoute: () => AdminRouteRoute,
 } as any)
-const AdminOsnutkiDraft_slugIndexRoute =
-  AdminOsnutkiDraft_slugIndexRouteImport.update({
-    id: '/osnutki/$draft_slug/',
-    path: '/osnutki/$draft_slug/',
+const AdminStatusArticle_slugIndexRoute =
+  AdminStatusArticle_slugIndexRouteImport.update({
+    id: '/$status/$article_slug/',
+    path: '/$status/$article_slug/',
     getParentRoute: () => AdminRouteRoute,
   } as any)
-const AdminOsnutkiDraft_slugUrediIndexRoute =
-  AdminOsnutkiDraft_slugUrediIndexRouteImport.update({
-    id: '/osnutki/$draft_slug/uredi/',
-    path: '/osnutki/$draft_slug/uredi/',
+const AdminStatusArticle_slugUrediIndexRoute =
+  AdminStatusArticle_slugUrediIndexRouteImport.update({
+    id: '/$status/$article_slug/uredi/',
+    path: '/$status/$article_slug/uredi/',
     getParentRoute: () => AdminRouteRoute,
   } as any)
 const ApiAuthSplatServerRoute = ApiAuthSplatServerRouteImport.update({
@@ -69,29 +69,29 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteRouteWithChildren
   '/prijava': typeof PrijavaIndexRoute
-  '/admin/osnutki': typeof AdminOsnutkiIndexRoute
+  '/admin/$status': typeof AdminStatusIndexRoute
   '/novica/$article_slug': typeof NovicaArticle_slugIndexRoute
-  '/admin/osnutki/$draft_slug': typeof AdminOsnutkiDraft_slugIndexRoute
-  '/admin/osnutki/$draft_slug/uredi': typeof AdminOsnutkiDraft_slugUrediIndexRoute
+  '/admin/$status/$article_slug': typeof AdminStatusArticle_slugIndexRoute
+  '/admin/$status/$article_slug/uredi': typeof AdminStatusArticle_slugUrediIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteRouteWithChildren
   '/prijava': typeof PrijavaIndexRoute
-  '/admin/osnutki': typeof AdminOsnutkiIndexRoute
+  '/admin/$status': typeof AdminStatusIndexRoute
   '/novica/$article_slug': typeof NovicaArticle_slugIndexRoute
-  '/admin/osnutki/$draft_slug': typeof AdminOsnutkiDraft_slugIndexRoute
-  '/admin/osnutki/$draft_slug/uredi': typeof AdminOsnutkiDraft_slugUrediIndexRoute
+  '/admin/$status/$article_slug': typeof AdminStatusArticle_slugIndexRoute
+  '/admin/$status/$article_slug/uredi': typeof AdminStatusArticle_slugUrediIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteRouteWithChildren
   '/prijava/': typeof PrijavaIndexRoute
-  '/admin/osnutki/': typeof AdminOsnutkiIndexRoute
+  '/admin/$status/': typeof AdminStatusIndexRoute
   '/novica/$article_slug/': typeof NovicaArticle_slugIndexRoute
-  '/admin/osnutki/$draft_slug/': typeof AdminOsnutkiDraft_slugIndexRoute
-  '/admin/osnutki/$draft_slug/uredi/': typeof AdminOsnutkiDraft_slugUrediIndexRoute
+  '/admin/$status/$article_slug/': typeof AdminStatusArticle_slugIndexRoute
+  '/admin/$status/$article_slug/uredi/': typeof AdminStatusArticle_slugUrediIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -99,28 +99,28 @@ export interface FileRouteTypes {
     | '/'
     | '/admin'
     | '/prijava'
-    | '/admin/osnutki'
+    | '/admin/$status'
     | '/novica/$article_slug'
-    | '/admin/osnutki/$draft_slug'
-    | '/admin/osnutki/$draft_slug/uredi'
+    | '/admin/$status/$article_slug'
+    | '/admin/$status/$article_slug/uredi'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/admin'
     | '/prijava'
-    | '/admin/osnutki'
+    | '/admin/$status'
     | '/novica/$article_slug'
-    | '/admin/osnutki/$draft_slug'
-    | '/admin/osnutki/$draft_slug/uredi'
+    | '/admin/$status/$article_slug'
+    | '/admin/$status/$article_slug/uredi'
   id:
     | '__root__'
     | '/'
     | '/admin'
     | '/prijava/'
-    | '/admin/osnutki/'
+    | '/admin/$status/'
     | '/novica/$article_slug/'
-    | '/admin/osnutki/$draft_slug/'
-    | '/admin/osnutki/$draft_slug/uredi/'
+    | '/admin/$status/$article_slug/'
+    | '/admin/$status/$article_slug/uredi/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -181,25 +181,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof NovicaArticle_slugIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/admin/osnutki/': {
-      id: '/admin/osnutki/'
-      path: '/osnutki'
-      fullPath: '/admin/osnutki'
-      preLoaderRoute: typeof AdminOsnutkiIndexRouteImport
+    '/admin/$status/': {
+      id: '/admin/$status/'
+      path: '/$status'
+      fullPath: '/admin/$status'
+      preLoaderRoute: typeof AdminStatusIndexRouteImport
       parentRoute: typeof AdminRouteRoute
     }
-    '/admin/osnutki/$draft_slug/': {
-      id: '/admin/osnutki/$draft_slug/'
-      path: '/osnutki/$draft_slug'
-      fullPath: '/admin/osnutki/$draft_slug'
-      preLoaderRoute: typeof AdminOsnutkiDraft_slugIndexRouteImport
+    '/admin/$status/$article_slug/': {
+      id: '/admin/$status/$article_slug/'
+      path: '/$status/$article_slug'
+      fullPath: '/admin/$status/$article_slug'
+      preLoaderRoute: typeof AdminStatusArticle_slugIndexRouteImport
       parentRoute: typeof AdminRouteRoute
     }
-    '/admin/osnutki/$draft_slug/uredi/': {
-      id: '/admin/osnutki/$draft_slug/uredi/'
-      path: '/osnutki/$draft_slug/uredi'
-      fullPath: '/admin/osnutki/$draft_slug/uredi'
-      preLoaderRoute: typeof AdminOsnutkiDraft_slugUrediIndexRouteImport
+    '/admin/$status/$article_slug/uredi/': {
+      id: '/admin/$status/$article_slug/uredi/'
+      path: '/$status/$article_slug/uredi'
+      fullPath: '/admin/$status/$article_slug/uredi'
+      preLoaderRoute: typeof AdminStatusArticle_slugUrediIndexRouteImport
       parentRoute: typeof AdminRouteRoute
     }
   }
@@ -217,15 +217,16 @@ declare module '@tanstack/react-start/server' {
 }
 
 interface AdminRouteRouteChildren {
-  AdminOsnutkiIndexRoute: typeof AdminOsnutkiIndexRoute
-  AdminOsnutkiDraft_slugIndexRoute: typeof AdminOsnutkiDraft_slugIndexRoute
-  AdminOsnutkiDraft_slugUrediIndexRoute: typeof AdminOsnutkiDraft_slugUrediIndexRoute
+  AdminStatusIndexRoute: typeof AdminStatusIndexRoute
+  AdminStatusArticle_slugIndexRoute: typeof AdminStatusArticle_slugIndexRoute
+  AdminStatusArticle_slugUrediIndexRoute: typeof AdminStatusArticle_slugUrediIndexRoute
 }
 
 const AdminRouteRouteChildren: AdminRouteRouteChildren = {
-  AdminOsnutkiIndexRoute: AdminOsnutkiIndexRoute,
-  AdminOsnutkiDraft_slugIndexRoute: AdminOsnutkiDraft_slugIndexRoute,
-  AdminOsnutkiDraft_slugUrediIndexRoute: AdminOsnutkiDraft_slugUrediIndexRoute,
+  AdminStatusIndexRoute: AdminStatusIndexRoute,
+  AdminStatusArticle_slugIndexRoute: AdminStatusArticle_slugIndexRoute,
+  AdminStatusArticle_slugUrediIndexRoute:
+    AdminStatusArticle_slugUrediIndexRoute,
 }
 
 const AdminRouteRouteWithChildren = AdminRouteRoute._addFileChildren(

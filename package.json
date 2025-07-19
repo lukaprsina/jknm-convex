@@ -13,7 +13,8 @@
 		"format": "biome format --write .",
 		"lint": "biome lint --write .",
 		"check": "biome check --write .",
-		"deps": "ncu --interactive --format group"
+		"deps": "ncu --interactive --format group",
+		"typecheck": "tsc --noEmit"
 	},
 	"patchedDependencies": {
 		"react-lite-youtube-embed@2.5.1": "patches/react-lite-youtube-embed.patch"
