@@ -87,12 +87,7 @@ export const PublishPlugin = createPlatePlugin({
 			return;
 		}
 
-		/* publish_draft({
-			id: article_id,
-			content_json: JSON.stringify(value),
-		}); */
 		context.setOption("open_dialogue", true);
-		console.log("Publishing draft...", { context, opts: context.getOptions() });
 	},
 }));
 

@@ -8,10 +8,7 @@ import { getEditorDOMFromHtmlString } from "platejs";
 import { useEditorRef } from "platejs/react";
 import * as React from "react";
 import { useFilePicker } from "use-file-picker";
-import type {
-	SelectedFiles,
-	SelectedFilesOrErrors,
-} from "use-file-picker/types";
+import type { SelectedFilesOrErrors } from "use-file-picker/types";
 
 import {
 	DropdownMenu,

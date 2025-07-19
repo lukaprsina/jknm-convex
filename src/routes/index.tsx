@@ -15,6 +15,7 @@ import { Footer2 } from "~/components/layout/footer2";
 import { Navbar1 } from "~/components/layout/navbar1";
 import { Button } from "~/components/ui/button";
 import { auth_client } from "~/lib/auth-client";
+import { ArticleCard } from "./-article-card";
 import { FilterAccordion } from "./-filter-accordion";
 
 const DEFAULT_NUM_ITEMS = 10;
@@ -109,15 +110,18 @@ function Home() {
 							Odstrani uporabnika
 						</Button>
 					</div>
-					{search_api.results?.map((article) => (
-						<Link
-							key={article._id}
-							to="/novica/$article_slug"
-							params={{ article_slug: article.slug }}
-						>
-							{article.title}
-						</Link>
-					))}
+					<div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+						{search_api.results?.map((article) => (
+							<ArticleCard key={article._id} article={article} />
+						))}
+					</div>
+					{/* Display a message if no articles are found */}
+					{search_api.status === "Exhausted" &&
+						search_api.results.length === 0 && (
+							<div className="text-center text-gray-500">
+								<p>Ni najdenih novic.</p>
+							</div>
+						)}
 					{/* Sentinel for infinite scroll */}
 					{search_api.status === "CanLoadMore" && (
 						<div

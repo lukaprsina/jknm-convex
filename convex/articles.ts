@@ -6,45 +6,53 @@ import slugify from "slugify";
 import { api } from "./_generated/api";
 import type { Doc, Id } from "./_generated/dataModel";
 import { mutation, type QueryCtx, query } from "./_generated/server";
-import { article_validator } from "./schema";
+import { article_validator, thumbnail_validator } from "./schema";
 
 /**
  * Helper function to load authors for an article in the correct order
  */
-async function load_authors_for_article(
+async function load_metadata_for_article(
 	ctx: QueryCtx,
-	articleId: Id<"articles">,
+	article: Doc<"articles">,
 ) {
-	const authors = await ctx.db
+	const author_links = await ctx.db
 		.query("articles_to_authors")
-		.withIndex("by_article_and_order", (q) => q.eq("article_id", articleId))
+		.withIndex("by_article_and_order", (q) => q.eq("article_id", article._id))
 		.collect();
 
-	/* const authors = await Promise.all(
-		authorLinks.map(async (link) => {
+	const authors = await Promise.all(
+		author_links.map(async (link) => {
 			const author = await ctx.db.get(link.author_id);
 			return author ? { ...author, order: link.order } : null;
 		}),
-	); */
+	);
 
-	// .filter((author): author is NonNullable<typeof author> => author !== null)
-	return authors.sort((a, b) => a.order - b.order);
+	const thumbnail_full = article.thumbnail?.image_id
+		? await ctx.db.get(article.thumbnail.image_id)
+		: null;
+
+	return {
+		authors: authors
+			.filter((author): author is NonNullable<typeof author> => author !== null)
+			.sort((a, b) => a.order - b.order),
+		thumbnail_full,
+	};
 }
 
 /**
  * Helper function to load authors for multiple articles and apply author filtering
  */
-async function load_authors_and_filter<T extends Doc<"articles">>(
+async function load_metadata_and_filter<T extends Doc<"articles">>(
 	ctx: QueryCtx,
 	articles: T[],
 	authorFilter: string[],
 ) {
-	const articlesWithAuthors = await Promise.all(
+	const articlesWithMetadata = await Promise.all(
 		articles.map(async (article) => {
-			const authors = await load_authors_for_article(ctx, article._id);
+			const metadata = await load_metadata_for_article(ctx, article);
 			return {
 				...article,
-				authors,
+				...metadata,
 			};
 		}),
 	);
@@ -52,10 +60,12 @@ async function load_authors_and_filter<T extends Doc<"articles">>(
 	// Filter by authors if specified
 	const hasAuthorFilter = authorFilter.length > 0;
 	return hasAuthorFilter
-		? articlesWithAuthors.filter((article) =>
-				article.authors.some((author) => authorFilter.includes(author._id)),
+		? articlesWithMetadata.filter((article) =>
+				article.authors.some((author: { _id: string }) =>
+					authorFilter.includes(author._id),
+				),
 			)
-		: articlesWithAuthors;
+		: articlesWithMetadata;
 }
 
 /**
@@ -74,7 +84,7 @@ export const get_by_slug = query({
 		const article = user_id
 			? await article_unfiltered.first()
 			: await article_unfiltered
-					// .filter((q) => q.eq(q.field("status"), "published")) // TODO
+					.filter((q) => q.eq(q.field("status"), "published")) // TODO
 					.first();
 
 		if (!article) {
@@ -82,11 +92,11 @@ export const get_by_slug = query({
 			return null;
 		}
 
-		const authors = await load_authors_for_article(ctx, article._id);
+		const metadata = await load_metadata_for_article(ctx, article);
 
 		return {
 			...article,
-			authors,
+			...metadata,
 		};
 	},
 });
@@ -103,12 +113,12 @@ export const search_articles_unified = query({
 		paginationOpts: paginationOptsValidator,
 	},
 	handler: async (ctx, args) => {
-		const hasSearchTerm = args.search_term.trim().length > 0;
+		const has_search_term = args.search_term.trim().length > 0;
 
 		// Declare result with union type
 		let result: PaginationResult<Doc<"articles">>;
 
-		if (hasSearchTerm) {
+		if (has_search_term) {
 			// Use full-text search when there's a search term
 			const searchQuery = ctx.db
 				.query("articles")
@@ -125,21 +135,21 @@ export const search_articles_unified = query({
 			result = await searchQuery.paginate(args.paginationOpts);
 		} else {
 			// Use regular index when no search term
-			const articlesQuery = ctx.db.query("articles");
+			const articles_query = ctx.db.query("articles");
 
-			const indexedQuery = args.year
-				? articlesQuery.withIndex("by_status_and_published_year", (q) =>
+			const indexed_query = args.year
+				? articles_query.withIndex("by_status_and_published_year", (q) =>
 						q.eq("status", "published").eq("published_year", args.year),
 					)
-				: articlesQuery.withIndex("by_status_and_published_at", (q) =>
+				: articles_query.withIndex("by_status_and_published_at", (q) =>
 						q.eq("status", "published"),
 					);
 
-			result = await indexedQuery.order("desc").paginate(args.paginationOpts);
+			result = await indexed_query.order("desc").paginate(args.paginationOpts);
 		}
 
 		// Load authors for all articles and apply author filtering
-		const filteredArticles = await load_authors_and_filter(
+		const filtered_articles = await load_metadata_and_filter(
 			ctx,
 			result.page,
 			args.author_ids,
@@ -147,7 +157,7 @@ export const search_articles_unified = query({
 
 		return {
 			...result,
-			page: filteredArticles,
+			page: filtered_articles,
 		};
 	},
 });
@@ -180,7 +190,7 @@ export const get_all_of_status = query({
 		// Load authors for each draft article
 		const drafts_with_authors = await Promise.all(
 			drafts.map(async (draft) => {
-				const authors = await load_authors_for_article(ctx, draft._id);
+				const authors = await load_metadata_for_article(ctx, draft);
 				return {
 					...draft,
 					authors,
@@ -288,6 +298,9 @@ export const update_draft = mutation({
 export const publish_draft = mutation({
 	args: {
 		article_id: v.id("articles"),
+		thumbnail: thumbnail_validator,
+		author_ids: v.array(v.string()),
+		published_at: v.optional(v.number()),
 		content_json: v.string(),
 	},
 	handler: async (ctx, args) => {
@@ -325,16 +338,42 @@ export const publish_draft = mutation({
 			throw new Error("Content JSON is not a valid array or is empty.");
 		}
 
+		const published_at = args.published_at ?? Date.now();
+
 		// Update the article with the new values
 		ctx.db.patch(args.article_id, {
 			title: title,
 			slug: slug,
+			thumbnail: args.thumbnail,
 			content_json: args.content_json,
 			status: "published",
-			published_at: Date.now(),
-			published_year: new Date().getFullYear(),
+			published_at,
+			published_year: new Date(published_at).getFullYear(),
 			updated_at: Date.now(),
 		});
+
+		// Delete previous authors for this article
+		const previous_authors = await ctx.db
+			.query("articles_to_authors")
+			.withIndex("by_article_and_order", (q) =>
+				q.eq("article_id", args.article_id),
+			)
+			.collect();
+
+		for (const author_link of previous_authors) {
+			await ctx.db.delete(author_link._id);
+		}
+
+		// Insert new authors into the join table
+		for (let i = 0; i < args.author_ids.length; i++) {
+			const author_id = args.author_ids[i];
+
+			await ctx.db.insert("articles_to_authors", {
+				article_id: args.article_id,
+				author_id: author_id as Id<"authors">,
+				order: i,
+			});
+		}
 
 		return ctx.db.get(args.article_id);
 	},

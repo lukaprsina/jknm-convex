@@ -1,17 +1,26 @@
 import { defineSchema, defineTable } from "convex/server";
 import { v } from "convex/values";
 
-const article_status_validator = v.union(
+export const article_status_validator = v.union(
 	v.literal("draft"),
 	v.literal("published"),
 	v.literal("archived"),
 	v.literal("deleted"),
 );
 
+export const thumbnail_validator = v.object({
+	image_id: v.id("media"),
+	x: v.number(),
+	y: v.number(),
+	width: v.number(),
+	height: v.number(),
+});
+
 const schema = defineSchema({
 	users: defineTable({
 		email: v.string(),
 	}).index("email", ["email"]),
+
 	articles: defineTable({
 		title: v.string(),
 		slug: v.string(),
@@ -20,16 +29,7 @@ const schema = defineSchema({
 		content_markdown: v.optional(v.string()), // For full-text search
 		excerpt: v.optional(v.string()), // For previews/SEO
 		view_count: v.number(),
-		thumbnail: v.optional(
-			v.object({
-				original_id: v.id("media"),
-				cropped_id: v.id("media"),
-				x: v.number(),
-				y: v.number(),
-				width: v.number(),
-				height: v.number(),
-			}),
-		),
+		thumbnail: v.optional(thumbnail_validator),
 		legacy_id: v.optional(v.number()),
 		updated_at: v.number(), // Unix timestamp
 		created_at: v.number(), // Unix timestamp

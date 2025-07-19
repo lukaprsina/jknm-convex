@@ -7,11 +7,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 export function DraftCard({ draft }: { draft: Doc<"articles"> }) {
 	return (
 		<div className="relative mb-4 w-full">
-			{/* Main Link for the entire card */}
 			<Link
 				from="/admin/osnutki"
-				to="/admin/osnutki/$draft_id"
-				params={{ draft_id: draft.slug }}
+				to="/admin/osnutki/$draft_slug"
+				params={{ draft_slug: draft.slug }}
 			>
 				<Card className="w-full p-4">
 					<CardHeader className="mb-2 flex w-full items-start">
@@ -32,8 +31,8 @@ export function DraftCard({ draft }: { draft: Doc<"articles"> }) {
 			<div className="absolute top-4 right-4 ml-auto flex gap-2">
 				<Button variant="outline" asChild>
 					<Link
-						to="/admin/osnutki/$draft_id/uredi"
-						params={{ draft_id: draft.slug }}
+						to="/admin/osnutki/$draft_slug/uredi"
+						params={{ draft_slug: draft.slug }}
 					>
 						<EditIcon />
 					</Link>

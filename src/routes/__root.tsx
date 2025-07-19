@@ -18,8 +18,6 @@ import { getCookie, getWebRequest } from "@tanstack/react-start/server";
 import type { ConvexReactClient } from "convex/react";
 import { Toaster } from "react-hot-toast";
 import appCss from "~/app.css?url";
-import { DefaultCatchBoundary } from "~/components/default-catch-boundary";
-import { NotFound } from "~/components/not-found";
 import { auth_client } from "~/lib/auth-client";
 import { seo } from "~/lib/seo";
 import { fetchSession, getCookieName } from "~/lib/utils";
@@ -76,14 +74,14 @@ export const Route = createRootRouteWithContext<{
 			// { src: "https://unpkg.com/@styleglide/theme-editor" },
 		],
 	}),
-	errorComponent: (props) => {
+	/* errorComponent: (props) => {
 		return (
 			<RootDocument>
 				<DefaultCatchBoundary {...props} />
 			</RootDocument>
 		);
 	},
-	notFoundComponent: () => <NotFound />,
+	notFoundComponent: () => <NotFound />, */
 	component: RootComponent,
 });
 
