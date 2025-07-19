@@ -3,10 +3,13 @@ import { paginationOptsValidator } from "convex/server";
 import { v } from "convex/values";
 import type { Value } from "platejs";
 import slugify from "slugify";
-import { api } from "./_generated/api";
 import type { Doc, Id } from "./_generated/dataModel";
 import { mutation, type QueryCtx, query } from "./_generated/server";
-import { article_validator, thumbnail_validator } from "./schema";
+import {
+	article_status_validator,
+	article_validator,
+	thumbnail_validator,
+} from "./schema";
 
 /**
  * Helper function to load authors for an article in the correct order
@@ -84,7 +87,7 @@ export const get_by_slug = query({
 		const article = user_id
 			? await article_unfiltered.first()
 			: await article_unfiltered
-					.filter((q) => q.eq(q.field("status"), "published")) // TODO
+					// .filter((q) => q.eq(q.field("status"), "published")) // TODO
 					.first();
 
 		if (!article) {
@@ -162,18 +165,13 @@ export const search_articles_unified = query({
 	},
 });
 
-export const get_all_of_status = query({
+export const get_latest_of_status = query({
 	args: {
 		status: article_validator.fields.status,
+		limit: v.optional(v.number()),
 	},
 	handler: async (ctx, args) => {
 		const user_id = await ctx.auth.getUserIdentity();
-		const current_user = await ctx.runQuery(api.auth.getCurrentUser);
-
-		console.log(
-			`Fetching articles with status "${args.status}" for user ${user_id}.`,
-			current_user,
-		);
 
 		if (!user_id) {
 			throw new Error(
@@ -181,26 +179,81 @@ export const get_all_of_status = query({
 			);
 		}
 
-		const drafts = await ctx.db
-			.query("articles")
-			.withIndex("by_status_and_updated_at", (q) => q.eq("status", args.status))
-			.order("desc")
-			.collect();
-
-		// Load authors for each draft article
-		const drafts_with_authors = await Promise.all(
-			drafts.map(async (draft) => {
-				const authors = await load_metadata_for_article(ctx, draft);
-				return {
-					...draft,
-					authors,
-				};
-			}),
+		const articles_with_metadata = await get_articles_with_status_and_limit(
+			ctx,
+			args,
 		);
 
-		return drafts_with_authors;
+		return articles_with_metadata;
 	},
 });
+
+type ArticlesByStatus = Record<
+	typeof article_status_validator.type,
+	Doc<"articles">[]
+>;
+
+export const get_latest_of_every_status = query({
+	args: {
+		limit: v.optional(v.number()),
+	},
+	handler: async (ctx, args) => {
+		/* const user_id = await ctx.auth.getUserIdentity();
+		if (!user_id) {
+			throw new Error("User must be authenticated to get all articles.");
+		} */
+
+		const articles_with_status = await Promise.all(
+			article_status_validator.members.map((status) =>
+				get_articles_with_status_and_limit(ctx, {
+					status: status.value,
+					limit: args.limit,
+				}),
+			),
+		);
+
+		const all_articles = articles_with_status.reduce<ArticlesByStatus>(
+			(acc, articles, idx) => {
+				const status = article_status_validator.members[idx].value;
+				acc[status] = articles;
+				return acc;
+			},
+			{} as ArticlesByStatus,
+		);
+
+		return all_articles;
+	},
+});
+
+async function get_articles_with_status_and_limit(
+	ctx: QueryCtx,
+	args: {
+		limit?: number | undefined;
+		status: typeof article_status_validator.type;
+	},
+) {
+	const article_query = ctx.db
+		.query("articles")
+		.withIndex("by_status_and_updated_at", (q) => q.eq("status", args.status))
+		.order("desc");
+
+	const articles = args.limit
+		? await article_query.take(args.limit)
+		: await article_query.collect();
+
+	// Load authors for each draft article
+	const articles_with_metadata = await Promise.all(
+		articles.map(async (draft) => {
+			const metadata = await load_metadata_for_article(ctx, draft);
+			return {
+				...draft,
+				...metadata,
+			};
+		}),
+	);
+
+	return articles_with_metadata;
+}
 
 function slugify_title(title: string, id: Id<"articles">): string {
 	const new_title = `${title ?? "Neimenovana novica"}-${id}`;

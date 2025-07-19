@@ -1,6 +1,6 @@
 import { convexQuery, useConvexMutation } from "@convex-dev/react-query";
 import { useMutation } from "@tanstack/react-query";
-import { createFileRoute, getRouteApi, Link } from "@tanstack/react-router";
+import { createFileRoute, getRouteApi } from "@tanstack/react-router";
 import type { EmptyObject } from "better-auth/react";
 import { api } from "convex/_generated/api";
 import { Button } from "~/components/ui/button";
@@ -10,7 +10,7 @@ export const Route = createFileRoute("/admin/osnutki/")({
 	component: RouteComponent,
 	loader: async ({ context }) => {
 		const drafts = await context.queryClient.ensureQueryData(
-			convexQuery(api.articles.get_all_of_status, { status: "draft" }),
+			convexQuery(api.articles.get_latest_of_status, { status: "draft" }),
 		);
 
 		return {

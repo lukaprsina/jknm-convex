@@ -4,7 +4,7 @@ import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 import { useState } from "react";
 import { Button } from "~/components/ui/button3";
-import { Calendar } from "~/components/ui/calendar2";
+import { Calendar } from "~/components/ui/calendar";
 import {
 	Popover,
 	PopoverContent,
@@ -18,39 +18,10 @@ export default function DatePickerDemo() {
 	const [time, setTime] = useState<string | undefined>("10:00");
 
 	// Mock time slots data
-	const timeSlots = [
-		{ time: "09:00", available: false },
-		{ time: "09:30", available: false },
-		{ time: "10:00", available: true },
-		{ time: "10:30", available: true },
-		{ time: "11:00", available: true },
-		{ time: "11:30", available: true },
-		{ time: "12:00", available: false },
-		{ time: "12:30", available: true },
-		{ time: "13:00", available: true },
-		{ time: "13:30", available: true },
-		{ time: "14:00", available: true },
-		{ time: "14:30", available: false },
-		{ time: "15:00", available: false },
-		{ time: "15:30", available: true },
-		{ time: "16:00", available: true },
-		{ time: "16:30", available: true },
-		{ time: "17:00", available: true },
-		{ time: "17:30", available: true },
-		{ time: "18:00", available: true },
-		{ time: "18:30", available: true },
-		{ time: "19:00", available: true },
-		{ time: "19:30", available: true },
-		{ time: "20:00", available: true },
-		{ time: "20:30", available: true },
-		{ time: "21:00", available: true },
-		{ time: "21:30", available: true },
-		{ time: "22:00", available: true },
-		{ time: "22:30", available: true },
-		{ time: "23:00", available: true },
-		{ time: "23:30", available: true },
-		{ time: "24:00", available: true },
-	];
+	const time_slots = Array.from({ length: 6 }, (_, i) => ({
+		time: `${(i * 4).toString().padStart(2, "0")}:00`,
+		available: true,
+	}));
 
 	return (
 		<Popover>
@@ -84,7 +55,11 @@ export default function DatePickerDemo() {
 							}
 						}}
 						className="p-2 sm:pe-5"
-						disabled={[{ before: today }]}
+						captionLayout="dropdown"
+						endMonth={new Date("2030")}
+						// navLayout="around"
+						startMonth={new Date("2008")}
+						// disabled={[{ before: today }]}
 					/>
 					<div className="relative w-full max-sm:h-48 sm:w-40">
 						<div className="absolute inset-0 py-4 max-sm:border-t">
@@ -96,7 +71,7 @@ export default function DatePickerDemo() {
 										</p>
 									</div>
 									<div className="grid gap-1.5 px-5 max-sm:grid-cols-2">
-										{timeSlots.map(({ time: timeSlot, available }) => (
+										{time_slots.map(({ time: timeSlot, available }) => (
 											<Button
 												key={timeSlot}
 												variant={time === timeSlot ? "primary" : "outline"}

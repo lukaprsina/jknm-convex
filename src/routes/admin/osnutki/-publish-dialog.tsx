@@ -5,6 +5,8 @@ import { useMutation } from "@tanstack/react-query";
 import { getRouteApi } from "@tanstack/react-router";
 import { useEditorRef, usePluginOption } from "platejs/react";
 import { useState } from "react";
+import AuthorMultiselect from "~/components/author-mutliselect";
+import DatePickerDemo from "~/components/date-time";
 import { ImageSelector } from "~/components/plate-ui/image-selector";
 import PublishImageCropper from "~/components/plate-ui/publish-image-cropper";
 import { PublishPlugin } from "~/components/plugins/save-kit";
@@ -64,6 +66,8 @@ export function PublishDialog() {
 				<DialogHeader className="contents space-y-0 text-left">
 					<DialogTitle className="px-6 pt-6">Objavi novico</DialogTitle>
 				</DialogHeader>
+				<DatePickerDemo />
+				<AuthorMultiselect />
 				<div className="overflow-y-auto">
 					{selectedImage && (
 						<PublishImageCropper className="m-10" image={selectedImage} />
@@ -79,11 +83,11 @@ export function PublishDialog() {
 					</DialogClose>
 					<DialogClose
 						asChild
-						onClick={() => {
+						/* onClick={() => {
 							if (!article_id || !editor) return;
 							const content_json = JSON.stringify(editor.children);
 							publish_mutation.mutate({ article_id, content_json });
-						}}
+						}} */
 					>
 						<Button variant="destructive">Objavi</Button>
 					</DialogClose>

@@ -18,20 +18,18 @@ import {
 	SidebarMenuSubItem,
 } from "~/components/ui/sidebar";
 
-export function NavMain({
-	items,
-}: {
-	items: {
+export type NavMainItemType = {
+	title: string;
+	url: string;
+	icon?: LucideIcon;
+	isActive?: boolean;
+	items?: {
 		title: string;
 		url: string;
-		icon?: LucideIcon;
-		isActive?: boolean;
-		items?: {
-			title: string;
-			url: string;
-		}[];
 	}[];
-}) {
+};
+
+export function NavMain({ items }: { items: NavMainItemType[] }) {
 	return (
 		<SidebarGroup>
 			<SidebarGroupLabel>Platform</SidebarGroupLabel>

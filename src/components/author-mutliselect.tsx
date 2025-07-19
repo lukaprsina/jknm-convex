@@ -70,33 +70,20 @@ const frameworks: Option[] = [
 
 // Multiselect with placeholder and clear
 // https://originui.com/r/comp-235.json
-export default function Component() {
+export default function AuthorMultiselect() {
+	const placeholder = "Izberi avtorje";
+
 	return (
 		<div className="*:not-first:mt-2">
-			<Label>Multiselect with placeholder and clear</Label>
+			<Label>Avtorji</Label>
 			<MultipleSelector
 				commandProps={{
-					label: "Select frameworks",
+					label: placeholder,
 				}}
 				defaultOptions={frameworks}
-				placeholder="Select frameworks"
+				placeholder={placeholder}
 				emptyIndicator={<p className="text-center text-sm">No results found</p>}
 			/>
-			<p
-				className="mt-2 text-muted-foreground text-xs"
-				role="region"
-				aria-live="polite"
-			>
-				Inspired by{" "}
-				<a
-					className="underline hover:text-foreground"
-					href="https://shadcnui-expansions.typeart.cc/docs/multiple-selector"
-					target="_blank"
-					rel="noopener nofollow"
-				>
-					shadcn/ui expansions
-				</a>
-			</p>
 		</div>
 	);
 }
