@@ -11,6 +11,7 @@
 import type * as articles from "../articles.js";
 import type * as auth from "../auth.js";
 import type * as authors from "../authors.js";
+import type * as authors_google from "../authors_google.js";
 import type * as http from "../http.js";
 import type * as media from "../media.js";
 import type * as media_sharp from "../media_sharp.js";
@@ -34,6 +35,7 @@ declare const fullApi: ApiFromModules<{
   articles: typeof articles;
   auth: typeof auth;
   authors: typeof authors;
+  authors_google: typeof authors_google;
   http: typeof http;
   media: typeof media;
   media_sharp: typeof media_sharp;

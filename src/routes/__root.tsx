@@ -20,7 +20,7 @@ import { Toaster } from "react-hot-toast";
 import appCss from "~/app.css?url";
 import { auth_client } from "~/lib/auth-client";
 import { seo } from "~/lib/seo";
-import { fetchSession, getCookieName } from "~/lib/utils";
+import { fetchSession, getCookieName } from "~/lib/server-auth-utils";
 
 // Server side session request
 const fetchAuth = createServerFn({ method: "GET" }).handler(async () => {
@@ -84,8 +84,6 @@ export const Route = createRootRouteWithContext<{
 	notFoundComponent: () => <NotFound />, */
 	component: RootComponent,
 });
-
-const _root_route = getRouteApi("__root__");
 
 function RootComponent() {
 	const context = useRouteContext({ from: Route.id });

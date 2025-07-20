@@ -9,12 +9,18 @@ import {
 	ArchiveIcon,
 	CheckCircleIcon,
 	Edit3Icon,
+	HomeIcon,
 	type LucideIcon,
 	Trash2Icon,
 } from "lucide-react";
 import { useMemo } from "react";
+import { NavMain } from "~/components/nav-main";
+import { NavProjects } from "~/components/nav-projects";
 import { Sidebar, SidebarContent, SidebarRail } from "~/components/ui/sidebar";
-import { ArticleSidebar, type ArticleSidebarItem } from "./-article-sidebar";
+import {
+	ArticleSidebar,
+	type ArticleSidebarByStatusItem,
+} from "./-article-sidebar";
 
 type ArticleStatus = Infer<typeof article_status_validator>;
 
@@ -47,17 +53,22 @@ export function AdminSidebar({
 
 	const sidebar_content = useMemo(() => {
 		// Type-safe creation of sidebar items for all status values
-		const sidebar_items: ArticleSidebarItem[] = status_order.map((status) => {
-			const articles = articles_by_status[status] ?? [];
-			return create_sidebar_item(articles, status);
-		});
+		const sidebar_items: ArticleSidebarByStatusItem[] = status_order.map(
+			(status) => {
+				const articles = articles_by_status[status] ?? [];
+				return create_sidebar_item(articles, status);
+			},
+		);
 
-		return <ArticleSidebar items={sidebar_items} />;
+		return <ArticleSidebar articles_by_status={sidebar_items} />;
 	}, [articles_by_status]);
 
 	return (
 		<Sidebar collapsible="icon" {...props}>
-			<SidebarContent>{sidebar_content}</SidebarContent>
+			<SidebarContent>
+				<NavProjects projects={[{ name: "Domov", icon: HomeIcon, url: "/" }]} />
+				{sidebar_content}
+			</SidebarContent>
 			<SidebarRail />
 		</Sidebar>
 	);
@@ -69,7 +80,7 @@ function create_sidebar_item(
 ) {
 	const { label, icon } = status_meta[status];
 
-	const item: ArticleSidebarItem = {
+	const item: ArticleSidebarByStatusItem = {
 		label,
 		icon,
 		isActive: true,

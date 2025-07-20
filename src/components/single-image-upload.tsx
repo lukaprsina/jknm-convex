@@ -62,8 +62,7 @@ export default function SingleImageUpload({
 					size_bytes: file.size,
 				},
 
-				// will ignore
-				created_at: Date.now(),
+				// TODO: change to remove this from state
 				upload_status: "completed",
 				variants: undefined,
 				_creationTime: Date.now(),

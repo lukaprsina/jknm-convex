@@ -19,7 +19,8 @@ export const thumbnail_validator = v.object({
 const schema = defineSchema({
 	users: defineTable({
 		email: v.string(),
-	}).index("email", ["email"]),
+		author_id: v.optional(v.id("authors")),
+	}).index("by_email", ["email"]),
 
 	articles: defineTable({
 		title: v.string(),
@@ -32,7 +33,8 @@ const schema = defineSchema({
 		thumbnail: v.optional(thumbnail_validator),
 		legacy_id: v.optional(v.number()),
 		updated_at: v.number(), // Unix timestamp
-		created_at: v.number(), // Unix timestamp
+		// created_at: v.number(), // Automatically managed by Convex
+		created_by: v.id("users"), // User who created the article
 		deleted_at: v.optional(v.number()), // Unix timestamp
 		published_at: v.optional(v.number()), // Unix timestamp
 		archived_at: v.optional(v.number()), // Unix timestamp
@@ -70,7 +72,7 @@ const schema = defineSchema({
 			size_bytes: v.number(),
 		}),
 
-		// Optimized variants - cleaner structure
+		// Optimized variants
 		variants: v.optional(
 			v.array(
 				v.object({
@@ -101,16 +103,17 @@ const schema = defineSchema({
 			v.literal("completed"),
 			v.literal("failed"),
 		),
-		created_at: v.number(),
 	}).index("by_status", ["upload_status"]),
 
 	authors: defineTable({
 		author_type: v.union(v.literal("member"), v.literal("guest")),
-		name: v.string(), // non-unique
-		google_id: v.optional(v.string()),
-		email: v.optional(v.string()),
-		image: v.optional(v.string()),
-	}).index("by_name", ["name"]),
+		name: v.string(), // Non-unique
+		email: v.optional(v.string()), // For members
+		user_id: v.optional(v.id("users")), // For members
+		google_id: v.optional(v.string()), // For Google sync
+	})
+		.index("by_name", ["name"])
+		.index("by_email", ["email"]),
 
 	articles_to_authors: defineTable({
 		article_id: v.id("articles"),

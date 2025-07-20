@@ -118,7 +118,6 @@ export const generate_presigned_upload_url = mutation({
 				size_bytes: args.size_bytes,
 			},
 			upload_status: "pending",
-			created_at: Date.now(),
 		});
 
 		const variant = "original";

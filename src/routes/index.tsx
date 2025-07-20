@@ -83,6 +83,10 @@ function Home() {
 		mutationFn: useConvexMutation(api.articles.delete_everything),
 	});
 
+	const sync_google_authors = useMutation({
+		mutationFn: useConvexMutation(api.authors.sync_google_authors),
+	});
+
 	// Sentinel for infinite loading
 	const { isIntersecting, ref } = useIntersectionObserver({ threshold: 0.5 });
 
@@ -130,6 +134,13 @@ function Home() {
 							}}
 						>
 							Izbriši vse
+						</Button>
+						<Button
+							onClick={async () => {
+								sync_google_authors.mutate({});
+							}}
+						>
+							Sinhroniziraj Google avtorje
 						</Button>
 					</div>
 					<div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">

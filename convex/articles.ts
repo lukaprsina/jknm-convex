@@ -1,8 +1,3 @@
-import {
-	DeleteObjectsCommand,
-	ListObjectsV2Command,
-	S3Client,
-} from "@aws-sdk/client-s3";
 import type { PaginationResult } from "convex/server";
 import { paginationOptsValidator } from "convex/server";
 import { v } from "convex/values";
@@ -10,12 +5,8 @@ import type { Value } from "platejs";
 import slugify from "slugify";
 import { internal } from "./_generated/api";
 import type { Doc, Id } from "./_generated/dataModel";
-import {
-	internalAction,
-	mutation,
-	type QueryCtx,
-	query,
-} from "./_generated/server";
+import { mutation, type QueryCtx, query } from "./_generated/server";
+import { get_user } from "./auth";
 import {
 	article_status_validator,
 	article_validator,
@@ -209,11 +200,6 @@ export const get_latest_of_every_status = query({
 		limit: v.optional(v.number()),
 	},
 	handler: async (ctx, args) => {
-		/* const user_id = await ctx.auth.getUserIdentity();
-		if (!user_id) {
-			throw new Error("User must be authenticated to get all articles.");
-		} */
-
 		const articles_with_status = await Promise.all(
 			article_status_validator.members.map((status) =>
 				get_articles_with_status_and_limit(ctx, {
@@ -280,9 +266,9 @@ function slugify_title(title: string, id: Id<"articles">): string {
 export const create_draft = mutation({
 	args: {},
 	handler: async (ctx) => {
-		const user_id = await ctx.auth.getUserIdentity();
+		const user = await ctx.auth.getUserIdentity();
 
-		if (!user_id) {
+		if (!user) {
 			throw new Error("User must be authenticated to create a draft article.");
 		}
 
@@ -300,7 +286,7 @@ export const create_draft = mutation({
 			]),
 			view_count: 0,
 			updated_at: Date.now(),
-			created_at: Date.now(),
+			created_by: user.subject as Id<"users">,
 		});
 
 		const slug = new_draft_id;
@@ -310,6 +296,79 @@ export const create_draft = mutation({
 		});
 
 		return slug;
+	},
+});
+
+export const copy_published_into_draft = mutation({
+	args: {
+		article_id: v.id("articles"),
+	},
+	handler: async (ctx, args) => {
+		const user = await ctx.auth.getUserIdentity();
+		if (!user) {
+			throw new Error(
+				"User must be authenticated to copy a published article.",
+			);
+		}
+
+		const article = await ctx.db.get(args.article_id);
+		if (!article || article.status !== "published") {
+			throw new Error("Article not found or is not published.");
+		}
+
+		// Create a new draft article
+		const new_draft_id = await ctx.db.insert("articles", {
+			status: "draft",
+			title: article.title,
+			slug: "ERROR",
+			content_json: article.content_json,
+			view_count: 0,
+			updated_at: Date.now(),
+			created_by: user.subject as Id<"users">,
+		});
+
+		await ctx.db.patch(new_draft_id, {
+			slug: new_draft_id,
+		});
+
+		// Copy authors
+		const authors = await ctx.db
+			.query("articles_to_authors")
+			.withIndex("by_article_and_order", (q) =>
+				q.eq("article_id", args.article_id),
+			)
+			.collect();
+
+		for (const author_link of authors) {
+			await ctx.db.insert("articles_to_authors", {
+				article_id: new_draft_id,
+				author_id: author_link.author_id,
+				order: author_link.order,
+			});
+		}
+
+		// Copy media links
+		const media_links = await ctx.db
+			.query("media_to_articles")
+			.withIndex("by_article_and_order", (q) =>
+				q.eq("article_id", args.article_id),
+			)
+			.collect();
+
+		for (const media_link of media_links) {
+			await ctx.db.insert("media_to_articles", {
+				article_id: new_draft_id,
+				media_id: media_link.media_id,
+				order: media_link.order,
+			});
+		}
+
+		/* ctx.scheduler.runAfter(0, internal.media_sharp.copy_media, {
+			source_article_id: args.article_id,
+			target_article_id: new_draft_id,
+		}); */
+
+		return new_draft_id;
 	},
 });
 

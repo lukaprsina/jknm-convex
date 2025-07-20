@@ -10,7 +10,7 @@ import { v } from "convex/values";
 import sharp from "sharp";
 import { internal } from "./_generated/api";
 import type { Id } from "./_generated/dataModel";
-import { internalAction, internalMutation } from "./_generated/server";
+import { internalAction } from "./_generated/server";
 import { media_validator } from "./schema";
 
 interface VariantData {
@@ -231,6 +231,14 @@ export const optimize_image = internalAction({
 			throw error;
 		}
 	},
+});
+
+export const copy_media = internalAction({
+	args: {
+		source_article_id: v.id("articles"),
+		target_article_id: v.id("articles"),
+	},
+	handler: async (ctx, args) => {},
 });
 
 export const empty_bucket = internalAction({

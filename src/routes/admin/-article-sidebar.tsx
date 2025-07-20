@@ -30,27 +30,31 @@ import {
 	useSidebar,
 } from "~/components/ui/sidebar";
 
-export type ArticleSidebarSubItem = {
+export type ArticleSidebarByStatusSubItem = {
 	label: string;
 	link: (props: LinkProps) => ReactNode;
 	edit_link: (props: LinkProps) => ReactNode;
 };
 
-export type ArticleSidebarItem = {
+export type ArticleSidebarByStatusItem = {
 	label: string;
 	link: (props: LinkProps) => ReactNode;
 	icon: LucideIcon;
 	isActive?: boolean;
-	items?: ArticleSidebarSubItem[];
+	items?: ArticleSidebarByStatusSubItem[];
 };
 
-export function ArticleSidebar({ items }: { items: ArticleSidebarItem[] }) {
+export function ArticleSidebar({
+	articles_by_status,
+}: {
+	articles_by_status: ArticleSidebarByStatusItem[];
+}) {
 	return (
 		/* className="group-data-[collapsible=icon]:hidden" */
 		<SidebarGroup>
 			<SidebarGroupLabel>Novice</SidebarGroupLabel>
 			<SidebarMenu>
-				{items.map((item) => (
+				{articles_by_status.map((item) => (
 					<SidebarMenuItem key={item.label}>
 						<SidebarMenuButton tooltip={item.label} asChild>
 							{item.link({
@@ -63,12 +67,12 @@ export function ArticleSidebar({ items }: { items: ArticleSidebarItem[] }) {
 							})}
 						</SidebarMenuButton>
 						<SidebarMenuSub>
-							{item.items?.map((subItem) => (
+							{item.items?.map((sub_item) => (
 								<ArticleSidebarSubItem
-									key={subItem.label}
-									label={subItem.label}
-									link={subItem.link}
-									edit_link={subItem.edit_link}
+									key={sub_item.label}
+									label={sub_item.label}
+									link={sub_item.link}
+									edit_link={sub_item.edit_link}
 								/>
 							))}
 						</SidebarMenuSub>
@@ -83,7 +87,7 @@ function ArticleSidebarSubItem({
 	label,
 	link,
 	edit_link,
-}: ArticleSidebarSubItem) {
+}: ArticleSidebarByStatusSubItem) {
 	const { isMobile } = useSidebar();
 
 	return (
