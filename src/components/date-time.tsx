@@ -2,7 +2,6 @@
 
 import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
-import { useState } from "react";
 import { Button } from "~/components/ui/button3";
 import { Calendar } from "~/components/ui/calendar";
 import {
@@ -12,11 +11,17 @@ import {
 } from "~/components/ui/popover2";
 import { ScrollArea } from "~/components/ui/scroll-area2";
 
-export default function DatePickerDemo() {
-	const today = new Date();
-	const [date, setDate] = useState<Date | undefined>(today);
-	const [time, setTime] = useState<string | undefined>("10:00");
-
+export default function DatePickerDemo({
+	date,
+	setDate,
+	time,
+	setTime,
+}: {
+	date: Date | undefined;
+	setDate: (date: Date | undefined) => void;
+	time: string | undefined;
+	setTime: (time: string | undefined) => void;
+}) {
 	// Mock time slots data
 	const time_slots = Array.from({ length: 6 }, (_, i) => ({
 		time: `${(i * 4).toString().padStart(2, "0")}:00`,

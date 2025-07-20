@@ -1,13 +1,11 @@
 import { useEffect, useState } from "react";
 import {
 	Timeline,
-	TimelineContent,
 	TimelineDate,
 	TimelineHeader,
 	TimelineIndicator,
 	TimelineItem,
 	TimelineSeparator,
-	TimelineTitle,
 } from "~/components/ui/timeline";
 import { cn } from "~/lib/utils";
 
@@ -51,7 +49,7 @@ export function YearSelectorHorizontal({
 					<TimelineItem
 						key={year}
 						step={year}
-						className="w-16 flex-none cursor-pointer group-data-[orientation=horizontal]/timeline:mt-0"
+						className="w-12 flex-none cursor-pointer group-data-[orientation=horizontal]/timeline:mt-0"
 						onClick={() => handleYearClick(year)}
 					>
 						<TimelineHeader>

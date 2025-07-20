@@ -1,77 +1,29 @@
+import { api } from "@convex/_generated/api";
+import { convexQuery } from "@convex-dev/react-query";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { useMemo } from "react";
 import { Label } from "~/components/ui/label";
 import MultipleSelector, { type Option } from "~/components/ui/multiselect";
 
-const frameworks: Option[] = [
-	{
-		value: "next.js",
-		label: "Next.js",
-	},
-	{
-		value: "sveltekit",
-		label: "SvelteKit",
-	},
-	{
-		value: "nuxt.js",
-		label: "Nuxt.js",
-	},
-	{
-		value: "remix",
-		label: "Remix",
-	},
-	{
-		value: "astro",
-		label: "Astro",
-	},
-	{
-		value: "angular",
-		label: "Angular",
-	},
-	{
-		value: "vue",
-		label: "Vue.js",
-	},
-	{
-		value: "react",
-		label: "React",
-	},
-	{
-		value: "ember",
-		label: "Ember.js",
-	},
-	{
-		value: "gatsby",
-		label: "Gatsby",
-	},
-	{
-		value: "eleventy",
-		label: "Eleventy",
-	},
-	{
-		value: "solid",
-		label: "SolidJS",
-	},
-	{
-		value: "preact",
-		label: "Preact",
-	},
-	{
-		value: "qwik",
-		label: "Qwik",
-	},
-	{
-		value: "alpine",
-		label: "Alpine.js",
-	},
-	{
-		value: "lit",
-		label: "Lit",
-	},
-];
-
 // Multiselect with placeholder and clear
 // https://originui.com/r/comp-235.json
-export default function AuthorMultiselect() {
+export default function AuthorMultiselect({
+	authors,
+	onAuthorsChange,
+}: {
+	authors?: Option[];
+	onAuthorsChange?: (authors: Option[]) => void;
+}) {
+	const { data } = useSuspenseQuery(convexQuery(api.authors.get_all, {}));
 	const placeholder = "Izberi avtorje";
+
+	const all_authors: Option[] = useMemo(() => {
+		if (!data) return [];
+		return data.map((author) => ({
+			value: author._id,
+			label: author.name,
+		}));
+	}, [data]);
 
 	return (
 		<div className="*:not-first:mt-2">
@@ -80,9 +32,11 @@ export default function AuthorMultiselect() {
 				commandProps={{
 					label: placeholder,
 				}}
-				defaultOptions={frameworks}
+				defaultOptions={all_authors}
 				placeholder={placeholder}
 				emptyIndicator={<p className="text-center text-sm">No results found</p>}
+				value={authors}
+				onChange={onAuthorsChange}
 			/>
 		</div>
 	);

@@ -103,7 +103,7 @@ function Home() {
 			<main className="w-full flex-grow">
 				<div className="container mx-auto px-4">
 					<FilterAccordion />
-					<div className="flex grow-0 flex-row justify-center gap-4">
+					<div className="flex flex-col items-start gap-4">
 						<Button asChild>
 							<Link to="/prijava">Prijava</Link>
 						</Button>

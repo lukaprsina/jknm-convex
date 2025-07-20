@@ -1,4 +1,5 @@
 import { ChevronDownIcon } from "lucide-react";
+import type { DropdownMenu as DropdownMenuPrimitive } from "radix-ui";
 import { Button } from "~/components/ui/button";
 import {
 	DropdownMenu,
@@ -6,8 +7,11 @@ import {
 	DropdownMenuItem,
 	DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
+import { cn } from "~/lib/utils";
+import { Label } from "./label";
 
-interface YearDropdownProps {
+interface YearDropdownProps
+	extends React.ComponentProps<typeof DropdownMenuPrimitive.Trigger> {
 	selectedYear?: number;
 	onYearChange?: (year: number) => void;
 	startYear?: number;
@@ -34,7 +38,7 @@ export function YearDropdown({
 	return (
 		<DropdownMenu>
 			<DropdownMenuTrigger asChild>
-				<Button variant="outline" className={className}>
+				<Button variant="outline">
 					{selectedYear || "Izberi leto"}
 					<ChevronDownIcon size={16} className="ml-2" />
 				</Button>

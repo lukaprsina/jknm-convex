@@ -19,11 +19,17 @@ import {
 	DialogHeader,
 	DialogTitle,
 } from "~/components/ui/dialog";
+import type { Option } from "~/components/ui/multiselect";
 
 type PublishMutation = typeof api.articles.publish_draft;
 const admin_draft_route = getRouteApi("/admin/$status/$article_slug/uredi/");
 
 export function PublishDialog() {
+	const today = new Date();
+	const [date, setDate] = useState<Date | undefined>(today);
+	const [time, setTime] = useState<string | undefined>("12:00");
+	const [authors, setAuthors] = useState<Option[]>([]);
+
 	const open = usePluginOption(PublishPlugin, "open_dialogue");
 	const article_id = usePluginOption(PublishPlugin, "article_id");
 	const editor = useEditorRef();
@@ -66,8 +72,13 @@ export function PublishDialog() {
 				<DialogHeader className="contents space-y-0 text-left">
 					<DialogTitle className="px-6 pt-6">Objavi novico</DialogTitle>
 				</DialogHeader>
-				<DatePickerDemo />
-				<AuthorMultiselect />
+				<DatePickerDemo
+					date={date}
+					setDate={setDate}
+					time={time}
+					setTime={setTime}
+				/>
+				<AuthorMultiselect authors={authors} onAuthorsChange={setAuthors} />
 				<div className="overflow-y-auto">
 					{selectedImage && (
 						<PublishImageCropper className="m-10" image={selectedImage} />
@@ -81,15 +92,36 @@ export function PublishDialog() {
 					<DialogClose asChild>
 						<Button variant="outline">Prekliči</Button>
 					</DialogClose>
-					<DialogClose
-						asChild
-						/* onClick={() => {
-							if (!article_id || !editor) return;
-							const content_json = JSON.stringify(editor.children);
-							publish_mutation.mutate({ article_id, content_json });
-						}} */
-					>
-						<Button variant="destructive">Objavi</Button>
+					<DialogClose asChild>
+						<Button
+							variant="destructive"
+							onClick={() => {
+								if (!article_id || !editor || !date || !selectedImage) return;
+								const content_json = JSON.stringify(editor.children);
+								const published_at = new Date(date);
+								if (time) {
+									const [hours, minutes] = time.split(":").map(Number);
+									published_at.setHours(hours, minutes, 0, 0);
+								}
+
+								// TODO: change image shape
+								publish_mutation.mutate({
+									article_id,
+									content_json,
+									author_ids: authors.map((a) => a.value),
+									published_at: published_at.getTime(),
+									thumbnail: {
+										image_id: selectedImage._id,
+										height: 1500, // selectedImage?.height,
+										width: 800, // selectedImage?.width,
+										x: 0,
+										y: 0,
+									},
+								});
+							}}
+						>
+							Objavi
+						</Button>
 					</DialogClose>
 				</DialogFooter>
 			</DialogContent>

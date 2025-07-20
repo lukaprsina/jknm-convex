@@ -8,6 +8,7 @@ import {
 	AccordionTrigger,
 } from "~/components/ui/accordion";
 import { AuthorSelect } from "~/components/ui/author-select";
+import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
 import { YearDropdown } from "~/components/ui/year-dropdown";
@@ -31,7 +32,6 @@ export function FilterAccordion() {
 	const { authors } = home_route.useLoaderData();
 
 	const navigate = useNavigate({ from: home_route.id });
-	const isMobile = useIsMobile();
 	const [isOpen, setIsOpen] = useState(
 		!equal(home_search, DEFAULT_SEARCH_VALUES),
 	);
@@ -49,30 +49,18 @@ export function FilterAccordion() {
 				</div>
 				<AccordionContent className="grid grid-rows-2 gap-6 text-balance px-2">
 					{/* First row - Year selector */}
-					<div className="space-y-2">
+					<div className="hidden space-y-2 xl:block">
 						<Label className="pr-2 font-medium text-sm">Leto</Label>
-						{isMobile ? (
-							<YearDropdown
-								selectedYear={home_search.leto ?? undefined}
-								onYearChange={async (year) =>
-									await navigate({
-										from: home_route.id,
-										search: (prev) => ({ ...prev, leto: year }),
-									})
-								}
-							/>
-						) : (
-							<YearSelectorHorizontal
-								selectedYear={home_search.leto ?? undefined}
-								onYearChange={async (year) =>
-									await navigate({
-										from: home_route.id,
-										search: (prev) => ({ ...prev, leto: year }),
-									})
-								}
-								className="h-11 w-full"
-							/>
-						)}
+						<YearSelectorHorizontal
+							selectedYear={home_search.leto ?? undefined}
+							onYearChange={async (year) =>
+								await navigate({
+									from: home_route.id,
+									search: (prev) => ({ ...prev, leto: year }),
+								})
+							}
+							className="h-11 w-full"
+						/>
 					</div>
 
 					{/* Second row - Search and Author dropdown */}
@@ -80,7 +68,7 @@ export function FilterAccordion() {
 						{/* Author dropdown */}
 						<div className="w-auto space-y-2">
 							<Label htmlFor="author-select" className="font-medium text-sm">
-								Avtor
+								Avtorji
 							</Label>
 							<AuthorSelect
 								authors={authors}
@@ -102,7 +90,7 @@ export function FilterAccordion() {
 							<Input
 								id="search"
 								type="text"
-								placeholder="Poišči članke..."
+								placeholder="Filtriraj članke..."
 								value={home_search.iskanje ?? ""}
 								onChange={async (event) =>
 									await navigate({
@@ -114,6 +102,26 @@ export function FilterAccordion() {
 									})
 								}
 								className="w-auto min-w-[200px]"
+							/>
+						</div>
+
+						<div className="flex flex-col">
+							<Label
+								htmlFor="year-dropdown"
+								className="pr-2 font-medium text-sm"
+							>
+								Leto
+							</Label>
+							<YearDropdown
+								id="year-dropdown"
+								className="xl:hidden"
+								selectedYear={home_search.leto ?? undefined}
+								onYearChange={async (year) =>
+									await navigate({
+										from: home_route.id,
+										search: (prev) => ({ ...prev, leto: year }),
+									})
+								}
 							/>
 						</div>
 					</div>
