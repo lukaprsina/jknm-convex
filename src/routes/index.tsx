@@ -14,6 +14,7 @@ import { useIntersectionObserver } from "usehooks-ts";
 import { z } from "zod";
 import { Footer2 } from "~/components/layout/footer2";
 import { Navbar1 } from "~/components/layout/navbar1";
+import { Header, Navbar } from "~/components/navbar";
 import { Button } from "~/components/ui/button";
 import { auth_client } from "~/lib/auth-client";
 import { ArticleCard } from "./-article-card";
@@ -100,6 +101,14 @@ function Home() {
 	return (
 		<>
 			<Navbar1 />
+			{/* <header className="flex w-full flex-col items-center">
+				<div className="py-8">
+					<img src="/logo.svg" alt="Logo" className="h-24" />
+				</div>
+
+				<Navbar />
+			</header> */}
+			{/* <Header /> */}
 			<main className="w-full flex-grow">
 				<div className="container mx-auto px-4">
 					<FilterAccordion />
@@ -170,6 +179,15 @@ function Home() {
 						</div>
 					)}
 				</div>
+				{Array.from({ length: 50 }).map((_, index) => (
+					// biome-ignore lint/suspicious/noArrayIndexKey: lol
+					<p key={index}>
+						Lorem ipsum, dolor sit amet consectetur adipisicing elit. In,
+						facilis numquam. Blanditiis asperiores quidem iusto explicabo
+						pariatur incidunt cupiditate provident ducimus nostrum. Eius
+						corporis magnam placeat suscipit, sapiente fugit. Ipsum?
+					</p>
+				))}
 			</main>
 			<Footer2 />
 		</>

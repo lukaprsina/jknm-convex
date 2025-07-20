@@ -22,21 +22,22 @@ export function ArticleCard({ article }: { article: Article }) {
 				to="/novica/$article_slug"
 				params={{ article_slug: article.slug }}
 			>
-				<img
-					src={thumbnail.url} // TODO
-					loading="lazy"
-					width={thumbnail.width}
-					height={thumbnail.height}
-					style={{
-						backgroundImage: article.thumbnail_full?.blur_placeholder
-							? `url(${article.thumbnail_full.blur_placeholder})`
-							: undefined,
-						backgroundSize: "cover",
-						backgroundRepeat: "no-repeat",
-						backgroundPosition: "center",
-					}}
-				/>
 				<Card className="w-full p-4">
+					<img
+						src={thumbnail.url} // TODO
+						loading="lazy"
+						width={thumbnail.width}
+						height={thumbnail.height}
+						className="rounded-lg"
+						style={{
+							backgroundImage: article.thumbnail_full?.blur_placeholder
+								? `url(${article.thumbnail_full.blur_placeholder})`
+								: undefined,
+							backgroundSize: "cover",
+							backgroundRepeat: "no-repeat",
+							backgroundPosition: "center",
+						}}
+					/>
 					<CardHeader className="mb-2 flex w-full items-start">
 						<CardTitle className="font-bold text-lg">
 							{article.title || "Neimenovana novica"}
