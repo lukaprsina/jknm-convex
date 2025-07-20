@@ -14,7 +14,6 @@ import { useIntersectionObserver } from "usehooks-ts";
 import { z } from "zod";
 import { Footer2 } from "~/components/layout/footer2";
 import { Navbar1 } from "~/components/layout/navbar1";
-import { Header, Navbar } from "~/components/navbar";
 import { Button } from "~/components/ui/button";
 import { auth_client } from "~/lib/auth-client";
 import { ArticleCard } from "./-article-card";
@@ -175,11 +174,11 @@ function Home() {
 								justifyContent: "center",
 							}}
 						>
-							<span>Loading more...</span>
+							<span>Nalagam...</span>
 						</div>
 					)}
 				</div>
-				{Array.from({ length: 50 }).map((_, index) => (
+				{/* {Array.from({ length: 50 }).map((_, index) => (
 					// biome-ignore lint/suspicious/noArrayIndexKey: lol
 					<p key={index}>
 						Lorem ipsum, dolor sit amet consectetur adipisicing elit. In,
@@ -187,7 +186,7 @@ function Home() {
 						pariatur incidunt cupiditate provident ducimus nostrum. Eius
 						corporis magnam placeat suscipit, sapiente fugit. Ipsum?
 					</p>
-				))}
+				))} */}
 			</main>
 			<Footer2 />
 		</>
