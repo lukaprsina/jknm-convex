@@ -40,15 +40,15 @@ export default defineConfig({
 	preview: {
 		port: 3000,
 		host: true, // This enables listening on all network interfaces
-		// allowedHosts: [".jknm.site"],
-		allowedHosts: true,
+		allowedHosts: [".jknm.site"],
+		// allowedHosts: true,
 	},
 	server: {
 		// Also add this for development server
 		host: true, // This enables listening on all network interfaces
 		port: 3000,
-		// allowedHosts: [".jknm.site"],
-		allowedHosts: true,
+		allowedHosts: [".jknm.site"],
+		// allowedHosts: true,
 	},
 	plugins: [
 		tailwindcss(),
@@ -62,8 +62,8 @@ export default defineConfig({
 	],
 	resolve: {
 		alias: {
-			"~": path.resolve(__dirname, "../src"),
-			"@convex": path.resolve(__dirname, "../convex"),
+			"~": path.resolve(__dirname, "./src"),
+			"@convex": path.resolve(__dirname, "./convex"),
 		},
 	},
 	/* build: {
