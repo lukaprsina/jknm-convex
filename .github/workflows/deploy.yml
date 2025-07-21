@@ -47,15 +47,5 @@ jobs:
           file: ./Dockerfile
           push: true
           tags: |
-            dokploy/example:latest
+            lukaprsina/jknm:latest
           platforms: linux/amd64
-          build-args: |
-            GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}
-            GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}
-            JKNM_SERVICE_ACCOUNT_CREDENTIALS=${{ secrets.JKNM_SERVICE_ACCOUNT_CREDENTIALS }}
-            JKNM_WORKSPACE_ID=${{ vars.JKNM_WORKSPACE_ID }}
-            NODE_ENV=${{ vars.NODE_ENV }}
-            SITE_URL=${{ vars.SITE_URL }}
-            VITE_AWS_BUCKET_NAME=${{ vars.VITE_AWS_BUCKET_NAME }}
-            VITE_AWS_REGION=${{ vars.VITE_AWS_REGION }}
-            VITE_CONVEX_SITE_URL=${{ vars.VITE_CONVEX_SITE_URL }}
