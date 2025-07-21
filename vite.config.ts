@@ -37,7 +37,7 @@ export default defineConfig({
 		exclude: ["@tanstack/react-router-devtools"], // warning when running dev server
 	},
 	server: {
-		host: true,
+		// host: true,
 		port: 3000,
 	},
 	plugins: [

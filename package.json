@@ -10,7 +10,7 @@
 		"dev:server": "convex dev",
 		"build:local": "vite build",
 		"build": "bun x convex deploy --cmd-url-env-var-name VITE_CONVEX_URL --cmd \"bun run build:local\"",
-		"start": "vite start",
+		"start": "vite start --host --port 3000",
 		"format": "biome format --write .",
 		"lint": "biome lint --write .",
 		"check": "biome check --write .",
