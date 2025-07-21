@@ -1,3 +1,4 @@
+import path from "node:path";
 import tailwindcss from "@tailwindcss/vite";
 import { tanstackStart } from "@tanstack/react-start/plugin/vite";
 import viteReact from "@vitejs/plugin-react";
@@ -52,13 +53,19 @@ export default defineConfig({
 	plugins: [
 		tailwindcss(),
 		tsConfigPaths({
-			projects: ["./tsconfig.json"],
+			projects: ["../tsconfig.json"],
 		}),
 		tanstackStart({
 			customViteReactPlugin: true,
 		}),
 		viteReact(),
 	],
+	resolve: {
+		alias: {
+			"~": path.resolve(__dirname, "../src"),
+			"@convex": path.resolve(__dirname, "../convex"),
+		},
+	},
 	/* build: {
 		rollupOptions: {
 			// temp fix: https://github.com/rollup/rollup/issues/6012
