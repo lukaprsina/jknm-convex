@@ -27,6 +27,7 @@ ENV VITE_AWS_REGION=$VITE_AWS_REGION
 ENV VITE_CONVEX_SITE_URL=$VITE_CONVEX_SITE_URL
 
 RUN printenv CONVEX_DEPLOY_KEY
+RUN printenv PATH
 
 COPY package.json bun.lock vite.config.ts tsconfig.json ./
 COPY src ./src
