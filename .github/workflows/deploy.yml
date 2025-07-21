@@ -3,6 +3,14 @@ name: Build Docker images
 on:
   push:
     branches: ["production"]
+  # Allows you to run this workflow manually from the Actions tab on GitHub.
+  workflow_dispatch:
+
+# Allow this job to clone the repo and create a page deployment
+permissions:
+  contents: read
+  pages: write
+  id-token: write
 
 jobs:
   build-and-push-dockerfile-image:
@@ -11,7 +19,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Log in to Docker Hub
         uses: docker/login-action@v2
@@ -28,3 +36,17 @@ jobs:
           tags: |
             dokploy/example:latest
           platforms: linux/amd64
+        env:
+          # Secrets
+          CONVEX_DEPLOY_KEY: ${{ secrets.CONVEX_DEPLOY_KEY }}
+          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+          JKNM_SERVICE_ACCOUNT_CREDENTIALS: ${{ secrets.JKNM_SERVICE_ACCOUNT_CREDENTIALS }}
+
+          # Variables
+          JKNM_WORKSPACE_ID: ${{ vars.JKNM_WORKSPACE_ID }}
+          NODE_ENV: ${{ vars.NODE_ENV }}
+          SITE_URL: ${{ vars.SITE_URL }}
+          VITE_AWS_BUCKET_NAME: ${{ vars.VITE_AWS_BUCKET_NAME }}
+          VITE_AWS_REGION: ${{ vars.VITE_AWS_REGION }}
+          VITE_CONVEX_SITE_URL: ${{ vars.VITE_CONVEX_SITE_URL }}
