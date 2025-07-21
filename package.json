@@ -9,6 +9,7 @@
 		"dev:web": "vite dev",
 		"dev:server": "convex dev",
 		"build": "vite build",
+		"build:cloud": "npx convex deploy --cmd-url-env-var-name VITE_CONVEX_URL --cmd \"npm run build\"",
 		"start": "vite start",
 		"format": "biome format --write .",
 		"lint": "biome lint --write .",
