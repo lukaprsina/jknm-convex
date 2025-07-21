@@ -36,10 +36,18 @@ export default defineConfig({
 	optimizeDeps: {
 		exclude: ["@tanstack/react-router-devtools"], // warning when running dev server
 	},
-	server: {
-		// host: true,
+	preview: {
 		port: 3000,
-		allowedHosts: ["dokploy.jknm.site"],
+		host: true, // This enables listening on all network interfaces
+		// allowedHosts: [".jknm.site"],
+		allowedHosts: true,
+	},
+	server: {
+		// Also add this for development server
+		host: true, // This enables listening on all network interfaces
+		port: 3000,
+		// allowedHosts: [".jknm.site"],
+		allowedHosts: true,
 	},
 	plugins: [
 		tailwindcss(),
