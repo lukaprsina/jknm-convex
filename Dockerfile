@@ -3,8 +3,7 @@ WORKDIR /app
 
 FROM base AS build
 
-# Declare build arguments for environment variables
-ARG CONVEX_DEPLOY_KEY
+# Declare build arguments for environment variables (no longer need CONVEX_DEPLOY_KEY)
 ARG GOOGLE_CLIENT_ID
 ARG GOOGLE_CLIENT_SECRET
 ARG JKNM_SERVICE_ACCOUNT_CREDENTIALS
@@ -16,7 +15,6 @@ ARG VITE_AWS_REGION
 ARG VITE_CONVEX_SITE_URL
 
 # Set environment variables from build arguments
-ENV CONVEX_DEPLOY_KEY=$CONVEX_DEPLOY_KEY
 ENV GOOGLE_CLIENT_ID=$GOOGLE_CLIENT_ID
 ENV GOOGLE_CLIENT_SECRET=$GOOGLE_CLIENT_SECRET
 ENV JKNM_SERVICE_ACCOUNT_CREDENTIALS=$JKNM_SERVICE_ACCOUNT_CREDENTIALS
@@ -34,7 +32,7 @@ COPY patches ./patches
 COPY public ./public
 
 RUN bun install
-RUN bun run build
+RUN bun run build:local
 
 FROM base AS dokploy
 WORKDIR /app
