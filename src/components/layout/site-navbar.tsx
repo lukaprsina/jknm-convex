@@ -1,4 +1,11 @@
-import { Book, Menu, Sunset, Trees, Zap } from "lucide-react";
+import {
+	BookIcon,
+	type LucideIcon,
+	Menu,
+	SunsetIcon,
+	TreesIcon,
+	ZapIcon,
+} from "lucide-react";
 
 import {
 	Accordion,
@@ -27,11 +34,11 @@ interface MenuItem {
 	title: string;
 	url: string;
 	description?: string;
-	icon?: React.ReactNode;
+	icon?: LucideIcon;
 	items?: MenuItem[];
 }
 
-interface Navbar1Props {
+export interface SiteNavbarProps {
 	logo?: {
 		url: string;
 		src: string;
@@ -39,19 +46,9 @@ interface Navbar1Props {
 		title: string;
 	};
 	menu?: MenuItem[];
-	auth?: {
-		login: {
-			title: string;
-			url: string;
-		};
-		signup: {
-			title: string;
-			url: string;
-		};
-	};
 }
 
-const Navbar1 = ({
+export const SiteNavbar = ({
 	logo = {
 		url: "https://www.shadcnblocks.com",
 		src: "https://deifkwefumgah.cloudfront.net/shadcnblocks/block/logos/shadcnblockscom-icon.svg",
@@ -67,26 +64,27 @@ const Navbar1 = ({
 				{
 					title: "Blog",
 					description: "The latest industry news, updates, and info",
-					icon: <Book className="size-5 shrink-0" />,
+					// className="size-5 shrink-0"
+					icon: BookIcon,
 					url: "#",
 				},
 				{
 					title: "Company",
 					description: "Our mission is to innovate and empower the world",
-					icon: <Trees className="size-5 shrink-0" />,
+					icon: TreesIcon,
 					url: "#",
 				},
 				{
 					title: "Careers",
 					description: "Browse job listing and discover our workspace",
-					icon: <Sunset className="size-5 shrink-0" />,
+					icon: SunsetIcon,
 					url: "#",
 				},
 				{
 					title: "Support",
 					description:
 						"Get in touch with our support team or visit our community forums",
-					icon: <Zap className="size-5 shrink-0" />,
+					icon: ZapIcon,
 					url: "#",
 				},
 			],
@@ -98,25 +96,25 @@ const Navbar1 = ({
 				{
 					title: "Help Center",
 					description: "Get all the answers you need right here",
-					icon: <Zap className="size-5 shrink-0" />,
+					icon: ZapIcon,
 					url: "#",
 				},
 				{
 					title: "Contact Us",
 					description: "We are here to help you with any questions you have",
-					icon: <Sunset className="size-5 shrink-0" />,
+					icon: SunsetIcon,
 					url: "#",
 				},
 				{
 					title: "Status",
 					description: "Check the current status of our services and APIs",
-					icon: <Trees className="size-5 shrink-0" />,
+					icon: TreesIcon,
 					url: "#",
 				},
 				{
 					title: "Terms of Service",
 					description: "Our terms and conditions for using our services",
-					icon: <Book className="size-5 shrink-0" />,
+					icon: BookIcon,
 					url: "#",
 				},
 			],
@@ -130,11 +128,7 @@ const Navbar1 = ({
 			url: "#",
 		},
 	],
-	auth = {
-		login: { title: "Login", url: "#" },
-		signup: { title: "Sign up", url: "#" },
-	},
-}: Navbar1Props) => {
+}: SiteNavbarProps) => {
 	return (
 		<section className="py-4">
 			{/* https://v3.tailwindcss.com/docs/container - you have to center it manually now */}
@@ -156,14 +150,6 @@ const Navbar1 = ({
 								</NavigationMenuList>
 							</NavigationMenu>
 						</div>
-					</div>
-					<div className="flex gap-2">
-						<Button asChild variant="outline" size="sm">
-							<a href={auth.login.url}>{auth.login.title}</a>
-						</Button>
-						<Button asChild size="sm">
-							<a href={auth.signup.url}>{auth.signup.title}</a>
-						</Button>
 					</div>
 				</nav>
 
@@ -196,15 +182,6 @@ const Navbar1 = ({
 									>
 										{menu.map((item) => renderMobileMenuItem(item))}
 									</Accordion>
-
-									<div className="flex flex-col gap-3">
-										<Button asChild variant="outline">
-											<a href={auth.login.url}>{auth.login.title}</a>
-										</Button>
-										<Button asChild>
-											<a href={auth.signup.url}>{auth.signup.title}</a>
-										</Button>
-									</div>
 								</div>
 							</SheetContent>
 						</Sheet>
@@ -272,7 +249,11 @@ const SubMenuLink = ({ item }: { item: MenuItem }) => {
 			className="flex select-none flex-row gap-4 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-muted hover:text-accent-foreground"
 			href={item.url}
 		>
-			<div className="text-foreground">{item.icon}</div>
+			{item.icon && (
+				<div className="text-foreground">
+					<item.icon />
+				</div>
+			)}
 			<div>
 				<div className="font-semibold text-sm">{item.title}</div>
 				{item.description && (
@@ -284,5 +265,3 @@ const SubMenuLink = ({ item }: { item: MenuItem }) => {
 		</a>
 	);
 };
-
-export { Navbar1 };

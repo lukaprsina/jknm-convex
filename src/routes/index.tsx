@@ -14,6 +14,7 @@ import { useIntersectionObserver } from "usehooks-ts";
 import { z } from "zod";
 import { Footer2 } from "~/components/layout/footer2";
 import { Navbar1 } from "~/components/layout/navbar1";
+import { SiteNavbar } from "~/components/layout/site-navbar";
 import { Button } from "~/components/ui/button";
 import { auth_client } from "~/lib/auth-client";
 import { ArticleCard } from "./-article-card";
@@ -99,7 +100,7 @@ function Home() {
 
 	return (
 		<>
-			<Navbar1 />
+			<SiteNavbar />
 			{/* <header className="flex w-full flex-col items-center">
 				<div className="py-8">
 					<img src="/logo.svg" alt="Logo" className="h-24" />

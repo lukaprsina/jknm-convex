@@ -6,7 +6,6 @@ import type { QueryClient } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools/production";
 import {
 	createRootRouteWithContext,
-	getRouteApi,
 	HeadContent,
 	Outlet,
 	Scripts,

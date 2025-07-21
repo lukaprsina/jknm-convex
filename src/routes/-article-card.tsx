@@ -17,11 +17,7 @@ export function ArticleCard({ article }: { article: Article }) {
 
 	return (
 		<div className="relative mb-4 w-full">
-			<Link
-				from="/"
-				to="/novica/$article_slug"
-				params={{ article_slug: article.slug }}
-			>
+			<Link to="/novica/$article_slug" params={{ article_slug: article.slug }}>
 				<Card className="w-full p-4">
 					<img
 						src={thumbnail.url} // TODO

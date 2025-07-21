@@ -233,14 +233,6 @@ export const optimize_image = internalAction({
 	},
 });
 
-export const copy_media = internalAction({
-	args: {
-		source_article_id: v.id("articles"),
-		target_article_id: v.id("articles"),
-	},
-	handler: async (ctx, args) => {},
-});
-
 export const empty_bucket = internalAction({
 	handler: async () => {
 		const client = new S3Client({

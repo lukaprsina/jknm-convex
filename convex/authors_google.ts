@@ -1,6 +1,7 @@
 "use node";
 
 import { admin_directory_v1, auth } from "@googleapis/admin";
+import type { JWTInput } from "google-auth-library";
 import { internal } from "./_generated/api";
 import { internalAction } from "./_generated/server";
 
@@ -12,7 +13,7 @@ export const get_users = internalAction({
 			"base64",
 		).toString();
 
-		const creds = JSON.parse(creds_json);
+		const creds = JSON.parse(creds_json) as JWTInput;
 
 		const client = new auth.GoogleAuth({
 			credentials: creds,

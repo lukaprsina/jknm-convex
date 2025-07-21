@@ -363,10 +363,7 @@ export const copy_published_into_draft = mutation({
 			});
 		}
 
-		/* ctx.scheduler.runAfter(0, internal.media_sharp.copy_media, {
-			source_article_id: args.article_id,
-			target_article_id: new_draft_id,
-		}); */
+		// We don't need to copy actual B2 files
 
 		return new_draft_id;
 	},

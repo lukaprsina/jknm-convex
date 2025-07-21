@@ -8,7 +8,6 @@ export function ArticleCard({ article }: { article: Doc<"articles"> }) {
 	return (
 		<div className="relative mb-4 w-full">
 			<Link
-				from="/admin/$status"
 				to="/admin/$status/$article_slug"
 				params={{ article_slug: article.slug, status: article.status }}
 			>

@@ -85,14 +85,13 @@ function create_sidebar_item(
 		icon,
 		isActive: true,
 		link: (props: LinkProps) => (
-			<Link {...props} from="/admin" to="/admin/$status" params={{ status }} />
+			<Link {...props} to="/admin/$status" params={{ status }} />
 		),
 		items: articles.map((article) => ({
 			label: article.title,
 			link: (props: LinkProps) => (
 				<Link
 					{...props}
-					from="/admin"
 					to="/admin/$status/$article_slug"
 					params={{
 						article_slug: article.slug,
@@ -103,7 +102,6 @@ function create_sidebar_item(
 			edit_link: (props: LinkProps) => (
 				<Link
 					{...props}
-					from="/admin"
 					to="/admin/$status/$article_slug/uredi"
 					params={{
 						article_slug: article.slug,
