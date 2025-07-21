@@ -3,6 +3,7 @@ WORKDIR /app
 
 FROM base AS build
 
+# Declare build arguments for environment variables
 ARG CONVEX_DEPLOY_KEY
 ARG GOOGLE_CLIENT_ID
 ARG GOOGLE_CLIENT_SECRET
@@ -14,7 +15,7 @@ ARG VITE_AWS_BUCKET_NAME
 ARG VITE_AWS_REGION
 ARG VITE_CONVEX_SITE_URL
 
-# Optionally, export them as ENV if your build needs them:
+# Set environment variables from build arguments
 ENV CONVEX_DEPLOY_KEY=$CONVEX_DEPLOY_KEY
 ENV GOOGLE_CLIENT_ID=$GOOGLE_CLIENT_ID
 ENV GOOGLE_CLIENT_SECRET=$GOOGLE_CLIENT_SECRET
@@ -26,15 +27,11 @@ ENV VITE_AWS_BUCKET_NAME=$VITE_AWS_BUCKET_NAME
 ENV VITE_AWS_REGION=$VITE_AWS_REGION
 ENV VITE_CONVEX_SITE_URL=$VITE_CONVEX_SITE_URL
 
-RUN printenv CONVEX_DEPLOY_KEY
-RUN printenv PATH
-
 COPY package.json bun.lock vite.config.ts tsconfig.json ./
 COPY src ./src
 COPY convex ./convex
 COPY patches ./patches
 COPY public ./public
-
 
 RUN bun install
 RUN bun run build
