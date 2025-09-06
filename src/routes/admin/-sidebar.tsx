@@ -1,5 +1,5 @@
 import { api } from "@convex/_generated/api";
-import type { Doc } from "@convex/_generated/dataModel";
+import type { Doc, Id } from "@convex/_generated/dataModel";
 import type { article_status_validator } from "@convex/schema";
 import { convexQuery } from "@convex-dev/react-query";
 import { useSuspenseQuery } from "@tanstack/react-query";
@@ -13,20 +13,32 @@ import {
 	type LucideIcon,
 	Trash2Icon,
 } from "lucide-react";
-import { useMemo } from "react";
-import { NavMain } from "~/components/nav-main";
+import { type ReactNode, useMemo } from "react";
 import { NavProjects } from "~/components/nav-projects";
 import { Sidebar, SidebarContent, SidebarRail } from "~/components/ui/sidebar";
-import {
-	ArticleSidebar,
-	type ArticleSidebarByStatusItem,
-} from "./-article-sidebar";
+import { ArticleSidebar } from "./-article-sidebar";
 
 type ArticleStatus = Infer<typeof article_status_validator>;
 
 type StatusInfo = {
 	label: string;
 	icon: LucideIcon;
+};
+
+export type ArticleSidebarByStatusSubItem = {
+	id: Id<"articles">;
+	status: ArticleStatus;
+	label: string;
+	link: (props: LinkProps) => ReactNode;
+	edit_link: (props: LinkProps) => ReactNode;
+};
+
+export type ArticleSidebarByStatusItem = {
+	label: string;
+	link: (props: LinkProps) => ReactNode;
+	icon: LucideIcon;
+	isActive?: boolean;
+	items?: ArticleSidebarByStatusSubItem[];
 };
 
 /**
@@ -88,6 +100,8 @@ function create_sidebar_item(
 			<Link {...props} to="/admin/$status" params={{ status }} />
 		),
 		items: articles.map((article) => ({
+			id: article._id,
+			status: article.status,
 			label: article.title,
 			link: (props: LinkProps) => (
 				<Link

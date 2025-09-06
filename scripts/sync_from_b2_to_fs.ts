@@ -155,7 +155,9 @@ async function downloadBucket(bucketName: string, localDir: string) {
 
 	if (errors.length > 0) {
 		console.error("\nErrors encountered:");
-		errors.forEach((error) => console.error(error));
+		errors.forEach((error) => {
+			console.error(error);
+		});
 	}
 }
 

@@ -45,7 +45,7 @@ function RouteComponent() {
 		onSuccess: (new_article) => {
 			navigate({
 				to: "/admin/$status/$article_slug/uredi",
-				params: { article_slug: new_article },
+				params: { article_slug: new_article, status: "draft" },
 			});
 		},
 	});

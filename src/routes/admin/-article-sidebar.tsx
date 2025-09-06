@@ -1,15 +1,16 @@
 "use client";
 
-import { Link, type LinkProps } from "@tanstack/react-router";
+import { api } from "@convex/_generated/api";
+import { useConvexMutation } from "@convex-dev/react-query";
+import { useMutation } from "@tanstack/react-query";
+import { useMatchRoute, useNavigate } from "@tanstack/react-router";
 import {
 	EditIcon,
 	ExternalLinkIcon,
-	type LucideIcon,
-	MoreHorizontal,
+	MoreHorizontalIcon,
 	ShareIcon,
 	Trash2Icon,
 } from "lucide-react";
-import type { ReactNode } from "react";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -29,20 +30,10 @@ import {
 	SidebarMenuSubItem,
 	useSidebar,
 } from "~/components/ui/sidebar";
-
-export type ArticleSidebarByStatusSubItem = {
-	label: string;
-	link: (props: LinkProps) => ReactNode;
-	edit_link: (props: LinkProps) => ReactNode;
-};
-
-export type ArticleSidebarByStatusItem = {
-	label: string;
-	link: (props: LinkProps) => ReactNode;
-	icon: LucideIcon;
-	isActive?: boolean;
-	items?: ArticleSidebarByStatusSubItem[];
-};
+import type {
+	ArticleSidebarByStatusItem,
+	ArticleSidebarByStatusSubItem,
+} from "./-sidebar";
 
 export function ArticleSidebar({
 	articles_by_status,
@@ -69,6 +60,8 @@ export function ArticleSidebar({
 						<SidebarMenuSub>
 							{item.items?.map((sub_item) => (
 								<ArticleSidebarSubItem
+									id={sub_item.id}
+									status={sub_item.status}
 									key={sub_item.label}
 									label={sub_item.label}
 									link={sub_item.link}
@@ -84,11 +77,18 @@ export function ArticleSidebar({
 }
 
 function ArticleSidebarSubItem({
+	id,
+	status,
 	label,
 	link,
 	edit_link,
 }: ArticleSidebarByStatusSubItem) {
 	const { isMobile } = useSidebar();
+	const delete_article = useMutation({
+		mutationFn: useConvexMutation(api.articles.delete_article),
+	});
+	const navigate = useNavigate();
+	const match_route = useMatchRoute();
 
 	return (
 		<SidebarMenuSubItem>
@@ -98,7 +98,7 @@ function ArticleSidebarSubItem({
 			<DropdownMenu>
 				<DropdownMenuTrigger asChild>
 					<SidebarMenuAction showOnHover>
-						<MoreHorizontal />
+						<MoreHorizontalIcon />
 						<span className="sr-only">More</span>
 					</SidebarMenuAction>
 				</DropdownMenuTrigger>
@@ -135,7 +135,23 @@ function ArticleSidebarSubItem({
 						<span>Deli</span>
 					</DropdownMenuItem>
 					<DropdownMenuSeparator />
-					<DropdownMenuItem>
+					<DropdownMenuItem
+						onClick={() => {
+							const is_viewing = match_route({
+								to: "/admin/$status/$article_slug",
+								params: { article_slug: id, status },
+								fuzzy: true,
+							});
+
+							if (is_viewing) {
+								navigate({
+									to: "/admin",
+								});
+							}
+
+							delete_article.mutate({ article_id: id });
+						}}
+					>
 						<Trash2Icon size={14} className="text-muted-foreground" />
 						<span>Zbriši</span>
 					</DropdownMenuItem>

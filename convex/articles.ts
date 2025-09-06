@@ -6,7 +6,6 @@ import slugify from "slugify";
 import { internal } from "./_generated/api";
 import type { Doc, Id } from "./_generated/dataModel";
 import { mutation, type QueryCtx, query } from "./_generated/server";
-import { get_user } from "./auth";
 import {
 	article_status_validator,
 	article_validator,
@@ -328,7 +327,7 @@ export const copy_published_into_draft = mutation({
 		});
 
 		await ctx.db.patch(new_draft_id, {
-			slug: new_draft_id,
+			slug: new_draft_id.toString(),
 		});
 
 		// Copy authors
@@ -496,6 +495,50 @@ export const publish_draft = mutation({
 		}
 
 		return ctx.db.get(args.article_id);
+	},
+});
+
+export const delete_article = mutation({
+	args: {
+		article_id: v.id("articles"),
+	},
+	handler: async (ctx, args) => {
+		const user_id = await ctx.auth.getUserIdentity();
+		if (!user_id) {
+			throw new Error("User must be authenticated to delete an article.");
+		}
+
+		const article = await ctx.db.get(args.article_id);
+		if (!article) {
+			throw new Error("Article not found.");
+		}
+
+		// Delete author links
+		const author_links = await ctx.db
+			.query("articles_to_authors")
+			.withIndex("by_article_and_order", (q) =>
+				q.eq("article_id", args.article_id),
+			)
+			.collect();
+
+		for (const link of author_links) {
+			await ctx.db.delete(link._id);
+		}
+
+		// Delete media links
+		const media_links = await ctx.db
+			.query("media_to_articles")
+			.withIndex("by_article_and_order", (q) =>
+				q.eq("article_id", args.article_id),
+			)
+			.collect();
+
+		for (const link of media_links) {
+			await ctx.db.delete(link._id);
+		}
+
+		// Delete the article
+		await ctx.db.delete(args.article_id);
 	},
 });
 

@@ -13,7 +13,6 @@ import { useEffect } from "react";
 import { useIntersectionObserver } from "usehooks-ts";
 import { z } from "zod";
 import { Footer2 } from "~/components/layout/footer2";
-import { Navbar1 } from "~/components/layout/navbar1";
 import { SiteNavbar } from "~/components/layout/site-navbar";
 import { Button } from "~/components/ui/button";
 import { auth_client } from "~/lib/auth-client";
@@ -142,7 +141,7 @@ function Home() {
 								delete_everything.mutate({});
 							}}
 						>
-							Izbriši vse
+							Zbriši vse
 						</Button>
 						<Button
 							onClick={async () => {
