@@ -6,24 +6,16 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { Link, type LinkProps } from "@tanstack/react-router";
 import type { Infer } from "convex/values";
 import {
-	ArchiveIcon,
-	CheckCircleIcon,
-	Edit3Icon,
 	HomeIcon,
 	type LucideIcon,
-	Trash2Icon,
+	ShieldIcon,
 } from "lucide-react";
 import { type ReactNode, useMemo } from "react";
 import { NavProjects } from "~/components/nav-projects";
 import { Sidebar, SidebarContent, SidebarRail } from "~/components/ui/sidebar";
 import { ArticleSidebar } from "./-article-sidebar";
-
-type ArticleStatus = Infer<typeof article_status_validator>;
-
-type StatusInfo = {
-	label: string;
-	icon: LucideIcon;
-};
+import { status_meta } from "~/components/status-meta";
+import { SidebarSecondary } from "~/components/ui/sidebar-secondary";
 
 export type ArticleSidebarByStatusSubItem = {
 	id: Id<"articles">;
@@ -41,20 +33,11 @@ export type ArticleSidebarByStatusItem = {
 	items?: ArticleSidebarByStatusSubItem[];
 };
 
-/**
- * Type-safe status metadata - TypeScript will ensure all statuses from the validator are covered.
- * If a new status is added to `article_status_validator`, TypeScript will require it to be added here.
- * The `satisfies` constraint ensures this object contains exactly the statuses defined in the validator.
- */
-const status_meta = {
-	draft: { label: "Osnutki", icon: Edit3Icon },
-	published: { label: "Objavljeno", icon: CheckCircleIcon },
-	archived: { label: "Arhiv", icon: ArchiveIcon },
-	deleted: { label: "Koš", icon: Trash2Icon },
-} as const satisfies Record<ArticleStatus, StatusInfo>;
+type ArticleStatus = Infer<typeof article_status_validator>;
 
-const status_order = Object.keys(status_meta) as readonly ArticleStatus[];
+const status_order = Array.from(status_meta.keys())
 
+// https://ui.shadcn.com/blocks/sidebar
 // TODO: when clicking edit on published articles, it edits the article directly, invalid state
 export function AdminSidebar({
 	...props
@@ -64,7 +47,6 @@ export function AdminSidebar({
 	);
 
 	const sidebar_content = useMemo(() => {
-		// Type-safe creation of sidebar items for all status values
 		const sidebar_items: ArticleSidebarByStatusItem[] = status_order.map(
 			(status) => {
 				const articles = articles_by_status[status] ?? [];
@@ -76,10 +58,16 @@ export function AdminSidebar({
 	}, [articles_by_status]);
 
 	return (
-		<Sidebar collapsible="icon" {...props}>
+		<Sidebar className="h-full" collapsible="icon" {...props}>
 			<SidebarContent>
-				<NavProjects projects={[{ name: "Domov", icon: HomeIcon, url: "/" }]} />
+				<NavProjects projects={[
+					{ name: "Domov", icon: HomeIcon, url: "/" },
+					{ name: "Admin", icon: ShieldIcon, url: "/admin" }
+				]} />
 				{sidebar_content}
+				<SidebarSecondary className="mt-auto" items={[
+					{ title: "Dokumentacija", url: "https://docs.jknm.dev", icon: HomeIcon },
+				]} />
 			</SidebarContent>
 			<SidebarRail />
 		</Sidebar>
@@ -90,11 +78,12 @@ function create_sidebar_item(
 	articles: Doc<"articles">[],
 	status: ArticleStatus,
 ) {
-	const { label, icon } = status_meta[status];
+	const meta = status_meta.get(status);
+	if (!meta) throw new Error("Status meta not found");
 
 	const item: ArticleSidebarByStatusItem = {
-		label,
-		icon,
+		label: meta.label,
+		icon: meta.icon,
 		isActive: true,
 		link: (props: LinkProps) => (
 			<Link {...props} to="/admin/$status" params={{ status }} />

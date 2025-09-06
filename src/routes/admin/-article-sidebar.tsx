@@ -43,7 +43,7 @@ export function ArticleSidebar({
 	return (
 		/* className="group-data-[collapsible=icon]:hidden" */
 		<SidebarGroup>
-			<SidebarGroupLabel>Novice</SidebarGroupLabel>
+			<SidebarGroupLabel>Kategorije</SidebarGroupLabel>
 			<SidebarMenu>
 				{articles_by_status.map((item) => (
 					<SidebarMenuItem key={item.label}>

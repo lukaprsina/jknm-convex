@@ -7,6 +7,7 @@ import { api } from "convex/_generated/api";
 import type { Infer } from "convex/values";
 import { Button } from "~/components/ui/button";
 import { ArticleCard } from "./-article-card";
+import { status_meta } from "~/components/status-meta";
 
 export const Route = createFileRoute("/admin/$status/")({
 	component: RouteComponent,
@@ -25,7 +26,7 @@ export const Route = createFileRoute("/admin/$status/")({
 
 		return {
 			articles,
-			status,
+			status
 		};
 	},
 });
@@ -33,7 +34,7 @@ export const Route = createFileRoute("/admin/$status/")({
 const status_route = getRouteApi("/admin/$status/");
 
 function RouteComponent() {
-	const { articles } = status_route.useLoaderData();
+	const { articles, status } = status_route.useLoaderData();
 	const navigate = status_route.useNavigate();
 
 	const { mutate } = useMutation<
@@ -50,8 +51,12 @@ function RouteComponent() {
 		},
 	});
 
+	const meta = status_meta.get(status);
+	if (!meta) throw new Error("Status meta not found");
+
 	return (
-		<div>
+		<div className="prose">
+			<h2>{meta.label}</h2>
 			<Button onClick={() => mutate({})}>Create Draft</Button>
 			<div>
 				{articles.map((article) => (
