@@ -32,8 +32,21 @@ export const SavePlugin = createPlatePlugin({
 	options: {
 		article_id: undefined as Id<"articles"> | undefined,
 		update_draft: undefined as UpdateDraftMutation | undefined,
+		dirty: false,
 	},
 	handlers: {
+		onNodeChange: (context) => {
+			// const value = context.editor.children;
+			// console.log("onNodeChange...", value, context);
+			context.editor.setOption(SavePlugin, "dirty", true);
+			// autosave_store.set(autosave_atom, { value, timestamp: new Date() });
+		},
+		onTextChange: (context) => {
+			// const value = context.editor.children;
+			// console.log("onTextChange...", value, context);
+			context.editor.setOption(SavePlugin, "dirty", true);
+			// autosave_store.set(autosave_atom, { value, timestamp: new Date() });
+		},
 		/* onBlur: (context) => {
 			const value = context.editor.children;
 			autosave_store.set(autosave_atom, { value, timestamp: new Date() });

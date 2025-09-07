@@ -1,5 +1,6 @@
 import { useConvexMutation } from "@convex-dev/react-query";
 import { useMutation } from "@tanstack/react-query";
+import { useBlocker } from "@tanstack/react-router";
 import { api } from "convex/_generated/api";
 import type { Id } from "convex/_generated/dataModel";
 import type { Value } from "platejs";
@@ -8,6 +9,7 @@ import {
 	useEditorMounted,
 	useEditorRef,
 	usePlateEditor,
+	usePluginOption,
 } from "platejs/react";
 import { useEffect } from "react";
 import { EditorKit } from "~/components/editor-kit";
@@ -61,6 +63,21 @@ function ConfiguredPlateEditor({ article_id }: { article_id: Id<"articles"> }) {
 	const publish_draft = useMutation({
 		mutationFn: useConvexMutation(api.articles.publish_draft),
 	});
+
+	const is_dirty = usePluginOption(SavePlugin, "dirty");
+	const save_plugin = editor.getApi(SavePlugin).save;
+
+	const { proceed, status } = useBlocker({
+		shouldBlockFn: () => is_dirty,
+		withResolver: true,
+	});
+
+	useEffect(() => {
+		if (status === "blocked") {
+			console.log("Blocking navigation, saving, proceeding");
+			void save_plugin.save().then(() => proceed());
+		}
+	}, [status, save_plugin.save, proceed]);
 
 	useEffect(() => {
 		if (!is_mounted) return;

@@ -1,11 +1,9 @@
 import type { LucideIcon } from "lucide-react";
-
 import {
 	SidebarGroup,
 	SidebarMenu,
 	SidebarMenuButton,
 	SidebarMenuItem,
-	useSidebar,
 } from "~/components/ui/sidebar";
 
 export function NavProjects({
@@ -13,11 +11,12 @@ export function NavProjects({
 }: {
 	projects: {
 		name: string;
-		url: string;
 		icon: LucideIcon;
+		url?: string;
+		onClick?: () => void;
 	}[];
 }) {
-	const { isMobile } = useSidebar();
+	// const { isMobile } = useSidebar();
 
 	return (
 		<SidebarGroup className="group-data-[collapsible=icon]:hidden">
@@ -26,10 +25,17 @@ export function NavProjects({
 				{projects.map((item) => (
 					<SidebarMenuItem key={item.name}>
 						<SidebarMenuButton asChild>
-							<a href={item.url}>
-								<item.icon />
-								<span>{item.name}</span>
-							</a>
+							{item.url ? (
+								<a href={item.url}>
+									<item.icon />
+									<span>{item.name}</span>
+								</a>
+							) : (
+								<button onClick={item.onClick}>
+									<item.icon />
+									<span>{item.name}</span>
+								</button>
+							)}
 						</SidebarMenuButton>
 						{/* <DropdownMenu>
 							<DropdownMenuTrigger asChild>
