@@ -77,7 +77,7 @@ function ConfiguredPlateEditor({ article_id }: { article_id: Id<"articles"> }) {
 
 	useEffect(() => {
 		if (status === "blocked") {
-			console.log("Blocking navigation, saving, proceeding");
+			// console.log("Blocking navigation, saving, proceeding");
 			void save_plugin.save().then(() => proceed());
 		}
 	}, [status, save_plugin.save, proceed]);

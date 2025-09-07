@@ -9,7 +9,7 @@
 		"ignoreUnknown": false,
 		"includes": [
 			"**/*.{js,jsx,ts,tsx,json,jsonc,css}",
-			"!convex/_generated/**",
+			"!convex/_generated/",
 			"!src/routeTree.gen.ts"
 		]
 	},
@@ -19,9 +19,9 @@
 	},
 	"linter": {
 		"enabled": true,
-		/* "domains": {
+		"domains": {
 			"react": "recommended"
-		}, */
+		},
 		"rules": {
 			"nursery": {
 				"useSortedClasses": {

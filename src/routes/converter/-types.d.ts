@@ -14,12 +14,12 @@ export interface Article {
 export interface Content {
 	time: number;
 	blocks: Block[];
-	version: Version;
+	version: string;
 }
 
 export interface Block {
 	id: string;
-	type: Type;
+	type: BlockType;
 	data: Data;
 }
 
@@ -30,7 +30,7 @@ export interface Data {
 	withBorder?: boolean;
 	withBackground?: boolean;
 	stretched?: boolean;
-	file?: File;
+	file?: DataFile;
 	style?: Style;
 	items?: string[];
 	service?: Service;
@@ -40,7 +40,7 @@ export interface Data {
 	height?: number;
 }
 
-export interface File {
+export interface DataFile {
 	url: string;
 	width: number;
 	height: number;
@@ -54,18 +54,7 @@ export enum Style {
 	Unordered = "unordered",
 }
 
-export enum Type {
-	Embed = "embed",
-	Header = "header",
-	Image = "image",
-	List = "list",
-	Paragraph = "paragraph",
-}
-
-export enum Version {
-	The2306 = "2.30.6",
-	The2310RC7 = "2.31.0-rc.7",
-}
+export type BlockType = "embed" | "header" | "image" | "list" | "paragraph";
 
 export interface PublishedArticlesToAuthor {
 	published_id: number;
