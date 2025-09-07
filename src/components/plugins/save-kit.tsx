@@ -4,7 +4,6 @@ import { createStore } from "jotai";
 import { atomWithStorage } from "jotai/utils";
 import type { Value } from "platejs";
 import { createPlatePlugin, Key } from "platejs/react";
-import { PublishDialog } from "../../routes/admin/$status/-publish-dialog";
 
 type AutoSaveStorage = {
 	value: Value;
@@ -66,6 +65,7 @@ export const SavePlugin = createPlatePlugin({
 				return;
 			}
 
+			context.editor.setOption(SavePlugin, "dirty", false);
 			update_draft({
 				id: article_id,
 				content_json: JSON.stringify(value),
@@ -106,9 +106,9 @@ export const PublishPlugin = createPlatePlugin({
 
 export const SaveKit = [
 	SavePlugin,
-	PublishPlugin.configure({
+	PublishPlugin /* .configure({
 		render: {
 			afterEditable: () => <PublishDialog />,
 		},
-	}),
+	}) */,
 ];

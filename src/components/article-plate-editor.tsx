@@ -15,6 +15,7 @@ import { useEffect } from "react";
 import { EditorKit } from "~/components/editor-kit";
 import { Editor, EditorContainer } from "~/components/plate-ui/editor";
 import { PublishPlugin, SavePlugin } from "./plugins/save-kit";
+import { PublishDialog } from "./publish-dialog";
 
 function initial_value(string_value: string): Value {
 	const value = JSON.parse(string_value) as Value;
@@ -47,6 +48,7 @@ export function ArticlePlateEditor({
 
 	return (
 		<Plate editor={editor}>
+			<PublishDialog />
 			<ConfiguredPlateEditor article_id={article_id} />
 		</Plate>
 	);
@@ -70,6 +72,7 @@ function ConfiguredPlateEditor({ article_id }: { article_id: Id<"articles"> }) {
 	const { proceed, status } = useBlocker({
 		shouldBlockFn: () => is_dirty,
 		withResolver: true,
+		enableBeforeUnload: is_dirty,
 	});
 
 	useEffect(() => {

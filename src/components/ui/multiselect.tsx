@@ -260,7 +260,7 @@ const MultipleSelector = ({
 			document.removeEventListener("mousedown", handleClickOutside);
 			document.removeEventListener("touchend", handleClickOutside);
 		};
-	}, [open]);
+	}, [open, handleClickOutside]);
 
 	useEffect(() => {
 		if (value) {
@@ -277,7 +277,7 @@ const MultipleSelector = ({
 		if (JSON.stringify(newOption) !== JSON.stringify(options)) {
 			setOptions(newOption);
 		}
-	}, [arrayDefaultOptions, arrayOptions, groupBy, onSearch, options]);
+	}, [arrayOptions, groupBy, onSearch, options]);
 
 	useEffect(() => {
 		/** sync search */
@@ -301,7 +301,7 @@ const MultipleSelector = ({
 
 		void exec();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [debouncedSearchTerm, groupBy, open, triggerSearchOnFocus]);
+	}, [debouncedSearchTerm, groupBy, open, triggerSearchOnFocus, onSearchSync]);
 
 	useEffect(() => {
 		/** async search */
@@ -316,18 +316,17 @@ const MultipleSelector = ({
 		const exec = async () => {
 			if (!onSearch || !open) return;
 
-			if (triggerSearchOnFocus) {
+			/* if (triggerSearchOnFocus) {
 				await doSearch();
-			}
+			} */
 
-			if (debouncedSearchTerm) {
-				await doSearch();
-			}
+			// TODO: changed
+			await doSearch();
 		};
 
 		void exec();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [debouncedSearchTerm, groupBy, open, triggerSearchOnFocus]);
+	}, [debouncedSearchTerm, groupBy, open, onSearch]);
 
 	const CreatableItem = () => {
 		if (!creatable) return undefined;
@@ -556,7 +555,7 @@ const MultipleSelector = ({
 							}}
 						>
 							{isLoading ? (
-								<>{loadingIndicator}</>
+								loadingIndicator
 							) : (
 								<>
 									{EmptyItem()}
@@ -570,38 +569,36 @@ const MultipleSelector = ({
 											heading={key}
 											className="h-full overflow-auto"
 										>
-											<>
-												{dropdowns.map((option) => {
-													return (
-														<CommandItem
-															key={option.value}
-															value={option.value}
-															disabled={option.disable}
-															onMouseDown={(e) => {
-																e.preventDefault();
-																e.stopPropagation();
-															}}
-															onSelect={() => {
-																if (selected.length >= maxSelected) {
-																	onMaxSelected?.(selected.length);
-																	return;
-																}
-																setInputValue("");
-																const newOptions = [...selected, option];
-																setSelected(newOptions);
-																onChange?.(newOptions);
-															}}
-															className={cn(
-																"cursor-pointer",
-																option.disable &&
-																	"pointer-events-none cursor-not-allowed opacity-50",
-															)}
-														>
-															{option.label}
-														</CommandItem>
-													);
-												})}
-											</>
+											{dropdowns.map((option) => {
+												return (
+													<CommandItem
+														key={option.value}
+														value={option.value}
+														disabled={option.disable}
+														onMouseDown={(e) => {
+															e.preventDefault();
+															e.stopPropagation();
+														}}
+														onSelect={() => {
+															if (selected.length >= maxSelected) {
+																onMaxSelected?.(selected.length);
+																return;
+															}
+															setInputValue("");
+															const newOptions = [...selected, option];
+															setSelected(newOptions);
+															onChange?.(newOptions);
+														}}
+														className={cn(
+															"cursor-pointer",
+															option.disable &&
+																"pointer-events-none cursor-not-allowed opacity-50",
+														)}
+													>
+														{option.label}
+													</CommandItem>
+												);
+											})}
 										</CommandGroup>
 									))}
 								</>

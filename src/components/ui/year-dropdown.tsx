@@ -8,7 +8,6 @@ import {
 	DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
 import { cn } from "~/lib/utils";
-import { Label } from "./label";
 
 interface YearDropdownProps
 	extends React.ComponentProps<typeof DropdownMenuPrimitive.Trigger> {
@@ -43,7 +42,9 @@ export function YearDropdown({
 					<ChevronDownIcon size={16} className="ml-2" />
 				</Button>
 			</DropdownMenuTrigger>
-			<DropdownMenuContent className="max-h-60 overflow-y-auto">
+			<DropdownMenuContent
+				className={cn("max-h-60 overflow-y-auto", className)}
+			>
 				{years.map((year) => (
 					<DropdownMenuItem key={year} onClick={() => handleYearSelect(year)}>
 						{year}

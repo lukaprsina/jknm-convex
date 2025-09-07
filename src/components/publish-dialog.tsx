@@ -2,10 +2,9 @@ import { api } from "@convex/_generated/api";
 import type { Doc } from "@convex/_generated/dataModel";
 import { useConvexMutation } from "@convex-dev/react-query";
 import { useMutation } from "@tanstack/react-query";
-import { getRouteApi } from "@tanstack/react-router";
+import { useNavigate } from "@tanstack/react-router";
 import { useEditorRef, usePluginOption } from "platejs/react";
 import { useState } from "react";
-import AuthorMultiselect from "~/components/author-mutliselect";
 import DatePickerDemo from "~/components/date-time";
 import { ImageSelector } from "~/components/plate-ui/image-selector";
 import PublishImageCropper from "~/components/plate-ui/publish-image-cropper";
@@ -19,24 +18,22 @@ import {
 	DialogHeader,
 	DialogTitle,
 } from "~/components/ui/dialog";
-import type { Option } from "~/components/ui/multiselect";
 
 type PublishMutation = typeof api.articles.publish_draft;
-const admin_draft_route = getRouteApi("/admin/$status/$article_slug/uredi/");
 
 export function PublishDialog() {
 	const today = new Date();
+
 	const [date, setDate] = useState<Date | undefined>(today);
 	const [time, setTime] = useState<string | undefined>("12:00");
-	const [authors, setAuthors] = useState<Option[]>([]);
-
+	const [authors, _setAuthors] = useState<string[]>([]);
 	const open = usePluginOption(PublishPlugin, "open_dialogue");
 	const article_id = usePluginOption(PublishPlugin, "article_id");
 	const editor = useEditorRef();
 	const [selectedImage, setSelectedImage] = useState<
 		Doc<"media"> | undefined
 	>();
-	const navigate = admin_draft_route.useNavigate();
+	const navigate = useNavigate();
 
 	const publish_mutation = useMutation<
 		PublishMutation["_returnType"],
@@ -57,6 +54,8 @@ export function PublishDialog() {
 		},
 	});
 
+	// const { authors: loader_authors } = home_route.useLoaderData();
+
 	return (
 		<Dialog
 			open={open}
@@ -67,7 +66,7 @@ export function PublishDialog() {
 			{/* sm:max-w-lg [&>button:last-child]:hidden  sm:max-h-[min(640px,80vh)] */}
 			<DialogContent
 				aria-describedby={undefined}
-				className="flex flex-col gap-0 p-0 sm:max-h-[min(900px,80vh)] sm:max-w-3xl "
+				className="flex flex-col gap-0 p-0 sm:max-h-[min(900px,80vh)] sm:max-w-3xl"
 			>
 				<DialogHeader className="contents space-y-0 text-left">
 					<DialogTitle className="px-6 pt-6">Objavi novico</DialogTitle>
@@ -78,7 +77,12 @@ export function PublishDialog() {
 					time={time}
 					setTime={setTime}
 				/>
-				<AuthorMultiselect authors={authors} onAuthorsChange={setAuthors} />
+				{/* <AuthorMultiselect authors={authors} onAuthorsChange={setAuthors} /> */}
+				{/* <AuthorSelect
+					authors={loader_authors}
+					selectedAuthors={authors}
+					onAuthorsChange={setAuthors}
+				/> */}
 				<div className="overflow-y-auto">
 					{selectedImage && (
 						<PublishImageCropper className="m-10" image={selectedImage} />
@@ -108,7 +112,7 @@ export function PublishDialog() {
 								publish_mutation.mutate({
 									article_id,
 									content_json,
-									author_ids: authors.map((a) => a.value),
+									author_ids: authors,
 									published_at: published_at.getTime(),
 									thumbnail: {
 										image_id: selectedImage._id,

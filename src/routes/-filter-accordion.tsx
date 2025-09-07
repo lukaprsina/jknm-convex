@@ -1,6 +1,6 @@
 import { getRouteApi, useNavigate } from "@tanstack/react-router";
 import equal from "fast-deep-equal";
-import { useState } from "react";
+import { useId, useState } from "react";
 import {
 	Accordion,
 	AccordionContent,
@@ -8,28 +8,19 @@ import {
 	AccordionTrigger,
 } from "~/components/ui/accordion";
 import { AuthorSelect } from "~/components/ui/author-select";
-import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
 import { YearDropdown } from "~/components/ui/year-dropdown";
 import { YearSelectorHorizontal } from "~/components/ui/year-selector-horizontal";
-import { useIsMobile } from "~/hooks/use-mobile";
 import { DEFAULT_SEARCH_VALUES } from ".";
-
-// Mock authors data - replace with actual data from your backend
-const mock_authors = [
-	{ value: "john-doe", label: "John Doe" },
-	{ value: "jane-smith", label: "Jane Smith" },
-	{ value: "bob-johnson", label: "Bob Johnson" },
-	{ value: "alice-brown", label: "Alice Brown" },
-	{ value: "mike-wilson", label: "Mike Wilson" },
-];
 
 const home_route = getRouteApi("/");
 
 export function FilterAccordion() {
 	const home_search = home_route.useSearch();
 	const { authors } = home_route.useLoaderData();
+	const search_id = useId();
+	const year_id = useId();
 
 	const navigate = useNavigate({ from: home_route.id });
 	const [isOpen, setIsOpen] = useState(
@@ -84,11 +75,11 @@ export function FilterAccordion() {
 
 						{/* Search field */}
 						<div className="w-auto space-y-2">
-							<Label htmlFor="search" className="font-medium text-sm">
+							<Label htmlFor={search_id} className="font-medium text-sm">
 								Iskanje
 							</Label>
 							<Input
-								id="search"
+								id={search_id}
 								type="text"
 								placeholder="Filtriraj članke..."
 								value={home_search.iskanje ?? ""}
@@ -113,7 +104,7 @@ export function FilterAccordion() {
 								Leto
 							</Label>
 							<YearDropdown
-								id="year-dropdown"
+								id={year_id}
 								className="xl:hidden"
 								selectedYear={home_search.leto ?? undefined}
 								onYearChange={async (year) =>

@@ -1,7 +1,7 @@
 "use client";
 
 import type { api } from "convex/_generated/api";
-import * as React from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import MultipleSelector, { type Option } from "~/components/ui/multiselect";
 
 interface AuthorSelectProps {
@@ -20,7 +20,7 @@ export function AuthorSelect({
 	className,
 }: AuthorSelectProps) {
 	// Convert authors to Options format
-	const authorOptions: Option[] = React.useMemo(
+	const authorOptions: Option[] = useMemo(
 		() =>
 			authors.map((author) => ({
 				value: author._id,
@@ -30,19 +30,27 @@ export function AuthorSelect({
 	);
 
 	// Convert selectedAuthors to selected Options
-	const selectedOptions: Option[] = React.useMemo(
+	const selectedOptions: Option[] = useMemo(
 		() =>
 			authorOptions.filter((option) => selectedAuthors.includes(option.value)),
 		[authorOptions, selectedAuthors],
 	);
 
-	const handleAuthorsChange = React.useCallback(
+	const handleAuthorsChange = useCallback(
 		(options: Option[]) => {
 			const authorValues = options.map((option) => option.value);
 			onAuthorsChange(authorValues);
 		},
 		[onAuthorsChange],
 	);
+
+	useEffect(() => {
+		console.log("Selected authors changed:", {
+			selectedAuthors,
+			authorOptions,
+			selectedOptions,
+		});
+	}, [selectedAuthors, authorOptions, selectedOptions]);
 
 	return (
 		<MultipleSelector
@@ -57,7 +65,17 @@ export function AuthorSelect({
 			onChange={handleAuthorsChange}
 			className={className}
 			commandProps={{
-				label: "Izberi avtorje",
+				label: placeholder,
+			}}
+			delay={1}
+			onSearch={(value) => {
+				const result = authorOptions.filter((option) =>
+					option.label.toLowerCase().includes(value.toLowerCase()),
+				);
+
+				console.log("AuthorSelect search:", { value, result });
+
+				return Promise.resolve(result);
 			}}
 		/>
 	);
