@@ -2,12 +2,11 @@
 
 import { admin_directory_v1, auth } from "@googleapis/admin";
 import type { JWTInput } from "google-auth-library";
-import { internal } from "./_generated/api";
 import { internalAction } from "./_generated/server";
 
 export const get_users = internalAction({
 	args: {},
-	handler: async (ctx) => {
+	handler: async (_ctx) => {
 		const creds_json = Buffer.from(
 			process.env.JKNM_SERVICE_ACCOUNT_CREDENTIALS!,
 			"base64",
@@ -41,25 +40,43 @@ export const get_users = internalAction({
 			return;
 		}
 
-		const authors = res.data.users
-			.filter(
-				(
-					u,
-				): u is {
-					name: { fullName: string };
-					primaryEmail: string;
-					id: string;
-				} =>
-					typeof u.primaryEmail === "string" &&
-					typeof u.name?.fullName === "string" &&
-					typeof u.id === "string",
-			)
-			.map((u) => ({
+		// Define the type for authors
+		type Author = {
+			name: string;
+			email: string;
+			google_id: string;
+		};
+
+		let suspended_count = 0;
+		let invalid_count = 0;
+		const authors = (res.data.users ?? []).reduce((acc: Author[], u) => {
+			if (
+				typeof u.primaryEmail !== "string" ||
+				typeof u.name?.fullName !== "string" ||
+				typeof u.id !== "string"
+			) {
+				invalid_count++;
+				return acc; // guard: skip invalid user
+			}
+
+			if (u.suspended) {
+				suspended_count++;
+				return acc; // guard: skip suspended users
+			}
+
+			acc.push({
 				name: u.name.fullName,
 				email: u.primaryEmail,
 				google_id: u.id,
-			}));
+			});
+			return acc;
+		}, []);
 
-		await ctx.runMutation(internal.authors.diff_google_authors, { authors });
+		console.log(`Fetched ${authors.length} authors from Google Workspace.`, {
+			suspended_count,
+			invalid_count,
+		});
+
+		// await ctx.runMutation(internal.authors.diff_google_authors, { authors });
 	},
 });
