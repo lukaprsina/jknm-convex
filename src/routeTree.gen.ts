@@ -19,6 +19,7 @@ import { Route as NovicaArticle_slugIndexRouteImport } from './routes/novica/$ar
 import { Route as AdminStatusIndexRouteImport } from './routes/admin/$status/index'
 import { Route as AdminStatusArticle_slugIndexRouteImport } from './routes/admin/$status/$article_slug.index'
 import { Route as AdminStatusArticle_slugUrediIndexRouteImport } from './routes/admin/$status/$article_slug.uredi.index'
+import { ServerRoute as NovicaIndexServerRouteImport } from './routes/novica/index'
 import { ServerRoute as ApiAuthSplatServerRouteImport } from './routes/api/auth/$'
 
 const rootServerRouteImport = createServerRootRoute()
@@ -65,6 +66,11 @@ const AdminStatusArticle_slugUrediIndexRoute =
     path: '/$status/$article_slug/uredi/',
     getParentRoute: () => AdminRouteRoute,
   } as any)
+const NovicaIndexServerRoute = NovicaIndexServerRouteImport.update({
+  id: '/novica/',
+  path: '/novica/',
+  getParentRoute: () => rootServerRouteImport,
+} as any)
 const ApiAuthSplatServerRoute = ApiAuthSplatServerRouteImport.update({
   id: '/api/auth/$',
   path: '/api/auth/$',
@@ -143,24 +149,28 @@ export interface RootRouteChildren {
   NovicaArticle_slugIndexRoute: typeof NovicaArticle_slugIndexRoute
 }
 export interface FileServerRoutesByFullPath {
+  '/novica': typeof NovicaIndexServerRoute
   '/api/auth/$': typeof ApiAuthSplatServerRoute
 }
 export interface FileServerRoutesByTo {
+  '/novica': typeof NovicaIndexServerRoute
   '/api/auth/$': typeof ApiAuthSplatServerRoute
 }
 export interface FileServerRoutesById {
   __root__: typeof rootServerRouteImport
+  '/novica/': typeof NovicaIndexServerRoute
   '/api/auth/$': typeof ApiAuthSplatServerRoute
 }
 export interface FileServerRouteTypes {
   fileServerRoutesByFullPath: FileServerRoutesByFullPath
-  fullPaths: '/api/auth/$'
+  fullPaths: '/novica' | '/api/auth/$'
   fileServerRoutesByTo: FileServerRoutesByTo
-  to: '/api/auth/$'
-  id: '__root__' | '/api/auth/$'
+  to: '/novica' | '/api/auth/$'
+  id: '__root__' | '/novica/' | '/api/auth/$'
   fileServerRoutesById: FileServerRoutesById
 }
 export interface RootServerRouteChildren {
+  NovicaIndexServerRoute: typeof NovicaIndexServerRoute
   ApiAuthSplatServerRoute: typeof ApiAuthSplatServerRoute
 }
 
@@ -226,6 +236,13 @@ declare module '@tanstack/react-router' {
 }
 declare module '@tanstack/react-start/server' {
   interface ServerFileRoutesByPath {
+    '/novica/': {
+      id: '/novica/'
+      path: '/novica'
+      fullPath: '/novica'
+      preLoaderRoute: typeof NovicaIndexServerRouteImport
+      parentRoute: typeof rootServerRouteImport
+    }
     '/api/auth/$': {
       id: '/api/auth/$'
       path: '/api/auth/$'
@@ -264,6 +281,7 @@ export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
 const rootServerRouteChildren: RootServerRouteChildren = {
+  NovicaIndexServerRoute: NovicaIndexServerRoute,
   ApiAuthSplatServerRoute: ApiAuthSplatServerRoute,
 }
 export const serverRouteTree = rootServerRouteImport

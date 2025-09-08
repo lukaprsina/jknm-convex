@@ -31,9 +31,9 @@ export interface Data {
 	withBackground?: boolean;
 	stretched?: boolean;
 	file?: DataFile;
-	style?: Style;
+	style?: "unordered";
 	items?: string[];
-	service?: Service;
+	service?: "youtube";
 	source?: string;
 	embed?: string;
 	width?: number;
@@ -44,14 +44,6 @@ export interface DataFile {
 	url: string;
 	width: number;
 	height: number;
-}
-
-export enum Service {
-	Youtube = "youtube",
-}
-
-export enum Style {
-	Unordered = "unordered",
 }
 
 export type BlockType = "embed" | "header" | "image" | "list" | "paragraph";
@@ -65,28 +57,19 @@ export interface PublishedArticlesToAuthor {
 
 export interface Author {
 	id: number;
-	author_type: AuthorType;
+	author_type: "guest" | "member";
 	name: string;
 	google_id: null | string;
 	email: null | string;
 	image: null | string;
 }
 
-export enum AuthorType {
-	Guest = "guest",
-	Member = "member",
-}
-
 export interface ThumbnailCrop {
 	image_url: string;
 	uploaded_custom_thumbnail?: boolean;
-	unit: Unit;
+	unit: "%";
 	x: number;
 	y: number;
 	width: number;
 	height: number;
-}
-
-export enum Unit {
-	Empty = "%",
 }

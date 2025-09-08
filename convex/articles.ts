@@ -105,6 +105,17 @@ export const get_by_slug = query({
 	},
 });
 
+export const get_by_legacy_id = query({
+	args: { legacy_id: v.number() },
+	handler: async (ctx, args) => {
+		const article = await ctx.db
+			.query("articles")
+			.withIndex("by_legacy_id", (q) => q.eq("legacy_id", args.legacy_id))
+			.first();
+		return article;
+	},
+});
+
 /**
  * Unified search function that handles both regular queries and full-text search
  * with author and year filtering
