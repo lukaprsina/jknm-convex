@@ -425,6 +425,7 @@ export const update_draft = mutation({
 	},
 });
 
+// TODO: thumbnail and authors can be changed in a draft article
 export const publish_draft = mutation({
 	args: {
 		article_id: v.id("articles"),
@@ -558,6 +559,10 @@ export const delete_everything = mutation({
 		const user_id = await ctx.auth.getUserIdentity();
 		if (!user_id) {
 			throw new Error("User must be authenticated to delete everything.");
+		}
+
+		if (process.env.NODE_ENV !== "development") {
+			throw new Error("Deleting everything is only allowed in development.");
 		}
 
 		// Delete all articles

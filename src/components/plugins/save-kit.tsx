@@ -10,7 +10,7 @@ type AutoSaveStorage = {
 	timestamp: Date;
 };
 
-// default is localstorage
+// default is localstorage, unused as of now
 const autosave_atom = atomWithStorage<AutoSaveStorage | undefined>(
 	"autosave",
 	undefined,
@@ -41,16 +41,8 @@ export const SavePlugin = createPlatePlugin({
 			// autosave_store.set(autosave_atom, { value, timestamp: new Date() });
 		},
 		onTextChange: (context) => {
-			// const value = context.editor.children;
-			// console.log("onTextChange...", value, context);
 			context.editor.setOption(SavePlugin, "dirty", true);
-			// autosave_store.set(autosave_atom, { value, timestamp: new Date() });
 		},
-		/* onBlur: (context) => {
-			const value = context.editor.children;
-			autosave_store.set(autosave_atom, { value, timestamp: new Date() });
-			console.log("Autosaving...", value);
-		}, */
 	},
 })
 	.extendApi((context) => ({

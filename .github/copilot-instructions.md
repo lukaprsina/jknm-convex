@@ -102,11 +102,11 @@ export const MyComponentStatic = ({ children, ...props }) => (
 
 ```bash
 # Start both dev servers concurrently
-npm run dev  # Runs both Vite and Convex dev servers
+bun run dev  # Runs both Vite and Convex dev servers
 
 # Individual commands
-npm run dev:web     # TanStack Start dev server
-npm run dev:server  # Convex dev server
+bun run dev:web     # TanStack Start dev server
+bun run dev:server  # Convex dev server
 ```
 
 ### Database Queries
