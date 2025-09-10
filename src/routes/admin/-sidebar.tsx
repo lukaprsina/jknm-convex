@@ -35,7 +35,6 @@ type ArticleStatus = Infer<typeof article_status_validator>;
 const status_order = Array.from(status_meta.keys());
 
 // https://ui.shadcn.com/blocks/sidebar
-// TODO: when clicking edit on published articles, it edits the article directly, invalid state
 export function AdminSidebar({
 	...props
 }: React.ComponentProps<typeof Sidebar>) {

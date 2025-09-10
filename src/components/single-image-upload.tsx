@@ -62,7 +62,7 @@ export default function SingleImageUpload({
 					size_bytes: file.size,
 				},
 
-				// TODO: change to remove this from state
+				// TODO: change to remove this all of this junk from state
 				upload_status: "completed",
 				variants: undefined,
 				_creationTime: Date.now(),

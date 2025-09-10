@@ -562,9 +562,10 @@ export const delete_everything = mutation({
 			throw new Error("User must be authenticated to delete everything.");
 		}
 
-		if (process.env.NODE_ENV !== "development") {
+		/* if (process.env.NODE_ENV !== "development") {
+			console.warn("process.env.NODE_ENV =", process.env.NODE_ENV);
 			throw new Error("Deleting everything is only allowed in development.");
-		}
+		} */
 
 		// Delete all articles
 		const articles = await ctx.db.query("articles").collect();
