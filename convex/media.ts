@@ -249,3 +249,89 @@ export const update_upload_status = internalMutation({
 		});
 	},
 });
+
+/**
+ * Stage legacy media during conversion process.
+ * Creates media record with 'staged' status and canonical URLs without uploading to B2.
+ */
+export const stage_legacy_media = internalMutation({
+	args: {
+		filename: v.string(),
+		content_type: v.string(),
+		size_bytes: v.number(),
+		legacy_key: v.string(),
+	},
+	handler: async (ctx, args) => {
+		// Create the media record to get the ID
+		const media_db_id = await ctx.db.insert("media", {
+			filename: args.filename,
+			content_type: args.content_type,
+			size_bytes: args.size_bytes,
+			// Temporary values, will be updated below
+			base_url: "PENDING",
+			original: {
+				url: "PENDING",
+				size_bytes: args.size_bytes,
+			},
+			upload_status: "staged",
+		});
+
+		// Compute extension from filename
+		const ext = `.${args.filename.split(".").pop()}`;
+		
+		// Build canonical URLs following the same pattern as production
+		const base_url = `https://gradivo.jknm.site/${media_db_id}`;
+		const original_url = `${base_url}/original${ext}`;
+
+		// Update the media record with final URLs
+		await ctx.db.patch(media_db_id, {
+			base_url,
+			original: {
+				url: original_url,
+				size_bytes: args.size_bytes,
+			},
+		});
+
+		// Return the complete media document
+		const media = await ctx.db.get(media_db_id);
+		if (!media) {
+			throw new Error(`Failed to retrieve created media record ${media_db_id}`);
+		}
+
+		return media;
+	},
+});
+
+/**
+ * Link staged media to an article during conversion process.
+ * Creates the media_to_articles junction record with specified order.
+ */
+export const link_media_to_article = internalMutation({
+	args: {
+		article_id: v.id("articles"),
+		media_id: v.id("media"),
+		order: v.number(),
+	},
+	handler: async (ctx, args) => {
+		// Verify the media exists
+		const media = await ctx.db.get(args.media_id);
+		if (!media) {
+			throw new Error(`Media with ID ${args.media_id} not found.`);
+		}
+
+		// Verify the article exists
+		const article = await ctx.db.get(args.article_id);
+		if (!article) {
+			throw new Error(`Article with ID ${args.article_id} not found.`);
+		}
+
+		// Create the media-to-article link
+		const link_id = await ctx.db.insert("media_to_articles", {
+			article_id: args.article_id,
+			media_id: args.media_id,
+			order: args.order,
+		});
+
+		return link_id;
+	},
+});

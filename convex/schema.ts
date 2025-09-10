@@ -99,6 +99,7 @@ const schema = defineSchema({
 
 		upload_status: v.union(
 			v.literal("pending"),
+			v.literal("staged"),
 			v.literal("processing"),
 			v.literal("completed"),
 			v.literal("failed"),
