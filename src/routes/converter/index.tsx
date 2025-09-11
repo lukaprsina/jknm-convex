@@ -116,7 +116,10 @@ function ConfiguredPlateEditor() {
 		// Load value asynchronously
 		const load_value = async () => {
 			try {
-				const value = await convert_article(article, editor);
+				const id = article?.old_id;
+				if (typeof id !== "number")
+					throw new Error("Article old_id is not a number");
+				const value = await convert_article(article, editor, id.toString());
 				editor.tf.setValue(value);
 				/* const str = JSON.stringify(value, null, 2);
 				set_value_string(str); */
@@ -197,10 +200,10 @@ function RouteComponent() {
 				// If no mapping exists, create a draft
 				if (!mapping) {
 					console.log("Creating draft for article:", article.title);
-					const draft_slug = await create_draft_mutation({});
-					await put_article_mapping(article.id, draft_slug, "draft");
+					const { id, slug } = await create_draft_mutation({});
+					await put_article_mapping(article.id, id, "draft");
 					mapping = {
-						article_id: draft_slug,
+						article_id: id,
 						status: "draft" as const,
 						legacy_id: article.id,
 					};

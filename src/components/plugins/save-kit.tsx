@@ -61,6 +61,7 @@ export const SavePlugin = createPlatePlugin({
 			update_draft({
 				id: article_id,
 				content_json: JSON.stringify(value),
+				author_ids: [], // TODO
 			});
 		},
 	}))

@@ -254,7 +254,7 @@ export const update_upload_status = internalMutation({
  * Stage legacy media during conversion process.
  * Creates media record with 'staged' status and canonical URLs without uploading to B2.
  */
-export const stage_legacy_media = internalMutation({
+export const stage_legacy_media = mutation({
 	args: {
 		filename: v.string(),
 		content_type: v.string(),
@@ -262,6 +262,11 @@ export const stage_legacy_media = internalMutation({
 		legacy_key: v.string(),
 	},
 	handler: async (ctx, args) => {
+		const user_id = await ctx.auth.getUserIdentity();
+		if (!user_id) {
+			throw new Error("User must be authenticated to stage legacy media.");
+		}
+
 		// Create the media record to get the ID
 		const media_db_id = await ctx.db.insert("media", {
 			filename: args.filename,
@@ -306,13 +311,18 @@ export const stage_legacy_media = internalMutation({
  * Link staged media to an article during conversion process.
  * Creates the media_to_articles junction record with specified order.
  */
-export const link_media_to_article = internalMutation({
+export const link_media_to_article = mutation({
 	args: {
 		article_id: v.id("articles"),
 		media_id: v.id("media"),
 		order: v.number(),
 	},
 	handler: async (ctx, args) => {
+		const user_id = await ctx.auth.getUserIdentity();
+		if (!user_id) {
+			throw new Error("User must be authenticated to link media to article.");
+		}
+
 		// Verify the media exists
 		const media = await ctx.db.get(args.media_id);
 		if (!media) {

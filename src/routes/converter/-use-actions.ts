@@ -103,11 +103,11 @@ export function useActions(
 					article_id = state.article_mapping.article_id;
 				} else {
 					// Create new draft
-					const draft_slug = await create_draft_mutation({});
-					article_id = draft_slug; // The mutation returns the slug which is the ID
+					const { id, slug } = await create_draft_mutation({});
+					article_id = id;
 
 					// Store mapping
-					await put_article_mapping(article.id, article_id, "draft");
+					await put_article_mapping(article.id, id, "draft");
 				}
 
 				// Use the converted content from editor or fallback to basic content

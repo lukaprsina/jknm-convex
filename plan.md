@@ -70,7 +70,7 @@ Post-migration phases executed later:
 - Migration path will invoke: `draft_id = create_draft()` → populate media links → `publish_draft({ article_id: draft_id, content_json, thumbnail, author_ids, published_at })`.
 
 ### 4.2 Media Mutations
-Add a new internal mutation: `stage_legacy_media`:
+Add a new mutation: `stage_legacy_media`:
 - Args: `{ filename, content_type, size_bytes, legacy_key }`
 - Behavior:
   1. Insert row into `media` with `upload_status: 'staged'`.
@@ -79,7 +79,7 @@ Add a new internal mutation: `stage_legacy_media`:
   4. Patch row with those values (mirroring final production convention but without uploading actual file yet).
   5. Return full media doc (including id / URLs).
 
-Add (or reuse existing) mutation to link staged media to article: `link_media_to_article({ article_id, media_id, order })` (could reuse part of `confirm_upload` minus status checks). If not present, create a small internal mutation.
+Add (or reuse existing) mutation to link staged media to article: `link_media_to_article({ article_id, media_id, order })` (could reuse part of `confirm_upload` minus status checks). If not present, create a small mutation.
 
 No B2 write occurs here; local filesystem copy (handled by the converter UI logic) places file into staging directory: `NEW_MEDIA_DIRECTORY/<media_id>/original<ext>` for future batch upload.
 
@@ -179,8 +179,8 @@ Edge Handling:
 ---
 ## 11. Implementation Iterations
 ### Iteration 1: Convex Backend Extensions
-- Add `stage_legacy_media` internal mutation.
-- Add `link_media_to_article` internal mutation (or reuse existing logic minus status transitions).
+- Add `stage_legacy_media` mutation.
+- Add `link_media_to_article` mutation (or reuse existing logic minus status transitions).
 - (Optional) Refactor shared article patch logic into helper `update_article` (can defer until after migration).
 
 ### Iteration 2: IndexedDB Layer

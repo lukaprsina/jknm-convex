@@ -304,13 +304,13 @@ export const create_draft = mutation({
 			created_by: user.subject as Id<"users">,
 		});
 
-		const slug = new_draft_id;
+		const slug = new_draft_id.toString();
 
 		await ctx.db.patch(new_draft_id, {
 			slug,
 		});
 
-		return slug;
+		return { slug, id: new_draft_id };
 	},
 });
 

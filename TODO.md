@@ -77,6 +77,10 @@ lsof -t -i:3000
 kill -9 3716
 ```
 
+`11. 09.`
+set html/body background color to match website color so overscroll area blends in
+inner radius = outer radius - padding
+
 ## Ostalo
 
 ```

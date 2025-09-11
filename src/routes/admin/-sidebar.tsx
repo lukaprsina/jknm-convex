@@ -61,10 +61,10 @@ export function AdminSidebar({
 		EmptyObject | undefined
 	>({
 		mutationFn: useConvexMutation(api.articles.create_draft),
-		onSuccess: (new_article) => {
+		onSuccess: ({ id, slug }) => {
 			navigate({
 				to: "/admin/$status/$article_slug/uredi",
-				params: { article_slug: new_article, status: "draft" },
+				params: { article_slug: slug, status: "draft" },
 			});
 		},
 	});

@@ -7,6 +7,7 @@ import type { Article } from "./-types";
 export async function convert_article(
 	article: Article,
 	editor: PlateEditor,
+	article_id: string,
 ): Promise<TElement[]> {
 	const value: TElement[] = [];
 	let mediaOrder = 0;
@@ -65,7 +66,12 @@ export async function convert_article(
 
 			try {
 				// Stage the media and get the final URL
-				const finalUrl = await stage_media(img_url, article.id, mediaOrder++);
+				const finalUrl = await stage_media(
+					img_url,
+					article.id,
+					mediaOrder++,
+					article_id,
+				);
 
 				const img_html = `<img src="${finalUrl}" />`;
 				const html = editor.api.html.deserialize({ element: img_html });
