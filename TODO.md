@@ -80,6 +80,11 @@ kill -9 3716
 `11. 09.`
 set html/body background color to match website color so overscroll area blends in
 inner radius = outer radius - padding
+TODO:
+- URGENT: nov convexClient NI PRIJAVLJEN
+- article draft slug je reference
+- ko se article prvič ustvari je article_id enak legacy id, kar faila link_media_to_article
+
 
 ## Ostalo
 

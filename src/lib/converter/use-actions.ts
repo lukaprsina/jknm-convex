@@ -15,8 +15,8 @@ import {
 	put_article_mapping,
 	wipe_all_stores,
 } from "~/lib/converter-db";
-import type { ConverterState } from ".";
-import type { Article } from "./-types";
+import type { ConverterState } from "../../routes/converter";
+import type { Article } from "./types";
 
 const CONTENT_FILE = "src/content/articles.json";
 
@@ -43,47 +43,72 @@ export function useActions(
 					0,
 					Math.min(index, state.articles.length - 1),
 				);
-				setState((prev) => ({ ...prev, currentIndex: clamped_index }));
+				setState(
+					(prev) =>
+						({
+							...prev,
+							current_index: clamped_index,
+						}) satisfies ConverterState,
+				);
 			},
 			[state.articles.length, setState],
 		),
 
 		load_articles: useCallback(async () => {
-			setState((prev) => ({ ...prev, isLoading: true, error: null }));
+			setState(
+				(prev) =>
+					({ ...prev, is_loading: true, error: null }) satisfies ConverterState,
+			);
 			try {
 				const articles = await get_articles();
 				await load_legacy_articles(articles);
-				setState((prev) => ({ ...prev, articles, isLoading: false }));
+				setState(
+					(prev) =>
+						({ ...prev, articles, is_loading: false }) satisfies ConverterState,
+				);
 				console.log("Loaded articles into IndexedDB:", articles.length);
 			} catch (error) {
 				console.error("Failed to load articles:", error);
-				setState((prev) => ({
-					...prev,
-					error: `Failed to load articles: ${error}`,
-					isLoading: false,
-				}));
+				setState(
+					(prev) =>
+						({
+							...prev,
+							error: `Failed to load articles: ${error}`,
+							is_loading: false,
+						}) satisfies ConverterState,
+				);
 			}
 		}, [setState]),
 
 		reload_articles: useCallback(async () => {
-			setState((prev) => ({ ...prev, isLoading: true, error: null }));
+			setState(
+				(prev) =>
+					({ ...prev, is_loading: true, error: null }) satisfies ConverterState,
+			);
+
 			try {
 				const articles = await get_articles();
 				await load_legacy_articles(articles); // This will clear and reload
-				setState((prev) => ({
-					...prev,
-					articles,
-					currentIndex: 0,
-					isLoading: false,
-				}));
+				setState(
+					(prev) =>
+						({
+							...prev,
+							articles,
+							current_index: 0,
+							is_loading: false,
+						}) satisfies ConverterState,
+				);
 				console.log("Reloaded articles from disk:", articles.length);
 			} catch (error) {
 				console.error("Failed to reload articles:", error);
-				setState((prev) => ({
-					...prev,
-					error: `Failed to reload articles: ${error}`,
-					isLoading: false,
-				}));
+				setState(
+					(prev) =>
+						({
+							...prev,
+							error: `Failed to reload articles: ${error}`,
+							is_loading: false,
+						}) satisfies ConverterState,
+				);
 			}
 		}, [setState]),
 
@@ -93,7 +118,10 @@ export function useActions(
 			const article = state.articles[state.current_index];
 			if (!article) return;
 
-			setState((prev) => ({ ...prev, isLoading: true, error: null }));
+			setState(
+				(prev) =>
+					({ ...prev, is_loading: true, error: null }) satisfies ConverterState,
+			);
 
 			try {
 				let article_id: string;
@@ -103,7 +131,7 @@ export function useActions(
 					article_id = state.article_mapping.article_id;
 				} else {
 					// Create new draft
-					const { id, slug } = await create_draft_mutation({});
+					const { id } = await create_draft_mutation({});
 					article_id = id;
 
 					// Store mapping
@@ -115,8 +143,9 @@ export function useActions(
 				if (state.converted_content) {
 					content_json = JSON.stringify(state.converted_content);
 				} else {
+					throw new Error("No converted content available");
 					// Fallback to basic content
-					content_json = JSON.stringify([
+					/* content_json = JSON.stringify([
 						{
 							type: "h1",
 							children: [{ text: article.title }],
@@ -129,20 +158,14 @@ export function useActions(
 								},
 							],
 						},
-					]);
+					]); */
 				}
 
 				// Publish the draft
 				await publish_draft_mutation({
 					article_id: article_id as Id<"articles">,
 					content_json: content_json,
-					thumbnail: {
-						image_id: "" as Id<"media">,
-						x: 0,
-						y: 0,
-						width: 100,
-						height: 100,
-					}, // TODO: Handle thumbnail properly
+					thumbnail: undefined, // TODO: Handle thumbnail properly
 					author_ids: [], // TODO: Map legacy authors
 					published_at: new Date(article.created_at).getTime(),
 				});
@@ -157,20 +180,26 @@ export function useActions(
 
 				// Refresh mapping
 				const mapping = await get_article_mapping(article.id);
-				setState((prev) => ({
-					...prev,
-					article_mapping: mapping,
-					isLoading: false,
-				}));
+				setState(
+					(prev) =>
+						({
+							...prev,
+							article_mapping: mapping,
+							is_loading: false,
+						}) satisfies ConverterState,
+				);
 
 				console.log("Successfully published article:", article.title);
 			} catch (error) {
 				console.error("Failed to accept article:", error);
-				setState((prev) => ({
-					...prev,
-					error: `Failed to accept article: ${error}`,
-					isLoading: false,
-				}));
+				setState(
+					(prev) =>
+						({
+							...prev,
+							error: `Failed to accept article: ${error}`,
+							is_loading: false,
+						}) satisfies ConverterState,
+				);
 			}
 		}, [
 			state.current_index,
@@ -191,7 +220,10 @@ export function useActions(
 				return;
 			}
 
-			setState((prev) => ({ ...prev, isLoading: true, error: null }));
+			setState(
+				(prev) =>
+					({ ...prev, is_loading: true, error: null }) satisfies ConverterState,
+			);
 
 			try {
 				// Clear Convex database
@@ -201,23 +233,29 @@ export function useActions(
 				await wipe_all_stores();
 
 				// Reset state
-				setState((prev) => ({
-					...prev,
-					articles: [],
-					currentIndex: 0,
-					article_mapping: null,
-					problems: [],
-					isLoading: false,
-				}));
+				setState(
+					(prev) =>
+						({
+							...prev,
+							articles: [],
+							current_index: 0,
+							article_mapping: null,
+							problems: [],
+							is_loading: false,
+						}) satisfies ConverterState,
+				);
 
 				console.log("Successfully wiped all data");
 			} catch (error) {
 				console.error("Failed to wipe data:", error);
-				setState((prev) => ({
-					...prev,
-					error: `Failed to wipe data: ${error}`,
-					isLoading: false,
-				}));
+				setState(
+					(prev) =>
+						({
+							...prev,
+							error: `Failed to wipe data: ${error}`,
+							is_loading: false,
+						}) satisfies ConverterState,
+				);
 			}
 		}, [delete_everything_mutation, setState]),
 
@@ -238,16 +276,26 @@ export function useActions(
 				console.log("Cache exported successfully");
 			} catch (error) {
 				console.error("Failed to export cache:", error);
-				setState((prev) => ({
-					...prev,
-					error: `Failed to export cache: ${error}`,
-				}));
+				setState(
+					(prev) =>
+						({
+							...prev,
+							error: `Failed to export cache: ${error}`,
+						}) satisfies ConverterState,
+				);
 			}
 		}, [setState]),
 
 		import_caches: useCallback(
 			async (file: File) => {
-				setState((prev) => ({ ...prev, isLoading: true, error: null }));
+				setState(
+					(prev) =>
+						({
+							...prev,
+							is_loading: true,
+							error: null,
+						}) satisfies ConverterState,
+				);
 
 				try {
 					const text = await file.text();
@@ -256,12 +304,15 @@ export function useActions(
 
 					// Reload articles from imported data
 					const articles = await get_all_legacy_articles();
-					setState((prev) => ({
-						...prev,
-						articles,
-						currentIndex: 0,
-						isLoading: false,
-					}));
+					setState(
+						(prev) =>
+							({
+								...prev,
+								articles,
+								current_index: 0,
+								is_loading: false,
+							}) satisfies ConverterState,
+					);
 
 					console.log(
 						"Cache imported successfully, loaded",
@@ -270,11 +321,14 @@ export function useActions(
 					);
 				} catch (error) {
 					console.error("Failed to import cache:", error);
-					setState((prev) => ({
-						...prev,
-						error: `Failed to import cache: ${error}`,
-						isLoading: false,
-					}));
+					setState(
+						(prev) =>
+							({
+								...prev,
+								error: `Failed to import cache: ${error}`,
+								is_loading: false,
+							}) satisfies ConverterState,
+					);
 				}
 			},
 			[setState],
@@ -282,7 +336,10 @@ export function useActions(
 
 		set_converted_content: useCallback(
 			(content: TElement[]) => {
-				setState((prev) => ({ ...prev, converted_content: content }));
+				setState(
+					(prev) =>
+						({ ...prev, converted_content: content }) satisfies ConverterState,
+				);
 			},
 			[setState],
 		),

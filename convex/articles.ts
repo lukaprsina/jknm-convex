@@ -410,7 +410,7 @@ export const update_draft = mutation({
 export const publish_draft = mutation({
 	args: {
 		article_id: v.id("articles"),
-		thumbnail: thumbnail_validator,
+		thumbnail: v.optional(thumbnail_validator),
 		author_ids: v.array(v.string()),
 		published_at: v.optional(v.number()),
 		content_json: v.string(),

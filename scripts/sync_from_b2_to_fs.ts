@@ -8,7 +8,7 @@ import {
 	ListObjectsV2Command,
 	S3Client,
 } from "@aws-sdk/client-s3";
-import mime from "mime-types";
+import mime from "mime/lite";
 
 // Load environment variables
 const AWS_REGION = process.env.AWS_REGION;
@@ -174,7 +174,7 @@ async function downloadObject(bucket: string, key: string, outPath: string) {
 		let contentType = head.ContentType;
 		if (!contentType) {
 			const ext = extname(key);
-			contentType = mime.lookup(ext) || "application/octet-stream";
+			contentType = mime.getType(ext) || "application/octet-stream";
 			console.warn(`no content-type for ${key}, guessing ${contentType}`);
 		}
 		const get = await s3.send(

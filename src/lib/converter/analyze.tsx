@@ -2,7 +2,7 @@ import type { Element } from "hast";
 import rehypeParse from "rehype-parse";
 import { unified } from "unified";
 import { visit } from "unist-util-visit";
-import type { Article } from "./-types";
+import type { Article } from "./types";
 
 const parser = unified().use(rehypeParse, { fragment: true });
 

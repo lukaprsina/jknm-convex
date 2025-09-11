@@ -6,6 +6,7 @@ import {
 	Plate,
 	useEditorMounted,
 	useEditorRef,
+	useEditorState,
 	usePlateEditor,
 } from "platejs/react";
 import { createContext, use, useEffect, useState } from "react";
@@ -15,6 +16,7 @@ import { Button } from "~/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import { Input } from "~/components/ui/input";
 import { Separator } from "~/components/ui/separator";
+import { useEffectDebugger } from "~/hooks/use-effect-debugger";
 import {
 	get_article_mapping,
 	init_database,
@@ -22,9 +24,9 @@ import {
 	type ProblemEntry,
 	put_article_mapping,
 } from "~/lib/converter-db";
-import { convert_article } from "./-convert-article";
-import type { Article } from "./-types";
-import { useActions } from "./-use-actions";
+import { convert_article } from "../../lib/converter/convert-article";
+import type { Article } from "../../lib/converter/types";
+import { useActions } from "../../lib/converter/use-actions";
 
 export const OLD_MEDIA_DIRECTORY = "C:/Users/luka/Desktop/jknm-b2/jknm-novice";
 export const NEW_MEDIA_DIRECTORY = "C:/Users/luka/Desktop/converted-media";
@@ -84,10 +86,23 @@ function ArticlePlateEditor() {
 	);
 }
 
+function useConvertedContentSetter() {
+	const editor_context = use(EditorContext);
+	const editor = useEditorState();
+	const mounted = useEditorMounted();
+
+	useEffect(() => {
+		if (!editor || !mounted) return;
+
+		editor_context?.actions.set_converted_content(editor.children);
+	}, [editor_context?.actions.set_converted_content, editor, mounted]);
+}
+
 function ConfiguredPlateEditor() {
 	const editor = useEditorRef();
 	const editor_context = use(EditorContext);
 	const mounted = useEditorMounted();
+	useConvertedContentSetter();
 	// const [value_string, set_value_string] = useState("");
 
 	// Store the current converted content in context for Accept functionality
@@ -104,10 +119,14 @@ function ConfiguredPlateEditor() {
 	}, [value_string, editor_context]); */
 
 	useEffect(() => {
-		if (!editor_context || !mounted) return;
+		if (!mounted) return;
 		const article =
-			editor_context.state.articles[editor_context.state.current_index];
+			editor_context?.state.articles[editor_context?.state.current_index];
 		if (!article) return;
+
+		// Only proceed if we have the article mapping (draft created)
+		const mapping = editor_context?.state.article_mapping;
+		if (!mapping) return;
 
 		console.log("Loading article", article.id, article.title);
 
@@ -116,10 +135,8 @@ function ConfiguredPlateEditor() {
 		// Load value asynchronously
 		const load_value = async () => {
 			try {
-				const id = article?.old_id;
-				if (typeof id !== "number")
-					throw new Error("Article old_id is not a number");
-				const value = await convert_article(article, editor, id.toString());
+				const convex_article_id = mapping.article_id;
+				const value = await convert_article(article, editor, convex_article_id);
 				editor.tf.setValue(value);
 				/* const str = JSON.stringify(value, null, 2);
 				set_value_string(str); */
@@ -137,7 +154,13 @@ function ConfiguredPlateEditor() {
 		};
 
 		void load_value();
-	}, [editor_context, editor, mounted]);
+	}, [
+		editor_context?.state.articles,
+		editor_context?.state.current_index,
+		editor_context?.state.article_mapping,
+		editor,
+		mounted,
+	]);
 
 	return (
 		<EditorContainer>
@@ -168,13 +191,19 @@ function RouteComponent() {
 		const init_db = async () => {
 			try {
 				await init_database();
-				setState((prev) => ({ ...prev, db_initialized: true }));
+				setState(
+					(prev) =>
+						({ ...prev, db_initialized: true }) satisfies ConverterState,
+				);
 			} catch (error) {
 				console.error("Failed to initialize database:", error);
-				setState((prev) => ({
-					...prev,
-					error: `Failed to initialize database: ${error}`,
-				}));
+				setState(
+					(prev) =>
+						({
+							...prev,
+							error: `Failed to initialize database: ${error}`,
+						}) satisfies ConverterState,
+				);
 			}
 		};
 
@@ -200,7 +229,7 @@ function RouteComponent() {
 				// If no mapping exists, create a draft
 				if (!mapping) {
 					console.log("Creating draft for article:", article.title);
-					const { id, slug } = await create_draft_mutation({});
+					const { id } = await create_draft_mutation({});
 					await put_article_mapping(article.id, id, "draft");
 					mapping = {
 						article_id: id,
@@ -209,13 +238,19 @@ function RouteComponent() {
 					};
 				}
 
-				setState((prev) => ({ ...prev, article_mapping: mapping }));
+				setState(
+					(prev) =>
+						({ ...prev, article_mapping: mapping }) satisfies ConverterState,
+				);
 			} catch (error) {
 				console.error("Failed to load/create article mapping:", error);
-				setState((prev) => ({
-					...prev,
-					error: `Failed to setup article: ${error}`,
-				}));
+				setState(
+					(prev) =>
+						({
+							...prev,
+							error: `Failed to setup article: ${error}`,
+						}) satisfies ConverterState,
+				);
 			}
 		};
 

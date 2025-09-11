@@ -1,13 +1,13 @@
 import type { TElement } from "platejs";
 import type { PlateEditor } from "platejs/react";
 import { record_problem } from "~/lib/converter-db";
-import { stage_media } from "./-stage-media";
-import type { Article } from "./-types";
+import { stage_media } from "./stage-media";
+import type { Article } from "./types";
 
 export async function convert_article(
 	article: Article,
 	editor: PlateEditor,
-	article_id: string,
+	convex_article_id: string,
 ): Promise<TElement[]> {
 	const value: TElement[] = [];
 	let mediaOrder = 0;
@@ -70,7 +70,7 @@ export async function convert_article(
 					img_url,
 					article.id,
 					mediaOrder++,
-					article_id,
+					convex_article_id,
 				);
 
 				const img_html = `<img src="${finalUrl}" />`;

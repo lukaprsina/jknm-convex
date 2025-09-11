@@ -8,7 +8,7 @@
  * - Problems encountered during conversion
  */
 
-import type { Article } from "~/routes/converter/-types";
+import type { Article } from "~/lib/converter/types";
 
 // Database configuration
 const DB_NAME = "converter_db";

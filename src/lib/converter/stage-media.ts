@@ -4,8 +4,8 @@ import type { Id } from "@convex/_generated/dataModel";
 import { ConvexQueryClient } from "@convex-dev/react-query";
 import { createServerFn } from "@tanstack/react-start";
 import { api } from "convex/_generated/api";
-import mime from "mime-types";
-import { basename, extname, join } from "~/lib/browser-path";
+import mime from "mime/lite";
+import { basename_b, extname_b, join_b } from "~/lib/browser-path";
 import {
 	get_media_entry,
 	type MediaCacheEntry,
@@ -13,7 +13,10 @@ import {
 	put_media_entry,
 	record_problem,
 } from "~/lib/converter-db";
-import { NEW_MEDIA_DIRECTORY, OLD_MEDIA_DIRECTORY } from "./index";
+import {
+	NEW_MEDIA_DIRECTORY,
+	OLD_MEDIA_DIRECTORY,
+} from "../../routes/converter/index";
 
 const convexQueryClient = new ConvexQueryClient(
 	import.meta.env.VITE_CONVEX_URL,
@@ -105,7 +108,7 @@ export async function stage_media(
 	img_url: string,
 	legacy_id: number,
 	order: number,
-	article_id: string,
+	convex_article_id: string,
 ): Promise<string> {
 	// Normalize the legacy media key
 	let legacy_media_key: string;
@@ -121,14 +124,25 @@ export async function stage_media(
 	// Check if media is already cached
 	const existing_media = await get_media_entry(legacy_media_key);
 	if (existing_media) {
-		return `${existing_media.base_url}/original${extname(existing_media.filename)}`;
+		// Media already staged, just link it to the article
+		console.log("Linking existing media to article:", {
+			article_id: convex_article_id,
+			media_id: existing_media.media_id,
+			order,
+		});
+		await convex.mutation(api.media.link_media_to_article, {
+			article_id: convex_article_id as Id<"articles">,
+			media_id: existing_media.media_id as Id<"media">,
+			order,
+		});
+		return `${existing_media.base_url}/original${extname_b(existing_media.filename)}`;
 	}
 
 	try {
 		// 1. Check if source file exists and get its size
-		const source_path = join(OLD_MEDIA_DIRECTORY, legacy_media_key);
-		const filename = basename(legacy_media_key);
-		const content_type = mime.lookup(filename);
+		const source_path = join_b(OLD_MEDIA_DIRECTORY, legacy_media_key);
+		const filename = basename_b(legacy_media_key);
+		const content_type = mime.getType(filename);
 		if (!content_type) {
 			throw new Error(`Could not determine content type for file: ${filename}`);
 		}
@@ -159,9 +173,9 @@ export async function stage_media(
 		});
 
 		// 3. Copy file to NEW_MEDIA_DIRECTORY/<media_id>/original<ext>
-		const ext = extname(filename);
-		const target_dir = path.join(NEW_MEDIA_DIRECTORY, media._id);
-		const target_path = path.join(target_dir, `original${ext}`);
+		const ext = extname_b(filename);
+		const target_dir = join_b(NEW_MEDIA_DIRECTORY, media._id);
+		const target_path = join_b(target_dir, `original${ext}`);
 
 		const copy_result = await copy_file_server({
 			data: { source_path, target_path, target_dir },
@@ -185,8 +199,13 @@ export async function stage_media(
 		await put_media_entry(cache_entry);
 
 		// 5. Call link_media_to_article mutation if article_id is provided
+		console.log("Linking media to article:", {
+			article_id: convex_article_id,
+			media_id: media._id,
+			order,
+		});
 		await convex.mutation(api.media.link_media_to_article, {
-			article_id: article_id as Id<"articles">,
+			article_id: convex_article_id as Id<"articles">,
 			media_id: media._id,
 			order,
 		});

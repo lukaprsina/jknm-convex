@@ -262,10 +262,10 @@ export const stage_legacy_media = mutation({
 		legacy_key: v.string(),
 	},
 	handler: async (ctx, args) => {
-		const user_id = await ctx.auth.getUserIdentity();
+		/* const user_id = await ctx.auth.getUserIdentity();
 		if (!user_id) {
 			throw new Error("User must be authenticated to stage legacy media.");
-		}
+		} */
 
 		// Create the media record to get the ID
 		const media_db_id = await ctx.db.insert("media", {
@@ -318,10 +318,10 @@ export const link_media_to_article = mutation({
 		order: v.number(),
 	},
 	handler: async (ctx, args) => {
-		const user_id = await ctx.auth.getUserIdentity();
+		/* const user_id = await ctx.auth.getUserIdentity();
 		if (!user_id) {
 			throw new Error("User must be authenticated to link media to article.");
-		}
+		} */
 
 		// Verify the media exists
 		const media = await ctx.db.get(args.media_id);
@@ -333,6 +333,21 @@ export const link_media_to_article = mutation({
 		const article = await ctx.db.get(args.article_id);
 		if (!article) {
 			throw new Error(`Article with ID ${args.article_id} not found.`);
+		}
+
+		// Check if link already exists
+		const existing_links = await ctx.db
+			.query("media_to_articles")
+			.withIndex("by_media", (q) => q.eq("media_id", args.media_id))
+			.collect();
+
+		const existing_link = existing_links.find(
+			(link) => link.article_id === args.article_id,
+		);
+
+		if (existing_link) {
+			// Link already exists, return the existing ID
+			return existing_link._id;
 		}
 
 		// Create the media-to-article link
