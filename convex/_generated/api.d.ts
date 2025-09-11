@@ -129,10 +129,10 @@ export declare const components: {
               }
             | {
                 data: {
-                  createdAt?: null | number;
+                  createdAt: number;
                   expiresAt: number;
                   identifier: string;
-                  updatedAt?: null | number;
+                  updatedAt: number;
                   value: string;
                 };
                 model: "verification";
@@ -301,6 +301,8 @@ export declare const components: {
                   status?: null | string;
                   stripeCustomerId?: null | string;
                   stripeSubscriptionId?: null | string;
+                  trialEnd?: null | number;
+                  trialStart?: null | number;
                 };
                 model: "subscription";
               }
@@ -664,10 +666,10 @@ export declare const components: {
                 sortBy?: { direction: "asc" | "desc"; field: string };
                 unique?: boolean;
                 update: {
-                  createdAt?: null | number;
+                  createdAt?: number;
                   expiresAt?: number;
                   identifier?: string;
-                  updatedAt?: null | number;
+                  updatedAt?: number;
                   value?: string;
                 };
                 where?: Array<{
@@ -1330,6 +1332,8 @@ export declare const components: {
                   status?: null | string;
                   stripeCustomerId?: null | string;
                   stripeSubscriptionId?: null | string;
+                  trialEnd?: null | number;
+                  trialStart?: null | number;
                 };
                 where?: Array<{
                   connector?: "AND" | "OR";
@@ -1575,10 +1579,10 @@ export declare const components: {
             | {
                 model: "verification";
                 update: {
-                  createdAt?: null | number;
+                  createdAt?: number;
                   expiresAt?: number;
                   identifier?: string;
-                  updatedAt?: null | number;
+                  updatedAt?: number;
                   value?: string;
                 };
                 where?: Array<{
@@ -2059,6 +2063,8 @@ export declare const components: {
                   status?: null | string;
                   stripeCustomerId?: null | string;
                   stripeSubscriptionId?: null | string;
+                  trialEnd?: null | number;
+                  trialStart?: null | number;
                 };
                 where?: Array<{
                   connector?: "AND" | "OR";
