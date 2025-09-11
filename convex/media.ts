@@ -278,7 +278,7 @@ export const stage_legacy_media = internalMutation({
 
 		// Compute extension from filename
 		const ext = `.${args.filename.split(".").pop()}`;
-		
+
 		// Build canonical URLs following the same pattern as production
 		const base_url = `https://gradivo.jknm.site/${media_db_id}`;
 		const original_url = `${base_url}/original${ext}`;

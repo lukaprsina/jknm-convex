@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-This is a Slovenian blog built with **TanStack Start** (SSR framework), **Convex** (reactive backend), **PlateJS** (rich text editor), and **Backblaze B2** (media storage). The project uses Tailwind CSS v4, shadcn/ui components, and Better Auth for authentication.
+This is a Slovenian blog built with **TanStack Start** (SSR framework), **Convex** (reactive backend), **PlateJS** (rich text editor), and **Backblaze B2** (media storage). The project uses Tailwind CSS v4, shadcn/ui components, and Better Auth for authentication. Use snake_case for local variables, PascalCase for React components, and SCREAMING_SNAKE_CASE for constants.
 
 ## Architecture & Key Patterns
 

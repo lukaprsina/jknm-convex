@@ -1,29 +1,29 @@
 import { basename, extname } from "~/lib/browser-path";
 import {
-	getMediaEntry,
-	normalizeLegacyMediaKey,
-	putMediaEntry,
+	get_media_entry,
+	normalize_legacy_media_key,
+	put_media_entry,
 } from "~/lib/converter-db";
 
 export async function stage_media(
-	imgUrl: string,
-	legacyId: number,
+	img_url: string,
+	legacy_id: number,
 	order: number,
 ): Promise<string> {
 	// Normalize the legacy media key
-	let legacyMediaKey: string;
+	let legacy_media_key: string;
 	try {
-		const url = new URL(imgUrl);
-		legacyMediaKey = normalizeLegacyMediaKey(url.pathname);
+		const url = new URL(img_url);
+		legacy_media_key = normalize_legacy_media_key(url.pathname);
 	} catch {
 		// If it's not a URL, treat it as a path
-		legacyMediaKey = normalizeLegacyMediaKey(imgUrl);
+		legacy_media_key = normalize_legacy_media_key(img_url);
 	}
 
 	// Check if media is already cached
-	const existingMedia = await getMediaEntry(legacyMediaKey);
-	if (existingMedia) {
-		return `${existingMedia.base_url}/original${extname(existingMedia.filename)}`;
+	const existing_media = await get_media_entry(legacy_media_key);
+	if (existing_media) {
+		return `${existing_media.base_url}/original${extname(existing_media.filename)}`;
 	}
 
 	// TODO: This is where we would:
@@ -34,19 +34,19 @@ export async function stage_media(
 	// 5. Call link_media_to_article mutation
 
 	// For now, return a placeholder URL that follows the final pattern
-	const mockMediaId = `media_${legacyId}_${order}`;
-	const ext = extname(legacyMediaKey) || ".jpg";
-	const finalUrl = `https://gradivo.jknm.site/${mockMediaId}/original${ext}`;
+	const mock_media_id = `media_${legacy_id}_${order}`;
+	const ext = extname(legacy_media_key) || ".jpg";
+	const final_url = `https://gradivo.jknm.site/${mock_media_id}/original${ext}`;
 
 	// Cache this for consistency
-	await putMediaEntry({
-		legacy_media_key: legacyMediaKey,
-		media_id: mockMediaId,
+	await put_media_entry({
+		legacy_media_key: legacy_media_key,
+		media_id: mock_media_id,
 		type: "image",
-		filename: basename(legacyMediaKey),
+		filename: basename(legacy_media_key),
 		content_type: "image/jpeg", // TODO: infer from extension
-		base_url: `https://gradivo.jknm.site/${mockMediaId}`,
+		base_url: `https://gradivo.jknm.site/${mock_media_id}`,
 	});
 
-	return finalUrl;
+	return final_url;
 }

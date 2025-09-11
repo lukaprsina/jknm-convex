@@ -5,7 +5,12 @@ import type { Value } from "platejs";
 import slugify from "slugify";
 import { internal } from "./_generated/api";
 import type { Doc, Id } from "./_generated/dataModel";
-import { mutation, type QueryCtx, type MutationCtx, query } from "./_generated/server";
+import {
+	type MutationCtx,
+	mutation,
+	type QueryCtx,
+	query,
+} from "./_generated/server";
 import {
 	article_status_validator,
 	article_validator,
@@ -392,7 +397,13 @@ export const update_draft = mutation({
 		}
 
 		// Use the helper function to update the article
-		await update_article(ctx, args.id, args.content_json, { thumbnail: args.thumbnail }, args.author_ids);
+		await update_article(
+			ctx,
+			args.id,
+			args.content_json,
+			{ thumbnail: args.thumbnail },
+			args.author_ids,
+		);
 	},
 });
 

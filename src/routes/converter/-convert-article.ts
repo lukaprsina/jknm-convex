@@ -1,6 +1,6 @@
 import type { TElement } from "platejs";
 import type { PlateEditor } from "platejs/react";
-import { recordProblem } from "~/lib/converter-db";
+import { record_problem } from "~/lib/converter-db";
 import { stage_media } from "./-stage-media";
 import type { Article } from "./-types";
 
@@ -85,7 +85,7 @@ export async function convert_article(
 				value.push(first_html as TElement);
 			} catch (error) {
 				console.error("Failed to stage media:", img_url, error);
-				await recordProblem(
+				await record_problem(
 					article.id,
 					"missing_media",
 					`Failed to stage media: ${img_url} - ${error}`,

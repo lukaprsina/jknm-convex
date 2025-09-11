@@ -16,10 +16,10 @@ const DB_VERSION = 1;
 
 // Store names
 export const STORES = {
-	LEGACY_ARTICLES: "legacy_articles",
-	NEW_ARTICLES_CACHE: "new_articles_cache",
-	MEDIA_CACHE: "media_cache",
-	PROBLEMS: "problems",
+	legacy_articles: "legacy_articles",
+	new_articles_cache: "new_articles_cache",
+	media_cache: "media_cache",
+	problems: "problems",
 } as const;
 
 // Type definitions for IndexedDB stores
@@ -60,22 +60,22 @@ export interface ProblemEntry {
 }
 
 // Database instance management
-let dbInstance: IDBDatabase | null = null;
-let dbPromise: Promise<IDBDatabase> | null = null;
+let db_instance: IDBDatabase | null = null;
+let db_promise: Promise<IDBDatabase> | null = null;
 
 /**
  * Initialize the IndexedDB database
  */
-export async function initDatabase(): Promise<IDBDatabase> {
-	if (dbInstance) {
-		return dbInstance;
+export async function init_database(): Promise<IDBDatabase> {
+	if (db_instance) {
+		return db_instance;
 	}
 
-	if (dbPromise) {
-		return dbPromise;
+	if (db_promise) {
+		return db_promise;
 	}
 
-	dbPromise = new Promise<IDBDatabase>((resolve, reject) => {
+	db_promise = new Promise<IDBDatabase>((resolve, reject) => {
 		const request = indexedDB.open(DB_NAME, DB_VERSION);
 
 		request.onerror = () => {
@@ -83,87 +83,87 @@ export async function initDatabase(): Promise<IDBDatabase> {
 		};
 
 		request.onsuccess = () => {
-			dbInstance = request.result;
-			resolve(dbInstance);
+			db_instance = request.result;
+			resolve(db_instance);
 		};
 
 		request.onupgradeneeded = (event) => {
 			const db = (event.target as IDBOpenDBRequest).result;
 
 			// Create legacy_articles store
-			if (!db.objectStoreNames.contains(STORES.LEGACY_ARTICLES)) {
-				const legacyStore = db.createObjectStore(STORES.LEGACY_ARTICLES, {
+			if (!db.objectStoreNames.contains(STORES.legacy_articles)) {
+				const legacy_store = db.createObjectStore(STORES.legacy_articles, {
 					keyPath: "legacy_id",
 				});
-				legacyStore.createIndex("by_legacy_id", "legacy_id", { unique: true });
+				legacy_store.createIndex("by_legacy_id", "legacy_id", { unique: true });
 			}
 
 			// Create new_articles_cache store
-			if (!db.objectStoreNames.contains(STORES.NEW_ARTICLES_CACHE)) {
-				const articlesStore = db.createObjectStore(STORES.NEW_ARTICLES_CACHE, {
+			if (!db.objectStoreNames.contains(STORES.new_articles_cache)) {
+				const articles_store = db.createObjectStore(STORES.new_articles_cache, {
 					keyPath: "legacy_id",
 				});
-				articlesStore.createIndex("by_legacy_id", "legacy_id", {
+				articles_store.createIndex("by_legacy_id", "legacy_id", {
 					unique: true,
 				});
-				articlesStore.createIndex("by_article_id", "article_id", {
+				articles_store.createIndex("by_article_id", "article_id", {
 					unique: false,
 				});
-				articlesStore.createIndex("by_status", "status", { unique: false });
+				articles_store.createIndex("by_status", "status", { unique: false });
 			}
 
 			// Create media_cache store
-			if (!db.objectStoreNames.contains(STORES.MEDIA_CACHE)) {
-				const mediaStore = db.createObjectStore(STORES.MEDIA_CACHE, {
+			if (!db.objectStoreNames.contains(STORES.media_cache)) {
+				const media_store = db.createObjectStore(STORES.media_cache, {
 					keyPath: "legacy_media_key",
 				});
-				mediaStore.createIndex("by_legacy_media_key", "legacy_media_key", {
+				media_store.createIndex("by_legacy_media_key", "legacy_media_key", {
 					unique: true,
 				});
-				mediaStore.createIndex("by_media_id", "media_id", { unique: false });
-				mediaStore.createIndex("by_type", "type", { unique: false });
+				media_store.createIndex("by_media_id", "media_id", { unique: false });
+				media_store.createIndex("by_type", "type", { unique: false });
 			}
 
 			// Create problems store
-			if (!db.objectStoreNames.contains(STORES.PROBLEMS)) {
-				const problemsStore = db.createObjectStore(STORES.PROBLEMS, {
+			if (!db.objectStoreNames.contains(STORES.problems)) {
+				const problems_store = db.createObjectStore(STORES.problems, {
 					keyPath: "id",
 				});
-				problemsStore.createIndex("by_legacy_id", "legacy_id", {
+				problems_store.createIndex("by_legacy_id", "legacy_id", {
 					unique: false,
 				});
-				problemsStore.createIndex("by_kind", "kind", { unique: false });
-				problemsStore.createIndex("by_timestamp", "timestamp", {
+				problems_store.createIndex("by_kind", "kind", { unique: false });
+				problems_store.createIndex("by_timestamp", "timestamp", {
 					unique: false,
 				});
 			}
 		};
 	});
 
-	return dbPromise;
+	return db_promise;
 }
 
 /**
  * Close the database connection
  */
-export function closeDatabase(): void {
-	if (dbInstance) {
-		dbInstance.close();
-		dbInstance = null;
-		dbPromise = null;
+export function close_database(): void {
+	if (db_instance) {
+		db_instance.close();
+		db_instance = null;
+		db_promise = null;
 	}
 }
 
 /**
  * Clear all stores and reset the database
  */
-export async function wipeAllStores(): Promise<void> {
-	const db = await initDatabase();
+export async function wipe_all_stores(): Promise<void> {
+	const db = await init_database();
 
 	const transaction = db.transaction(Object.values(STORES), "readwrite");
 
-	const promises = Object.values(STORES).map((storeName) => {
-		const store = transaction.objectStore(storeName);
+	const promises = Object.values(STORES).map((store_name) => {
+		const store = transaction.objectStore(store_name);
 		return new Promise<void>((resolve, reject) => {
 			const request = store.clear();
 			request.onsuccess = () => resolve();
@@ -177,28 +177,28 @@ export async function wipeAllStores(): Promise<void> {
 /**
  * Generic transaction helper
  */
-async function performTransaction<T>(
-	storeNames: string | string[],
+async function perform_transaction<T>(
+	store_names: string | string[],
 	mode: IDBTransactionMode,
 	operation: (stores: IDBObjectStore | IDBObjectStore[]) => Promise<T> | T,
 ): Promise<T> {
-	const db = await initDatabase();
-	const transaction = db.transaction(storeNames, mode);
+	const db = await init_database();
+	const transaction = db.transaction(store_names, mode);
 
-	const stores = Array.isArray(storeNames)
-		? storeNames.map((name) => transaction.objectStore(name))
-		: transaction.objectStore(storeNames);
+	const stores_arr = Array.isArray(store_names)
+		? store_names.map((name) => transaction.objectStore(name))
+		: transaction.objectStore(store_names);
 
-	return operation(stores);
+	return operation(stores_arr);
 }
 
 // Legacy Articles CRUD operations
-export async function loadLegacyArticles(articles: Article[]): Promise<void> {
-	await performTransaction(
-		STORES.LEGACY_ARTICLES,
+export async function load_legacy_articles(articles: Article[]): Promise<void> {
+	await perform_transaction(
+		STORES.legacy_articles,
 		"readwrite",
 		async (store) => {
-			const objectStore = store as IDBObjectStore;
+			const object_store = store as IDBObjectStore;
 
 			for (const article of articles) {
 				const entry: LegacyArticleEntry = {
@@ -207,7 +207,7 @@ export async function loadLegacyArticles(articles: Article[]): Promise<void> {
 				};
 
 				await new Promise<void>((resolve, reject) => {
-					const request = objectStore.put(entry);
+					const request = object_store.put(entry);
 					request.onsuccess = () => resolve();
 					request.onerror = () => reject(request.error);
 				});
@@ -216,17 +216,17 @@ export async function loadLegacyArticles(articles: Article[]): Promise<void> {
 	);
 }
 
-export async function getLegacyArticle(
+export async function get_legacy_article(
 	legacy_id: number,
 ): Promise<Article | null> {
-	return performTransaction(
-		STORES.LEGACY_ARTICLES,
+	return perform_transaction(
+		STORES.legacy_articles,
 		"readonly",
 		async (store) => {
-			const objectStore = store as IDBObjectStore;
+			const object_store = store as IDBObjectStore;
 
 			return new Promise<Article | null>((resolve, reject) => {
-				const request = objectStore.get(legacy_id);
+				const request = object_store.get(legacy_id);
 				request.onsuccess = () => {
 					const entry = request.result as LegacyArticleEntry | undefined;
 					resolve(entry?.article || null);
@@ -237,15 +237,15 @@ export async function getLegacyArticle(
 	);
 }
 
-export async function getAllLegacyArticles(): Promise<Article[]> {
-	return performTransaction(
-		STORES.LEGACY_ARTICLES,
+export async function get_all_legacy_articles(): Promise<Article[]> {
+	return perform_transaction(
+		STORES.legacy_articles,
 		"readonly",
 		async (store) => {
-			const objectStore = store as IDBObjectStore;
+			const object_store = store as IDBObjectStore;
 
 			return new Promise<Article[]>((resolve, reject) => {
-				const request = objectStore.getAll();
+				const request = object_store.getAll();
 				request.onsuccess = () => {
 					const entries = request.result as LegacyArticleEntry[];
 					resolve(entries.map((entry) => entry.article));
@@ -257,17 +257,17 @@ export async function getAllLegacyArticles(): Promise<Article[]> {
 }
 
 // New Articles Cache CRUD operations
-export async function putArticleMapping(
+export async function put_article_mapping(
 	legacy_id: number,
 	article_id: string,
 	status: "draft" | "published",
 	published_at?: number,
 ): Promise<void> {
-	await performTransaction(
-		STORES.NEW_ARTICLES_CACHE,
+	await perform_transaction(
+		STORES.new_articles_cache,
 		"readwrite",
 		async (store) => {
-			const objectStore = store as IDBObjectStore;
+			const object_store = store as IDBObjectStore;
 
 			const entry: NewArticleCacheEntry = {
 				legacy_id,
@@ -277,7 +277,7 @@ export async function putArticleMapping(
 			};
 
 			await new Promise<void>((resolve, reject) => {
-				const request = objectStore.put(entry);
+				const request = object_store.put(entry);
 				request.onsuccess = () => resolve();
 				request.onerror = () => reject(request.error);
 			});
@@ -285,17 +285,17 @@ export async function putArticleMapping(
 	);
 }
 
-export async function getArticleMapping(
+export async function get_article_mapping(
 	legacy_id: number,
 ): Promise<NewArticleCacheEntry | null> {
-	return performTransaction(
-		STORES.NEW_ARTICLES_CACHE,
+	return perform_transaction(
+		STORES.new_articles_cache,
 		"readonly",
 		async (store) => {
-			const objectStore = store as IDBObjectStore;
+			const object_store = store as IDBObjectStore;
 
 			return new Promise<NewArticleCacheEntry | null>((resolve, reject) => {
-				const request = objectStore.get(legacy_id);
+				const request = object_store.get(legacy_id);
 				request.onsuccess = () => resolve(request.result || null);
 				request.onerror = () => reject(request.error);
 			});
@@ -303,15 +303,17 @@ export async function getArticleMapping(
 	);
 }
 
-export async function getAllArticleMappings(): Promise<NewArticleCacheEntry[]> {
-	return performTransaction(
-		STORES.NEW_ARTICLES_CACHE,
+export async function get_all_article_mappings(): Promise<
+	NewArticleCacheEntry[]
+> {
+	return perform_transaction(
+		STORES.new_articles_cache,
 		"readonly",
 		async (store) => {
-			const objectStore = store as IDBObjectStore;
+			const object_store = store as IDBObjectStore;
 
 			return new Promise<NewArticleCacheEntry[]>((resolve, reject) => {
-				const request = objectStore.getAll();
+				const request = object_store.getAll();
 				request.onsuccess = () => resolve(request.result);
 				request.onerror = () => reject(request.error);
 			});
@@ -320,38 +322,38 @@ export async function getAllArticleMappings(): Promise<NewArticleCacheEntry[]> {
 }
 
 // Media Cache CRUD operations
-export async function putMediaEntry(entry: MediaCacheEntry): Promise<void> {
-	await performTransaction(STORES.MEDIA_CACHE, "readwrite", async (store) => {
-		const objectStore = store as IDBObjectStore;
+export async function put_media_entry(entry: MediaCacheEntry): Promise<void> {
+	await perform_transaction(STORES.media_cache, "readwrite", async (store) => {
+		const object_store = store as IDBObjectStore;
 
 		await new Promise<void>((resolve, reject) => {
-			const request = objectStore.put(entry);
+			const request = object_store.put(entry);
 			request.onsuccess = () => resolve();
 			request.onerror = () => reject(request.error);
 		});
 	});
 }
 
-export async function getMediaEntry(
+export async function get_media_entry(
 	legacy_media_key: string,
 ): Promise<MediaCacheEntry | null> {
-	return performTransaction(STORES.MEDIA_CACHE, "readonly", async (store) => {
-		const objectStore = store as IDBObjectStore;
+	return perform_transaction(STORES.media_cache, "readonly", async (store) => {
+		const object_store = store as IDBObjectStore;
 
 		return new Promise<MediaCacheEntry | null>((resolve, reject) => {
-			const request = objectStore.get(legacy_media_key);
+			const request = object_store.get(legacy_media_key);
 			request.onsuccess = () => resolve(request.result || null);
 			request.onerror = () => reject(request.error);
 		});
 	});
 }
 
-export async function getAllMediaEntries(): Promise<MediaCacheEntry[]> {
-	return performTransaction(STORES.MEDIA_CACHE, "readonly", async (store) => {
-		const objectStore = store as IDBObjectStore;
+export async function get_all_media_entries(): Promise<MediaCacheEntry[]> {
+	return perform_transaction(STORES.media_cache, "readonly", async (store) => {
+		const object_store = store as IDBObjectStore;
 
 		return new Promise<MediaCacheEntry[]>((resolve, reject) => {
-			const request = objectStore.getAll();
+			const request = object_store.getAll();
 			request.onsuccess = () => resolve(request.result);
 			request.onerror = () => reject(request.error);
 		});
@@ -359,14 +361,14 @@ export async function getAllMediaEntries(): Promise<MediaCacheEntry[]> {
 }
 
 // Problems CRUD operations
-export async function recordProblem(
+export async function record_problem(
 	legacy_id: number,
 	kind: ProblemEntry["kind"],
 	detail: string,
 	media_key?: string,
 ): Promise<void> {
-	await performTransaction(STORES.PROBLEMS, "readwrite", async (store) => {
-		const objectStore = store as IDBObjectStore;
+	await perform_transaction(STORES.problems, "readwrite", async (store) => {
+		const object_store = store as IDBObjectStore;
 
 		const entry: ProblemEntry = {
 			id: crypto.randomUUID(),
@@ -378,19 +380,19 @@ export async function recordProblem(
 		};
 
 		await new Promise<void>((resolve, reject) => {
-			const request = objectStore.put(entry);
+			const request = object_store.put(entry);
 			request.onsuccess = () => resolve();
 			request.onerror = () => reject(request.error);
 		});
 	});
 }
 
-export async function getProblemsForArticle(
+export async function get_problems_for_article(
 	legacy_id: number,
 ): Promise<ProblemEntry[]> {
-	return performTransaction(STORES.PROBLEMS, "readonly", async (store) => {
-		const objectStore = store as IDBObjectStore;
-		const index = objectStore.index("by_legacy_id");
+	return perform_transaction(STORES.problems, "readonly", async (store) => {
+		const object_store = store as IDBObjectStore;
+		const index = object_store.index("by_legacy_id");
 
 		return new Promise<ProblemEntry[]>((resolve, reject) => {
 			const request = index.getAll(legacy_id);
@@ -400,24 +402,24 @@ export async function getProblemsForArticle(
 	});
 }
 
-export async function getAllProblems(): Promise<ProblemEntry[]> {
-	return performTransaction(STORES.PROBLEMS, "readonly", async (store) => {
-		const objectStore = store as IDBObjectStore;
+export async function get_all_problems(): Promise<ProblemEntry[]> {
+	return perform_transaction(STORES.problems, "readonly", async (store) => {
+		const object_store = store as IDBObjectStore;
 
 		return new Promise<ProblemEntry[]>((resolve, reject) => {
-			const request = objectStore.getAll();
+			const request = object_store.getAll();
 			request.onsuccess = () => resolve(request.result);
 			request.onerror = () => reject(request.error);
 		});
 	});
 }
 
-export async function getProblemsByKind(
+export async function get_problems_by_kind(
 	kind: ProblemEntry["kind"],
 ): Promise<ProblemEntry[]> {
-	return performTransaction(STORES.PROBLEMS, "readonly", async (store) => {
-		const objectStore = store as IDBObjectStore;
-		const index = objectStore.index("by_kind");
+	return perform_transaction(STORES.problems, "readonly", async (store) => {
+		const object_store = store as IDBObjectStore;
+		const index = object_store.index("by_kind");
 
 		return new Promise<ProblemEntry[]>((resolve, reject) => {
 			const request = index.getAll(kind);
@@ -427,18 +429,18 @@ export async function getProblemsByKind(
 	});
 }
 
-export async function clearProblemsForArticle(
+export async function clear_problems_for_article(
 	legacy_id: number,
 ): Promise<void> {
-	const problems = await getProblemsForArticle(legacy_id);
+	const problems_arr = await get_problems_for_article(legacy_id);
 
-	await performTransaction(STORES.PROBLEMS, "readwrite", async (store) => {
-		const objectStore = store as IDBObjectStore;
+	await perform_transaction(STORES.problems, "readwrite", async (store) => {
+		const object_store = store as IDBObjectStore;
 
-		const promises = problems.map(
+		const promises = problems_arr.map(
 			(problem) =>
 				new Promise<void>((resolve, reject) => {
-					const request = objectStore.delete(problem.id);
+					const request = object_store.delete(problem.id);
 					request.onsuccess = () => resolve();
 					request.onerror = () => reject(request.error);
 				}),
@@ -449,7 +451,7 @@ export async function clearProblemsForArticle(
 }
 
 // Utility functions for media key normalization
-export function normalizeLegacyMediaKey(path: string): string {
+export function normalize_legacy_media_key(path: string): string {
 	return path
 		.replace(/\\/g, "/") // Convert Windows backslashes to forward slashes
 		.replace(/\/+/g, "/") // Remove duplicate slashes
@@ -466,20 +468,20 @@ export interface DatabaseSnapshot {
 	problems: ProblemEntry[];
 }
 
-export async function exportDatabase(): Promise<DatabaseSnapshot> {
+export async function export_database(): Promise<DatabaseSnapshot> {
 	const [legacy_articles, new_articles_cache, media_cache, problems] =
 		await Promise.all([
-			performTransaction(STORES.LEGACY_ARTICLES, "readonly", async (store) => {
-				const objectStore = store as IDBObjectStore;
+			perform_transaction(STORES.legacy_articles, "readonly", async (store) => {
+				const object_store = store as IDBObjectStore;
 				return new Promise<LegacyArticleEntry[]>((resolve, reject) => {
-					const request = objectStore.getAll();
+					const request = object_store.getAll();
 					request.onsuccess = () => resolve(request.result);
 					request.onerror = () => reject(request.error);
 				});
 			}),
-			getAllArticleMappings(),
-			getAllMediaEntries(),
-			getAllProblems(),
+			get_all_article_mappings(),
+			get_all_media_entries(),
+			get_all_problems(),
 		]);
 
 	return {
@@ -492,7 +494,7 @@ export async function exportDatabase(): Promise<DatabaseSnapshot> {
 	};
 }
 
-export async function importDatabase(
+export async function import_database(
 	snapshot: DatabaseSnapshot,
 ): Promise<void> {
 	// Validate version compatibility
@@ -503,20 +505,20 @@ export async function importDatabase(
 	}
 
 	// Clear existing data
-	await wipeAllStores();
+	await wipe_all_stores();
 
 	// Import data
-	await performTransaction(
+	await perform_transaction(
 		Object.values(STORES),
 		"readwrite",
-		async (stores) => {
-			const [legacyStore, articlesStore, mediaStore, problemsStore] =
-				stores as IDBObjectStore[];
+		async (stores_arr) => {
+			const [legacy_store, articles_store, media_store, problems_store] =
+				stores_arr as IDBObjectStore[];
 
 			// Import legacy articles
 			for (const entry of snapshot.legacy_articles) {
 				await new Promise<void>((resolve, reject) => {
-					const request = legacyStore.put(entry);
+					const request = legacy_store.put(entry);
 					request.onsuccess = () => resolve();
 					request.onerror = () => reject(request.error);
 				});
@@ -525,7 +527,7 @@ export async function importDatabase(
 			// Import article mappings
 			for (const entry of snapshot.new_articles_cache) {
 				await new Promise<void>((resolve, reject) => {
-					const request = articlesStore.put(entry);
+					const request = articles_store.put(entry);
 					request.onsuccess = () => resolve();
 					request.onerror = () => reject(request.error);
 				});
@@ -534,7 +536,7 @@ export async function importDatabase(
 			// Import media cache
 			for (const entry of snapshot.media_cache) {
 				await new Promise<void>((resolve, reject) => {
-					const request = mediaStore.put(entry);
+					const request = media_store.put(entry);
 					request.onsuccess = () => resolve();
 					request.onerror = () => reject(request.error);
 				});
@@ -543,7 +545,7 @@ export async function importDatabase(
 			// Import problems
 			for (const entry of snapshot.problems) {
 				await new Promise<void>((resolve, reject) => {
-					const request = problemsStore.put(entry);
+					const request = problems_store.put(entry);
 					request.onsuccess = () => resolve();
 					request.onerror = () => reject(request.error);
 				});

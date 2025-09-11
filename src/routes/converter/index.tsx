@@ -16,18 +16,18 @@ import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import { Input } from "~/components/ui/input";
 import { Separator } from "~/components/ui/separator";
 import {
-	getArticleMapping,
-	initDatabase,
+	get_article_mapping,
+	init_database,
 	type NewArticleCacheEntry,
 	type ProblemEntry,
-	putArticleMapping,
+	put_article_mapping,
 } from "~/lib/converter-db";
 import { convert_article } from "./-convert-article";
 import type { Article } from "./-types";
 import { useActions } from "./-use-actions";
 
-// const OLD_MEDIA_DIRECTORY = "C:/Users/luka/Desktop/jknm-b2/jknm-novice";
-// const NEW_MEDIA_DIRECTORY = "C:/Users/luka/Desktop/converted-media";
+export const OLD_MEDIA_DIRECTORY = "C:/Users/luka/Desktop/jknm-b2/jknm-novice";
+export const NEW_MEDIA_DIRECTORY = "C:/Users/luka/Desktop/converted-media";
 
 export const Route = createFileRoute("/converter/")({
 	component: RouteComponent,
@@ -35,26 +35,26 @@ export const Route = createFileRoute("/converter/")({
 
 export interface ConverterState {
 	articles: Article[];
-	currentIndex: number;
-	articleMapping: NewArticleCacheEntry | null;
+	current_index: number;
+	article_mapping: NewArticleCacheEntry | null;
 	problems: ProblemEntry[];
-	isLoading: boolean;
+	is_loading: boolean;
 	error: string | null;
-	dbInitialized: boolean;
-	convertedContent?: TElement[]; // PlateJS Value
-	// valueString?: string; // For debugging
+	db_initialized: boolean;
+	converted_content?: TElement[]; // PlateJS Value
+	// value_string?: string; // For debugging
 }
 
 interface ConverterActions {
-	setIndex: (index: number) => void;
-	loadArticles: () => Promise<void>;
-	reloadArticles: () => Promise<void>;
-	acceptArticle: () => Promise<void>;
-	wipeAll: () => Promise<void>;
-	exportCaches: () => Promise<void>;
-	importCaches: (file: File) => Promise<void>;
-	setConvertedContent: (content: TElement[]) => void;
-	// setValueString: (value: string) => void;
+	set_index: (index: number) => void;
+	load_articles: () => Promise<void>;
+	reload_articles: () => Promise<void>;
+	accept_article: () => Promise<void>;
+	wipe_all: () => Promise<void>;
+	export_caches: () => Promise<void>;
+	import_caches: (file: File) => Promise<void>;
+	set_converted_content: (content: TElement[]) => void;
+	// set_value_string: (value: string) => void;
 }
 
 const EditorContext = createContext<
@@ -77,7 +77,7 @@ function ArticlePlateEditor() {
 			</Plate>
 			{/* <div className="flex w-full justify-center">
 				<pre className="prose max-w-screen-md overflow-x-auto whitespace-pre-wrap break-words bg-gray-100 p-4">
-					{context?.state.valueString}
+					{context?.state.value_string}
 				</pre>
 			</div> */}
 		</>
@@ -88,25 +88,25 @@ function ConfiguredPlateEditor() {
 	const editor = useEditorRef();
 	const editor_context = use(EditorContext);
 	const mounted = useEditorMounted();
-	// const [valueString, setValueString] = useState("");
+	// const [value_string, set_value_string] = useState("");
 
 	// Store the current converted content in context for Accept functionality
 	/* useEffect(() => {
-		if (editor_context && valueString) {
+		if (editor_context && value_string) {
 			// Parse the value string and store it
 			try {
-				const value = JSON.parse(valueString) as TElement[];
-				editor_context.actions.setConvertedContent(value);
+				const value = JSON.parse(value_string) as TElement[];
+				editor_context.actions.set_converted_content(value);
 			} catch (error) {
 				console.error("Failed to parse converted content:", error);
 			}
 		}
-	}, [valueString, editor_context]); */
+	}, [value_string, editor_context]); */
 
 	useEffect(() => {
 		if (!editor_context || !mounted) return;
 		const article =
-			editor_context.state.articles[editor_context.state.currentIndex];
+			editor_context.state.articles[editor_context.state.current_index];
 		if (!article) return;
 
 		console.log("Loading article", article.id, article.title);
@@ -114,26 +114,26 @@ function ConfiguredPlateEditor() {
 		editor.tf.reset();
 
 		// Load value asynchronously
-		const loadValue = async () => {
+		const load_value = async () => {
 			try {
 				const value = await convert_article(article, editor);
 				editor.tf.setValue(value);
 				/* const str = JSON.stringify(value, null, 2);
-				setValueString(str); */
+				set_value_string(str); */
 			} catch (error) {
 				console.error("Failed to convert article:", error);
-				const errorValue = [
+				const error_value = [
 					{
 						type: "p",
 						children: [{ text: `Error converting article: ${error}` }],
 					},
 				];
-				editor.tf.setValue(errorValue);
-				// setValueString(JSON.stringify(errorValue, null, 2));
+				editor.tf.setValue(error_value);
+				// set_value_string(JSON.stringify(error_value, null, 2));
 			}
 		};
 
-		void loadValue();
+		void load_value();
 	}, [editor_context, editor, mounted]);
 
 	return (
@@ -150,22 +150,22 @@ function RouteComponent() {
 	// Component state
 	const [state, setState] = useState<ConverterState>({
 		articles: [],
-		currentIndex: 0,
-		articleMapping: null,
+		current_index: 0,
+		article_mapping: null,
 		problems: [],
-		isLoading: false,
+		is_loading: false,
 		error: null,
-		dbInitialized: false,
+		db_initialized: false,
 	});
 
-	const [indexInput, setIndexInput] = useState("0");
+	const [index_input, set_index_input] = useState("0");
 
 	// Initialize IndexedDB on component mount
 	useEffect(() => {
-		const initDB = async () => {
+		const init_db = async () => {
 			try {
-				await initDatabase();
-				setState((prev) => ({ ...prev, dbInitialized: true }));
+				await init_database();
+				setState((prev) => ({ ...prev, db_initialized: true }));
 			} catch (error) {
 				console.error("Failed to initialize database:", error);
 				setState((prev) => ({
@@ -175,38 +175,38 @@ function RouteComponent() {
 			}
 		};
 
-		void initDB();
+		void init_db();
 	}, []);
 
-	// Update index input when currentIndex changes
+	// Update index input when current_index changes
 	useEffect(() => {
-		setIndexInput(String(state.currentIndex));
-	}, [state.currentIndex]);
+		set_index_input(String(state.current_index));
+	}, [state.current_index]);
 
 	// Load article mapping and ensure draft exists when index changes
 	useEffect(() => {
-		const loadMappingAndEnsureDraft = async () => {
-			if (!state.dbInitialized || state.articles.length === 0) return;
+		const load_mapping_and_ensure_draft = async () => {
+			if (!state.db_initialized || state.articles.length === 0) return;
 
-			const article = state.articles[state.currentIndex];
+			const article = state.articles[state.current_index];
 			if (!article) return;
 
 			try {
-				let mapping = await getArticleMapping(article.id);
+				let mapping = await get_article_mapping(article.id);
 
 				// If no mapping exists, create a draft
 				if (!mapping) {
 					console.log("Creating draft for article:", article.title);
-					const draftSlug = await create_draft_mutation({});
-					await putArticleMapping(article.id, draftSlug, "draft");
+					const draft_slug = await create_draft_mutation({});
+					await put_article_mapping(article.id, draft_slug, "draft");
 					mapping = {
-						article_id: draftSlug,
+						article_id: draft_slug,
 						status: "draft" as const,
 						legacy_id: article.id,
 					};
 				}
 
-				setState((prev) => ({ ...prev, articleMapping: mapping }));
+				setState((prev) => ({ ...prev, article_mapping: mapping }));
 			} catch (error) {
 				console.error("Failed to load/create article mapping:", error);
 				setState((prev) => ({
@@ -216,11 +216,11 @@ function RouteComponent() {
 			}
 		};
 
-		void loadMappingAndEnsureDraft();
+		void load_mapping_and_ensure_draft();
 	}, [
-		state.currentIndex,
+		state.current_index,
 		state.articles,
-		state.dbInitialized,
+		state.db_initialized,
 		create_draft_mutation,
 	]);
 
@@ -229,7 +229,7 @@ function RouteComponent() {
 
 	const context = { state, actions };
 
-	if (!state.dbInitialized) {
+	if (!state.db_initialized) {
 		return <div className="p-4">Initializing database...</div>;
 	}
 
@@ -244,16 +244,16 @@ function RouteComponent() {
 					<CardContent className="space-y-2">
 						<div className="flex items-center gap-4">
 							<span>Total Articles: {state.articles.length}</span>
-							<span>Current Index: {state.currentIndex}</span>
-							{state.articleMapping && (
+							<span>Current Index: {state.current_index}</span>
+							{state.article_mapping && (
 								<span
 									className={`rounded px-2 py-1 text-sm ${
-										state.articleMapping.status === "published"
+										state.article_mapping.status === "published"
 											? "bg-green-100 text-green-800"
 											: "bg-yellow-100 text-yellow-800"
 									}`}
 								>
-									{state.articleMapping.status}
+									{state.article_mapping.status}
 								</span>
 							)}
 						</div>
@@ -268,30 +268,30 @@ function RouteComponent() {
 				{/* Control Buttons */}
 				<div className="flex flex-wrap gap-2">
 					<Button
-						onClick={actions.loadArticles}
-						disabled={state.isLoading}
+						onClick={actions.load_articles}
+						disabled={state.is_loading}
 						variant="default"
 					>
 						{state.articles.length > 0 ? "Reload" : "Load"} Articles
 					</Button>
 					<Button
-						onClick={actions.reloadArticles}
-						disabled={state.isLoading || state.articles.length === 0}
+						onClick={actions.reload_articles}
+						disabled={state.is_loading || state.articles.length === 0}
 						variant="outline"
 					>
 						Reload From Disk
 					</Button>
 					<Button
-						onClick={() => actions.setIndex(state.currentIndex - 1)}
-						disabled={state.currentIndex <= 0 || state.articles.length === 0}
+						onClick={() => actions.set_index(state.current_index - 1)}
+						disabled={state.current_index <= 0 || state.articles.length === 0}
 						variant="outline"
 					>
 						Previous
 					</Button>
 					<Button
-						onClick={() => actions.setIndex(state.currentIndex + 1)}
+						onClick={() => actions.set_index(state.current_index + 1)}
 						disabled={
-							state.currentIndex >= state.articles.length - 1 ||
+							state.current_index >= state.articles.length - 1 ||
 							state.articles.length === 0
 						}
 						variant="outline"
@@ -299,11 +299,11 @@ function RouteComponent() {
 						Next
 					</Button>
 					<Button
-						onClick={actions.acceptArticle}
+						onClick={actions.accept_article}
 						disabled={
-							state.isLoading ||
+							state.is_loading ||
 							state.articles.length === 0 ||
-							state.articleMapping?.status === "published"
+							state.article_mapping?.status === "published"
 						}
 						variant="default"
 						className="bg-green-600 hover:bg-green-700"
@@ -312,22 +312,22 @@ function RouteComponent() {
 					</Button>
 					<Separator orientation="vertical" className="h-8" />
 					<Button
-						onClick={actions.wipeAll}
-						disabled={state.isLoading}
+						onClick={actions.wipe_all}
+						disabled={state.is_loading}
 						variant="destructive"
 					>
 						Wipe All
 					</Button>
 					<Button
-						onClick={actions.exportCaches}
-						disabled={state.isLoading}
+						onClick={actions.export_caches}
+						disabled={state.is_loading}
 						variant="outline"
 					>
 						Export Caches
 					</Button>
 					<Button
 						onClick={() => document.getElementById("import-file")?.click()}
-						disabled={state.isLoading}
+						disabled={state.is_loading}
 						variant="outline"
 					>
 						Import Caches
@@ -340,7 +340,7 @@ function RouteComponent() {
 						onChange={(e) => {
 							const file = e.target.files?.[0];
 							if (file) {
-								actions.importCaches(file);
+								actions.import_caches(file);
 							}
 						}}
 					/>
@@ -351,11 +351,11 @@ function RouteComponent() {
 					<span>Article Index:</span>
 					<Input
 						type="number"
-						value={indexInput}
-						onChange={(e) => setIndexInput(e.target.value)}
+						value={index_input}
+						onChange={(e) => set_index_input(e.target.value)}
 						onKeyDown={(e) => {
 							if (e.key === "Enter") {
-								actions.setIndex(Number(indexInput));
+								actions.set_index(Number(index_input));
 							}
 						}}
 						className="w-20"

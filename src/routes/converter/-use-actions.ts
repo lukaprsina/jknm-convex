@@ -7,13 +7,13 @@ import type { TElement } from "platejs";
 import { useCallback } from "react";
 import {
 	type DatabaseSnapshot,
-	exportDatabase,
-	getAllLegacyArticles,
-	getArticleMapping,
-	importDatabase,
-	loadLegacyArticles,
-	putArticleMapping,
-	wipeAllStores,
+	export_database,
+	get_all_legacy_articles,
+	get_article_mapping,
+	import_database,
+	load_legacy_articles,
+	put_article_mapping,
+	wipe_all_stores,
 } from "~/lib/converter-db";
 import type { ConverterState } from ".";
 import type { Article } from "./-types";
@@ -31,28 +31,28 @@ export function useActions(
 	setState: React.Dispatch<React.SetStateAction<ConverterState>>,
 ) {
 	const create_draft_mutation = useConvexMutation(api.articles.create_draft);
-	const publishDraftMutation = useConvexMutation(api.articles.publish_draft);
-	const deleteEverythingMutation = useConvexMutation(
+	const publish_draft_mutation = useConvexMutation(api.articles.publish_draft);
+	const delete_everything_mutation = useConvexMutation(
 		api.articles.delete_everything,
 	);
 
 	const actions = {
-		setIndex: useCallback(
+		set_index: useCallback(
 			(index: number) => {
-				const clampedIndex = Math.max(
+				const clamped_index = Math.max(
 					0,
 					Math.min(index, state.articles.length - 1),
 				);
-				setState((prev) => ({ ...prev, currentIndex: clampedIndex }));
+				setState((prev) => ({ ...prev, currentIndex: clamped_index }));
 			},
 			[state.articles.length, setState],
 		),
 
-		loadArticles: useCallback(async () => {
+		load_articles: useCallback(async () => {
 			setState((prev) => ({ ...prev, isLoading: true, error: null }));
 			try {
 				const articles = await get_articles();
-				await loadLegacyArticles(articles);
+				await load_legacy_articles(articles);
 				setState((prev) => ({ ...prev, articles, isLoading: false }));
 				console.log("Loaded articles into IndexedDB:", articles.length);
 			} catch (error) {
@@ -65,11 +65,11 @@ export function useActions(
 			}
 		}, [setState]),
 
-		reloadArticles: useCallback(async () => {
+		reload_articles: useCallback(async () => {
 			setState((prev) => ({ ...prev, isLoading: true, error: null }));
 			try {
 				const articles = await get_articles();
-				await loadLegacyArticles(articles); // This will clear and reload
+				await load_legacy_articles(articles); // This will clear and reload
 				setState((prev) => ({
 					...prev,
 					articles,
@@ -87,36 +87,36 @@ export function useActions(
 			}
 		}, [setState]),
 
-		acceptArticle: useCallback(async () => {
+		accept_article: useCallback(async () => {
 			if (state.articles.length === 0) return;
 
-			const article = state.articles[state.currentIndex];
+			const article = state.articles[state.current_index];
 			if (!article) return;
 
 			setState((prev) => ({ ...prev, isLoading: true, error: null }));
 
 			try {
-				let articleId: string;
+				let article_id: string;
 
 				// Check if draft already exists
-				if (state.articleMapping?.article_id) {
-					articleId = state.articleMapping.article_id;
+				if (state.article_mapping?.article_id) {
+					article_id = state.article_mapping.article_id;
 				} else {
 					// Create new draft
-					const draftSlug = await create_draft_mutation({});
-					articleId = draftSlug; // The mutation returns the slug which is the ID
+					const draft_slug = await create_draft_mutation({});
+					article_id = draft_slug; // The mutation returns the slug which is the ID
 
 					// Store mapping
-					await putArticleMapping(article.id, articleId, "draft");
+					await put_article_mapping(article.id, article_id, "draft");
 				}
 
 				// Use the converted content from editor or fallback to basic content
-				let contentJson: string;
-				if (state.convertedContent) {
-					contentJson = JSON.stringify(state.convertedContent);
+				let content_json: string;
+				if (state.converted_content) {
+					content_json = JSON.stringify(state.converted_content);
 				} else {
 					// Fallback to basic content
-					contentJson = JSON.stringify([
+					content_json = JSON.stringify([
 						{
 							type: "h1",
 							children: [{ text: article.title }],
@@ -133,9 +133,9 @@ export function useActions(
 				}
 
 				// Publish the draft
-				await publishDraftMutation({
-					article_id: articleId as Id<"articles">,
-					content_json: contentJson,
+				await publish_draft_mutation({
+					article_id: article_id as Id<"articles">,
+					content_json: content_json,
 					thumbnail: {
 						image_id: "" as Id<"media">,
 						x: 0,
@@ -148,18 +148,18 @@ export function useActions(
 				});
 
 				// Update mapping to published
-				await putArticleMapping(
+				await put_article_mapping(
 					article.id,
-					articleId,
+					article_id,
 					"published",
 					new Date(article.created_at).getTime(),
 				);
 
 				// Refresh mapping
-				const mapping = await getArticleMapping(article.id);
+				const mapping = await get_article_mapping(article.id);
 				setState((prev) => ({
 					...prev,
-					articleMapping: mapping,
+					article_mapping: mapping,
 					isLoading: false,
 				}));
 
@@ -173,16 +173,16 @@ export function useActions(
 				}));
 			}
 		}, [
-			state.currentIndex,
+			state.current_index,
 			state.articles,
-			state.articleMapping,
-			state.convertedContent,
+			state.article_mapping,
+			state.converted_content,
 			create_draft_mutation,
-			publishDraftMutation,
+			publish_draft_mutation,
 			setState,
 		]),
 
-		wipeAll: useCallback(async () => {
+		wipe_all: useCallback(async () => {
 			if (
 				!confirm(
 					"Are you sure you want to wipe all data? This cannot be undone.",
@@ -195,17 +195,17 @@ export function useActions(
 
 			try {
 				// Clear Convex database
-				await deleteEverythingMutation({});
+				await delete_everything_mutation({});
 
 				// Clear IndexedDB
-				await wipeAllStores();
+				await wipe_all_stores();
 
 				// Reset state
 				setState((prev) => ({
 					...prev,
 					articles: [],
 					currentIndex: 0,
-					articleMapping: null,
+					article_mapping: null,
 					problems: [],
 					isLoading: false,
 				}));
@@ -219,11 +219,11 @@ export function useActions(
 					isLoading: false,
 				}));
 			}
-		}, [deleteEverythingMutation, setState]),
+		}, [delete_everything_mutation, setState]),
 
-		exportCaches: useCallback(async () => {
+		export_caches: useCallback(async () => {
 			try {
-				const snapshot = await exportDatabase();
+				const snapshot = await export_database();
 				const blob = new Blob([JSON.stringify(snapshot, null, 2)], {
 					type: "application/json",
 				});
@@ -245,17 +245,17 @@ export function useActions(
 			}
 		}, [setState]),
 
-		importCaches: useCallback(
+		import_caches: useCallback(
 			async (file: File) => {
 				setState((prev) => ({ ...prev, isLoading: true, error: null }));
 
 				try {
 					const text = await file.text();
 					const snapshot = JSON.parse(text) as DatabaseSnapshot;
-					await importDatabase(snapshot);
+					await import_database(snapshot);
 
 					// Reload articles from imported data
-					const articles = await getAllLegacyArticles();
+					const articles = await get_all_legacy_articles();
 					setState((prev) => ({
 						...prev,
 						articles,
@@ -280,9 +280,9 @@ export function useActions(
 			[setState],
 		),
 
-		setConvertedContent: useCallback(
+		set_converted_content: useCallback(
 			(content: TElement[]) => {
-				setState((prev) => ({ ...prev, convertedContent: content }));
+				setState((prev) => ({ ...prev, converted_content: content }));
 			},
 			[setState],
 		),
