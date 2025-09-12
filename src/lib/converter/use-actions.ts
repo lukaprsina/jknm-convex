@@ -5,10 +5,11 @@ import { createServerFn } from "@tanstack/react-start";
 import type { Id } from "convex/_generated/dataModel";
 import type { TElement } from "platejs";
 import { useCallback } from "react";
-import {
-	export_caches_server,
-	import_caches_server,
-} from "~/lib/converter/cache-server-actions";
+import type {
+	MediaCacheEntry,
+	NewArticleCacheEntry,
+	ProblemEntry,
+} from "~/lib/converter-db";
 import {
 	get_all_article_mappings,
 	get_all_legacy_articles,
@@ -265,17 +266,27 @@ export function useActions(
 						get_all_problems(),
 					]);
 
-				// Call server function with the data
-				const result = await export_caches_server({
-					data: {
+				// Send data to API endpoint
+				const response = await fetch("/api/converter", {
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+					},
+					body: JSON.stringify({
 						legacy_articles,
 						article_mappings,
 						media_entries,
 						problems,
-					},
+					}),
 				});
 
-				if (!result.success) {
+				const result = (await response.json()) as {
+					success: boolean;
+					message?: string;
+					error?: string;
+				};
+
+				if (!response.ok || !result.success) {
 					throw new Error(result.error || "Export failed");
 				}
 
@@ -311,9 +322,24 @@ export function useActions(
 			);
 
 			try {
-				// Call server function to read cache files
-				const result = await import_caches_server();
-				if (!result.success) {
+				// Fetch data from API endpoint
+				const response = await fetch("/api/converter", {
+					method: "GET",
+				});
+
+				const result = (await response.json()) as {
+					success: boolean;
+					message?: string;
+					error?: string;
+					data?: {
+						legacy_articles: Article[];
+						article_mappings: NewArticleCacheEntry[];
+						media_entries: MediaCacheEntry[];
+						problems: ProblemEntry[];
+					};
+				};
+
+				if (!response.ok || !result.success) {
 					throw new Error(result.error || "Import failed");
 				}
 
