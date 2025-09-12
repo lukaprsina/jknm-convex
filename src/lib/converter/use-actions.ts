@@ -6,13 +6,19 @@ import type { Id } from "convex/_generated/dataModel";
 import type { TElement } from "platejs";
 import { useCallback } from "react";
 import {
-	type DatabaseSnapshot,
-	export_database,
+	export_caches_server,
+	import_caches_server,
+} from "~/lib/converter/cache-server-actions";
+import {
+	get_all_article_mappings,
 	get_all_legacy_articles,
+	get_all_media_entries,
+	get_all_problems,
 	get_article_mapping,
-	import_database,
 	load_legacy_articles,
 	put_article_mapping,
+	put_media_entry,
+	record_problem,
 	wipe_all_stores,
 } from "~/lib/converter-db";
 import type { ConverterState } from "../../routes/converter";
@@ -244,20 +250,43 @@ export function useActions(
 		}, [delete_everything_mutation, setState]),
 
 		export_caches: useCallback(async () => {
+			setState(
+				(prev) =>
+					({ ...prev, is_loading: true, error: null }) satisfies ConverterState,
+			);
+
 			try {
-				const snapshot = await export_database();
-				const blob = new Blob([JSON.stringify(snapshot, null, 2)], {
-					type: "application/json",
+				// Gather all data from IndexedDB
+				const [legacy_articles, article_mappings, media_entries, problems] =
+					await Promise.all([
+						get_all_legacy_articles(),
+						get_all_article_mappings(),
+						get_all_media_entries(),
+						get_all_problems(),
+					]);
+
+				// Call server function with the data
+				const result = await export_caches_server({
+					data: {
+						legacy_articles,
+						article_mappings,
+						media_entries,
+						problems,
+					},
 				});
-				const url = URL.createObjectURL(blob);
-				const a = document.createElement("a");
-				a.href = url;
-				a.download = `converter-cache-${new Date().toISOString().split("T")[0]}.json`;
-				document.body.appendChild(a);
-				a.click();
-				document.body.removeChild(a);
-				URL.revokeObjectURL(url);
-				console.log("Cache exported successfully");
+
+				if (!result.success) {
+					throw new Error(result.error || "Export failed");
+				}
+
+				console.log("Cache exported successfully:", result.message);
+				setState(
+					(prev) =>
+						({
+							...prev,
+							is_loading: false,
+						}) satisfies ConverterState,
+				);
 			} catch (error) {
 				console.error("Failed to export cache:", error);
 				setState(
@@ -265,62 +294,88 @@ export function useActions(
 						({
 							...prev,
 							error: `Failed to export cache: ${error}`,
+							is_loading: false,
 						}) satisfies ConverterState,
 				);
 			}
 		}, [setState]),
 
-		import_caches: useCallback(
-			async (file: File) => {
+		import_caches: useCallback(async () => {
+			setState(
+				(prev) =>
+					({
+						...prev,
+						is_loading: true,
+						error: null,
+					}) satisfies ConverterState,
+			);
+
+			try {
+				// Call server function to read cache files
+				const result = await import_caches_server();
+				if (!result.success) {
+					throw new Error(result.error || "Import failed");
+				}
+
+				// Write imported data to IndexedDB
+				const { data } = result;
+				if (data) {
+					// Load legacy articles
+					await load_legacy_articles(data.legacy_articles);
+
+					// Load article mappings
+					for (const mapping of data.article_mappings) {
+						await put_article_mapping(
+							mapping.legacy_id,
+							mapping.article_id,
+							mapping.status,
+							mapping.published_at,
+						);
+					}
+
+					// Load media entries
+					for (const entry of data.media_entries) {
+						await put_media_entry(entry);
+					}
+
+					// Load problems
+					for (const problem of data.problems) {
+						await record_problem(
+							problem.legacy_id,
+							problem.kind,
+							problem.detail,
+							problem.media_key,
+						);
+					}
+				}
+
+				// Update state with imported articles
 				setState(
 					(prev) =>
 						({
 							...prev,
-							is_loading: true,
-							error: null,
+							articles: data?.legacy_articles || [],
+							current_index: 0,
+							is_loading: false,
 						}) satisfies ConverterState,
 				);
 
-				try {
-					const text = await file.text();
-					const snapshot = JSON.parse(text) as DatabaseSnapshot;
-					await import_database(snapshot);
-
-					// Reload articles from imported data
-					const articles = await get_all_legacy_articles();
-					setState(
-						(prev) =>
-							({
-								...prev,
-								articles,
-								current_index: 0,
-								is_loading: false,
-							}) satisfies ConverterState,
-					);
-
-					console.log(
-						"Cache imported successfully, loaded",
-						articles.length,
-						"articles",
-					);
-				} catch (error) {
-					console.error("Failed to import cache:", error);
-					setState(
-						(prev) =>
-							({
-								...prev,
-								error: `Failed to import cache: ${error}`,
-								is_loading: false,
-							}) satisfies ConverterState,
-					);
-				}
-			},
-			[setState],
-		),
+				console.log("Cache imported successfully:", result.message);
+			} catch (error) {
+				console.error("Failed to import cache:", error);
+				setState(
+					(prev) =>
+						({
+							...prev,
+							error: `Failed to import cache: ${error}`,
+							is_loading: false,
+						}) satisfies ConverterState,
+				);
+			}
+		}, [setState]),
 
 		set_converted_content: useCallback(
 			(content: TElement[]) => {
-				console.warn("Setting converted content:", { content });
 				setState(
 					(prev) =>
 						({ ...prev, converted_content: content }) satisfies ConverterState,

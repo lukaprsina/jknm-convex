@@ -52,7 +52,7 @@ interface ConverterActions {
 	accept_article: () => Promise<void>;
 	wipe_all: () => Promise<void>;
 	export_caches: () => Promise<void>;
-	import_caches: (file: File) => Promise<void>;
+	import_caches: () => Promise<void>;
 	set_converted_content: (content: TElement[]) => void;
 	// set_value_string: (value: string) => void;
 }
@@ -326,24 +326,12 @@ function RouteComponent() {
 						Export Caches
 					</Button>
 					<Button
-						onClick={() => document.getElementById("import-file")?.click()}
+						onClick={actions.import_caches}
 						disabled={state.is_loading}
 						variant="outline"
 					>
 						Import Caches
 					</Button>
-					<input
-						id="import-file"
-						type="file"
-						accept=".json"
-						style={{ display: "none" }}
-						onChange={(e) => {
-							const file = e.target.files?.[0];
-							if (file) {
-								actions.import_caches(file);
-							}
-						}}
-					/>
 				</div>
 
 				{/* Navigation */}
