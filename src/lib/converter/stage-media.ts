@@ -1,5 +1,4 @@
 import * as fs from "node:fs";
-import * as path from "node:path";
 import type { Id } from "@convex/_generated/dataModel";
 import { ConvexQueryClient } from "@convex-dev/react-query";
 import { createServerFn } from "@tanstack/react-start";
@@ -199,7 +198,7 @@ export async function stage_media(
 		await put_media_entry(cache_entry);
 
 		// 5. Call link_media_to_article mutation if article_id is provided
-		console.log("Linking media to article:", {
+		console.log("Linking new media to article:", {
 			article_id: convex_article_id,
 			media_id: media._id,
 			order,

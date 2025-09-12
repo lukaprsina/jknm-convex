@@ -139,27 +139,11 @@ export function useActions(
 				}
 
 				// Use the converted content from editor or fallback to basic content
-				let content_json: string;
-				if (state.converted_content) {
-					content_json = JSON.stringify(state.converted_content);
-				} else {
+				if (!state.converted_content) {
 					throw new Error("No converted content available");
-					// Fallback to basic content
-					/* content_json = JSON.stringify([
-						{
-							type: "h1",
-							children: [{ text: article.title }],
-						},
-						{
-							type: "p",
-							children: [
-								{
-									text: "Converted from legacy article (no content loaded)...",
-								},
-							],
-						},
-					]); */
 				}
+
+				const content_json = JSON.stringify(state.converted_content);
 
 				// Publish the draft
 				await publish_draft_mutation({
@@ -336,6 +320,7 @@ export function useActions(
 
 		set_converted_content: useCallback(
 			(content: TElement[]) => {
+				console.warn("Setting converted content:", { content });
 				setState(
 					(prev) =>
 						({ ...prev, converted_content: content }) satisfies ConverterState,

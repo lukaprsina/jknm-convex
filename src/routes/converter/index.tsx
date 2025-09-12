@@ -6,7 +6,6 @@ import {
 	Plate,
 	useEditorMounted,
 	useEditorRef,
-	useEditorState,
 	usePlateEditor,
 } from "platejs/react";
 import { createContext, use, useEffect, useState } from "react";
@@ -16,7 +15,9 @@ import { Button } from "~/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import { Input } from "~/components/ui/input";
 import { Separator } from "~/components/ui/separator";
-import { useEffectDebugger } from "~/hooks/use-effect-debugger";
+import { convert_article } from "~/lib/converter/convert-article";
+import type { Article } from "~/lib/converter/types";
+import { useActions } from "~/lib/converter/use-actions";
 import {
 	get_article_mapping,
 	init_database,
@@ -24,9 +25,6 @@ import {
 	type ProblemEntry,
 	put_article_mapping,
 } from "~/lib/converter-db";
-import { convert_article } from "../../lib/converter/convert-article";
-import type { Article } from "../../lib/converter/types";
-import { useActions } from "../../lib/converter/use-actions";
 
 export const OLD_MEDIA_DIRECTORY = "C:/Users/luka/Desktop/jknm-b2/jknm-novice";
 export const NEW_MEDIA_DIRECTORY = "C:/Users/luka/Desktop/converted-media";
@@ -73,50 +71,16 @@ function ArticlePlateEditor() {
 	});
 
 	return (
-		<>
-			<Plate editor={editor}>
-				<ConfiguredPlateEditor />
-			</Plate>
-			{/* <div className="flex w-full justify-center">
-				<pre className="prose max-w-screen-md overflow-x-auto whitespace-pre-wrap break-words bg-gray-100 p-4">
-					{context?.state.value_string}
-				</pre>
-			</div> */}
-		</>
+		<Plate editor={editor}>
+			<ConfiguredPlateEditor />
+		</Plate>
 	);
-}
-
-function useConvertedContentSetter() {
-	const editor_context = use(EditorContext);
-	const editor = useEditorState();
-	const mounted = useEditorMounted();
-
-	useEffect(() => {
-		if (!editor || !mounted) return;
-
-		editor_context?.actions.set_converted_content(editor.children);
-	}, [editor_context?.actions.set_converted_content, editor, mounted]);
 }
 
 function ConfiguredPlateEditor() {
 	const editor = useEditorRef();
 	const editor_context = use(EditorContext);
 	const mounted = useEditorMounted();
-	useConvertedContentSetter();
-	// const [value_string, set_value_string] = useState("");
-
-	// Store the current converted content in context for Accept functionality
-	/* useEffect(() => {
-		if (editor_context && value_string) {
-			// Parse the value string and store it
-			try {
-				const value = JSON.parse(value_string) as TElement[];
-				editor_context.actions.set_converted_content(value);
-			} catch (error) {
-				console.error("Failed to parse converted content:", error);
-			}
-		}
-	}, [value_string, editor_context]); */
 
 	useEffect(() => {
 		if (!mounted) return;
@@ -138,8 +102,7 @@ function ConfiguredPlateEditor() {
 				const convex_article_id = mapping.article_id;
 				const value = await convert_article(article, editor, convex_article_id);
 				editor.tf.setValue(value);
-				/* const str = JSON.stringify(value, null, 2);
-				set_value_string(str); */
+				editor_context?.actions.set_converted_content(editor.children);
 			} catch (error) {
 				console.error("Failed to convert article:", error);
 				const error_value = [
@@ -149,7 +112,6 @@ function ConfiguredPlateEditor() {
 					},
 				];
 				editor.tf.setValue(error_value);
-				// set_value_string(JSON.stringify(error_value, null, 2));
 			}
 		};
 
@@ -160,6 +122,7 @@ function ConfiguredPlateEditor() {
 		editor_context?.state.article_mapping,
 		editor,
 		mounted,
+		editor_context?.actions.set_converted_content,
 	]);
 
 	return (
@@ -170,7 +133,6 @@ function ConfiguredPlateEditor() {
 }
 
 function RouteComponent() {
-	// Convex mutations
 	const create_draft_mutation = useConvexMutation(api.articles.create_draft);
 
 	// Component state
@@ -228,7 +190,7 @@ function RouteComponent() {
 
 				// If no mapping exists, create a draft
 				if (!mapping) {
-					console.log("Creating draft for article:", article.title);
+					// console.log("Creating draft for article:", article.title);
 					const { id } = await create_draft_mutation({});
 					await put_article_mapping(article.id, id, "draft");
 					mapping = {

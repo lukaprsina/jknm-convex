@@ -439,7 +439,7 @@ export const publish_draft = mutation({
 				status: "published",
 				published_at,
 				published_year: new Date(published_at).getFullYear(),
-				slug: slugify_title("", args.article_id), // Will be updated below with actual title
+				slug: "ERROR", //slugify_title("", args.article_id), // Will be updated below with actual title
 			},
 			args.author_ids,
 		);
