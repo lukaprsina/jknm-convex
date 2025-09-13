@@ -68,7 +68,9 @@ const copy_file_server = createServerFn({ method: "POST" })
 			// Check if target already exists to avoid unnecessary copy
 			try {
 				await fs.promises.access(data.target_path);
-				console.log(`File already exists, skipping copy: ${data.target_path}`);
+				console.error(
+					`File already exists, skipping copy: ${data.target_path}`,
+				);
 				const target_stats = await fs.promises.stat(data.target_path);
 				return {
 					success: true,
@@ -104,7 +106,7 @@ function get_media_type(content_type: string): "image" | "document" {
 }
 
 export async function stage_media(
-	img_url: string,
+	media_url: string,
 	legacy_id: number,
 	order: number,
 	convex_article_id: string,
@@ -112,23 +114,23 @@ export async function stage_media(
 	// Normalize the legacy media key
 	let legacy_media_key: string;
 	try {
-		const url = new URL(img_url);
+		const url = new URL(media_url);
 		legacy_media_key = normalize_legacy_media_key(url.pathname);
 	} catch {
 		// If it's not a URL, treat it as a path
-		legacy_media_key = normalize_legacy_media_key(img_url);
-		throw new Error(`Invalid URL in stage_media: ${img_url}`);
+		legacy_media_key = normalize_legacy_media_key(media_url);
+		throw new Error(`Invalid URL in stage_media: ${media_url}`);
 	}
 
 	// Check if media is already cached
 	const existing_media = await get_media_entry(legacy_media_key);
 	if (existing_media) {
 		// Media already staged, just link it to the article
-		console.log("Linking existing media to article:", {
+		/* console.log("Linking existing media to article:", {
 			article_id: convex_article_id,
 			media_id: existing_media.media_id,
 			order,
-		});
+		}); */
 		await convex.mutation(api.media.link_media_to_article, {
 			article_id: convex_article_id as Id<"articles">,
 			media_id: existing_media.media_id as Id<"media">,
@@ -198,11 +200,11 @@ export async function stage_media(
 		await put_media_entry(cache_entry);
 
 		// 5. Call link_media_to_article mutation if article_id is provided
-		console.log("Linking new media to article:", {
+		/* console.log("Linking new media to article:", {
 			article_id: convex_article_id,
 			media_id: media._id,
 			order,
-		});
+		}); */
 		await convex.mutation(api.media.link_media_to_article, {
 			article_id: convex_article_id as Id<"articles">,
 			media_id: media._id,
@@ -212,13 +214,13 @@ export async function stage_media(
 		// Return the final URL
 		return media.original.url;
 	} catch (error) {
-		console.error("Failed to stage media:", img_url, error);
+		console.error("Failed to stage media:", media_url, error);
 
 		// Record the problem for debugging
 		await record_problem(
 			legacy_id,
 			"missing_media",
-			`Failed to stage media: ${img_url} - ${error instanceof Error ? error.message : String(error)}`,
+			`Failed to stage media: ${media_url} - ${error instanceof Error ? error.message : String(error)}`,
 			legacy_media_key,
 		);
 

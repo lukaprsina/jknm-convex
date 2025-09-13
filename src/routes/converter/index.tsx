@@ -18,6 +18,7 @@ import { Separator } from "~/components/ui/separator";
 import { convert_article } from "~/lib/converter/convert-article";
 import type { Article } from "~/lib/converter/types";
 import { useActions } from "~/lib/converter/use-actions";
+import { useAutoAccept } from "~/lib/converter/use-auto";
 import {
 	get_article_mapping,
 	init_database,
@@ -25,7 +26,6 @@ import {
 	type ProblemEntry,
 	put_article_mapping,
 } from "~/lib/converter-db";
-import { useAutoAccept } from "~/lib/converter/use-auto";
 
 export const OLD_MEDIA_DIRECTORY = "C:/Users/luka/Desktop/jknm-b2/jknm-novice";
 export const NEW_MEDIA_DIRECTORY = "C:/Users/luka/Desktop/converted-media";
@@ -99,7 +99,11 @@ function ConfiguredPlateEditor() {
 	const editor = useEditorRef();
 	const editor_context = use(EditorContext);
 	const mounted = useEditorMounted();
-	useAutoAccept({state: editor_context?.state, setState: editor_context?.setState, actions: editor_context?.actions});
+	useAutoAccept({
+		state: editor_context?.state,
+		setState: editor_context?.setState,
+		actions: editor_context?.actions,
+	});
 
 	useEffect(() => {
 		if (!mounted) return;
@@ -111,17 +115,17 @@ function ConfiguredPlateEditor() {
 		const mapping = editor_context?.state.article_mapping;
 		if (!mapping) return;
 
-		console.log("Loading article", article.id, article.title);
+		// console.log("Loading article", article.id, article.title);
 
 		editor.tf.reset();
 
 		// Load value asynchronously
 		const load_value = async () => {
-			try {
-				const convex_article_id = mapping.article_id;
-				const value = await convert_article(article, editor, convex_article_id);
-				editor.tf.setValue(value);
-				editor_context?.actions.set_converted_content(editor.children);
+			const convex_article_id = mapping.article_id;
+			const value = await convert_article(article, editor, convex_article_id);
+			editor.tf.setValue(value);
+			editor_context?.actions.set_converted_content(editor.children);
+			/* try {
 			} catch (error) {
 				console.error("Failed to convert article:", error);
 				const error_value = [
@@ -131,7 +135,7 @@ function ConfiguredPlateEditor() {
 					},
 				];
 				editor.tf.setValue(error_value);
-			}
+			} */
 		};
 
 		void load_value();
@@ -173,7 +177,8 @@ function RouteComponent() {
 		auto_accept_errors: [],
 	});
 
-	const [index_input, set_index_input] = useState("0");
+	const [indexInput, setIndexInput] = useState("0");
+	const [legacyIndexInput, setLegacyIndexInput] = useState("0");
 
 	// Initialize IndexedDB on component mount
 	useEffect(() => {
@@ -201,7 +206,7 @@ function RouteComponent() {
 
 	// Update index input when current_index changes
 	useEffect(() => {
-		set_index_input(String(state.current_index));
+		setIndexInput(String(state.current_index));
 	}, [state.current_index]);
 
 	// Load article mapping and ensure draft exists when index changes
@@ -252,7 +257,7 @@ function RouteComponent() {
 	]);
 
 	// Action handlers
-	const actions = useActions(state, setState);	
+	const actions = useActions(state, setState);
 
 	const context = { state, setState, actions };
 
@@ -284,7 +289,7 @@ function RouteComponent() {
 								</span>
 							)}
 							{state.is_auto_accepting && (
-								<span className="rounded bg-blue-100 px-2 py-1 text-sm text-blue-800">
+								<span className="rounded bg-blue-100 px-2 py-1 text-blue-800 text-sm">
 									Auto-accepting...
 								</span>
 							)}
@@ -298,7 +303,8 @@ function RouteComponent() {
 				</Card>
 
 				{/* Auto-Accept Progress */}
-				{(state.is_auto_accepting || state.auto_accept_progress.processed > 0) && (
+				{(state.is_auto_accepting ||
+					state.auto_accept_progress.processed > 0) && (
 					<Card>
 						<CardHeader>
 							<CardTitle>Auto-Accept Progress</CardTitle>
@@ -347,13 +353,14 @@ function RouteComponent() {
 								<div className="space-y-1">
 									<h4 className="font-semibold text-red-600">Errors:</h4>
 									<div className="max-h-32 space-y-1 overflow-y-auto">
-										{state.auto_accept_errors.map((error, index) => (
+										{state.auto_accept_errors.map((error) => (
 											<div
-												key={index}
+												key={error.index}
 												className="rounded border border-red-200 bg-red-50 p-2 text-sm"
 											>
 												<div className="font-medium">
-													Index {error.index}: {error.title} (ID: {error.article_id})
+													Index {error.index}: {error.title} (ID:{" "}
+													{error.article_id})
 												</div>
 												<div className="text-red-700">{error.error}</div>
 											</div>
@@ -426,10 +433,7 @@ function RouteComponent() {
 							Start Auto Accept
 						</Button>
 					) : (
-						<Button
-							onClick={actions.stop_auto_accept}
-							variant="outline"
-						>
+						<Button onClick={actions.stop_auto_accept} variant="outline">
 							Stop Auto Accept
 						</Button>
 					)}
@@ -469,11 +473,11 @@ function RouteComponent() {
 					<span>Article Index:</span>
 					<Input
 						type="number"
-						value={index_input}
-						onChange={(e) => set_index_input(e.target.value)}
+						value={indexInput}
+						onChange={(e) => setIndexInput(e.target.value)}
 						onKeyDown={(e) => {
 							if (e.key === "Enter") {
-								actions.set_index(Number(index_input));
+								actions.set_index(Number(indexInput));
 							}
 						}}
 						className="w-20"
@@ -481,6 +485,45 @@ function RouteComponent() {
 						max={state.articles.length - 1}
 					/>
 					<span>of {state.articles.length - 1}</span>
+				</div>
+
+				{/* Legacy index input */}
+				<div className="flex items-center gap-2">
+					<span>Legacy index:</span>
+					<Input
+						type="text"
+						value={legacyIndexInput}
+						onChange={(e) => setLegacyIndexInput(e.target.value)}
+						onKeyDown={(e) => {
+							if (e.key === "Enter") {
+								const search = legacyIndexInput.trim();
+								if (search === "") return;
+								const idx = state.articles.findIndex((a) => {
+									const n = Number(search);
+									if (!Number.isNaN(n)) {
+										if (a.old_id === n) return true;
+									}
+									return false;
+								});
+								console.log(
+									"Searching for legacy id",
+									search,
+									"found index",
+									idx,
+									{ a: state.articles },
+								);
+								if (idx >= 0) {
+									actions.set_index(idx);
+								} else {
+									setState((prev) => ({
+										...prev,
+										error: `Legacy id ${search} not found`,
+									}));
+								}
+							}
+						}}
+						className="w-32"
+					/>
 				</div>
 
 				{/* Editor */}

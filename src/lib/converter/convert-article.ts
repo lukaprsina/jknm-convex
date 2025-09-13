@@ -1,8 +1,83 @@
+import type { Element as HastElement } from "hast";
 import type { TElement } from "platejs";
 import type { PlateEditor } from "platejs/react";
+import rehypeParse from "rehype-parse";
+import { unified } from "unified";
+import { visit } from "unist-util-visit";
 import { record_problem } from "~/lib/converter-db";
 import { stage_media } from "./stage-media";
 import type { Article } from "./types";
+
+const parser = unified().use(rehypeParse, { fragment: true });
+
+async function check_link(
+	node: HastElement,
+	article: Article,
+	convex_article_id: string,
+	media_order_ref: { current: number },
+	absolute_urls: Map<string, string[]>,
+	article_links: Map<string, string[]>,
+) {
+	if (!article || !convex_article_id) throw new Error("Article is undefined");
+	if (node.tagName !== "a") return;
+	const href = node.properties?.href;
+
+	if (typeof href !== "string") throw new Error("Invalid link");
+
+	try {
+		const url = new URL(href);
+		const prev = absolute_urls.get(url.href) ?? [];
+		absolute_urls.set(url.href, [...prev, article.id.toString()]);
+	} catch (_e) {
+		if (!href.startsWith("/"))
+			throw new Error(`Invalid link: ${href}, doesn't start with /`);
+
+		if (href.startsWith("/novica?id=")) {
+			const id = href.substring("/novica?id=".length);
+			if (!id) throw new Error("Invalid novica link, missing id");
+			const prev = article_links.get(id) ?? [];
+			article_links.set(id, [...prev, article.id.toString()]);
+		} else {
+			// Return if href ends with a file extension (e.g., .jpg, .png, .pdf)
+			if (/\.[a-zA-Z0-9]+$/.test(href))
+				throw new Error(`Unsupported relative link: ${href}`);
+			/* await stage_media(
+				href,
+				article.id,
+				media_order_ref.current++,
+				convex_article_id,
+			); */
+		}
+	}
+}
+
+async function deserialize_html(
+	html: string,
+	editor: PlateEditor,
+	article: Article,
+	convex_article_id: string,
+	media_order_ref: { current: number },
+	absolute_urls: Map<string, string[]>,
+	article_links: Map<string, string[]>,
+) {
+	const tree = parser.parse(html);
+	const tasks: Promise<void>[] = [];
+	visit(tree, "element", (node) =>
+		tasks.push(
+			check_link(
+				node,
+				article,
+				convex_article_id,
+				media_order_ref,
+				absolute_urls,
+				article_links,
+			),
+		),
+	);
+	await Promise.all(tasks);
+	const descendants = editor.api.html.deserialize({ element: html });
+	return descendants;
+}
 
 export async function convert_article(
 	article: Article,
@@ -10,13 +85,23 @@ export async function convert_article(
 	convex_article_id: string,
 ): Promise<TElement[]> {
 	const value: TElement[] = [];
-	let mediaOrder = 0;
+	const absolute_urls = new Map<string, string[]>();
+	const article_links = new Map<string, string[]>();
+	const media_order_ref = { current: 0 };
 
 	for (const block of article.content.blocks) {
 		if (block.type === "paragraph") {
 			if (!block.data.text) throw new Error("Paragraph block missing text");
 
-			const html = editor.api.html.deserialize({ element: block.data.text });
+			const html = await deserialize_html(
+				block.data.text,
+				editor,
+				article,
+				convex_article_id,
+				media_order_ref,
+				absolute_urls,
+				article_links,
+			);
 			const node: TElement = {
 				type: "p",
 				children: html,
@@ -65,11 +150,10 @@ export async function convert_article(
 			if (!img_url) throw new Error("Image block missing file url");
 
 			try {
-				// Stage the media and get the final URL
 				const finalUrl = await stage_media(
 					img_url,
 					article.id,
-					mediaOrder++,
+					media_order_ref.current++,
 					convex_article_id,
 				);
 
@@ -97,7 +181,6 @@ export async function convert_article(
 					`Failed to stage media: ${img_url} - ${error}`,
 					img_url,
 				);
-				// Add placeholder for missing media
 				const placeholder_html = `<p>[Missing image: ${img_url}]</p>`;
 				const html = editor.api.html.deserialize({ element: placeholder_html });
 				value.push(html[0] as TElement);

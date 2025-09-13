@@ -11,20 +11,20 @@ import {
 import mime from "mime/lite";
 
 // Load environment variables
-const AWS_REGION = process.env.AWS_REGION;
+const VITE_AWS_REGION = process.env.VITE_AWS_REGION;
 const AWS_ACCESS_KEY_ID = process.env.AWS_ACCESS_KEY_ID;
 const AWS_SECRET_ACCESS_KEY = process.env.AWS_SECRET_ACCESS_KEY;
 
-if (!AWS_REGION || !AWS_ACCESS_KEY_ID || !AWS_SECRET_ACCESS_KEY) {
+if (!VITE_AWS_REGION || !AWS_ACCESS_KEY_ID || !AWS_SECRET_ACCESS_KEY) {
 	console.error(
-		"Missing required environment variables: AWS_REGION, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY",
+		"Missing required environment variables: VITE_AWS_REGION, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY",
 	);
 	process.exit(1);
 }
 
 const s3 = new S3Client({
-	region: AWS_REGION,
-	endpoint: `https://s3.${AWS_REGION}.backblazeb2.com`,
+	region: VITE_AWS_REGION,
+	endpoint: `https://s3.${VITE_AWS_REGION}.backblazeb2.com`,
 	credentials: {
 		accessKeyId: AWS_ACCESS_KEY_ID,
 		secretAccessKey: AWS_SECRET_ACCESS_KEY,
@@ -192,7 +192,7 @@ async function downloadObject(bucket: string, key: string, outPath: string) {
 	}
 }
 
-// bun run .\scripts\sync_from_b2_to_fs.ts jknm-novice "C:\Users\luka\Desktop\jknm-b2\jknm-novice"
+// bun run .\scripts\sync_from_b2_to_fs.ts jknm-novice "C:\Users\luka\Desktop\original_media"
 (async () => {
 	const bucket = process.argv[2];
 	const outdir = process.argv[3];

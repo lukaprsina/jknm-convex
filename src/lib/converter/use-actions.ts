@@ -180,7 +180,7 @@ export function useActions(
 						}) satisfies ConverterState,
 				);
 
-				console.log("Successfully published article:", article.title);
+				// console.log("Successfully published article:", article.title);
 			} catch (error) {
 				console.error("Failed to accept article:", error);
 				setState(
