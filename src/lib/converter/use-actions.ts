@@ -409,6 +409,52 @@ export function useActions(
 			},
 			[setState],
 		),
+
+		// Auto-accept functionality
+		start_auto_accept: useCallback(() => {
+			setState(
+				(prev) =>
+					({
+						...prev,
+						is_auto_accepting: true,
+						auto_accept_progress: {
+							total: prev.articles.length,
+							processed: 0,
+							successes: 0,
+							errors: 0,
+						},
+						auto_accept_errors: [],
+						error: null,
+					}) satisfies ConverterState,
+			);
+		}, [setState]),
+
+		stop_auto_accept: useCallback(() => {
+			setState(
+				(prev) =>
+					({
+						...prev,
+						is_auto_accepting: false,
+					}) satisfies ConverterState,
+			);
+		}, [setState]),
+
+		reset_auto_accept: useCallback(() => {
+			setState(
+				(prev) =>
+					({
+						...prev,
+						is_auto_accepting: false,
+						auto_accept_progress: {
+							total: 0,
+							processed: 0,
+							successes: 0,
+							errors: 0,
+						},
+						auto_accept_errors: [],
+					}) satisfies ConverterState,
+			);
+		}, [setState]),
 	};
 
 	return actions;
