@@ -65,7 +65,7 @@ Junction table for many-to-many relationship between articles and authors.
 
 - `by_article`: for finding authors of an article
 - `by_author`: for finding articles by an author
-- `by_article_and_order`: for ordered author retrieval
+- `by_article`: for ordered author retrieval
 - `by_article_and_author`: for checking existing relationships
 
 ## Functions

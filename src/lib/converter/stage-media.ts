@@ -108,7 +108,6 @@ function get_media_type(content_type: string): "image" | "document" {
 export async function stage_media(
 	media_url: string,
 	legacy_id: number,
-	order: number,
 	convex_article_id: string,
 ): Promise<string> {
 	// Normalize the legacy media key
@@ -129,12 +128,10 @@ export async function stage_media(
 		/* console.log("Linking existing media to article:", {
 			article_id: convex_article_id,
 			media_id: existing_media.media_id,
-			order,
 		}); */
 		await convex.mutation(api.media.link_media_to_article, {
 			article_id: convex_article_id as Id<"articles">,
 			media_id: existing_media.media_id as Id<"media">,
-			order,
 		});
 		return `${existing_media.base_url}/original${extname_b(existing_media.filename)}`;
 	}
@@ -208,7 +205,6 @@ export async function stage_media(
 		await convex.mutation(api.media.link_media_to_article, {
 			article_id: convex_article_id as Id<"articles">,
 			media_id: media._id,
-			order,
 		});
 
 		// Return the final URL

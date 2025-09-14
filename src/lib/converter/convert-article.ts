@@ -14,9 +14,10 @@ async function check_link(
 	node: HastElement,
 	article: Article,
 	convex_article_id: string,
-	media_order_ref: { current: number },
 	absolute_urls: Map<string, string[]>,
+	cdn_urls: Map<string, string[]>,
 	article_links: Map<string, string[]>,
+	relative_links: Map<string, string[]>,
 ) {
 	if (!article || !convex_article_id) throw new Error("Article is undefined");
 	if (node.tagName !== "a") return;
@@ -26,8 +27,16 @@ async function check_link(
 
 	try {
 		const url = new URL(href);
-		const prev = absolute_urls.get(url.href) ?? [];
-		absolute_urls.set(url.href, [...prev, article.old_id.toString()]);
+
+		// Check if the hostname ends with 'amazonaws.com'
+		// https://jknm.s3.eu-central-1.amazonaws.com
+		if (url.hostname.endsWith("amazonaws.com")) {
+			const prev_cdn = cdn_urls.get(url.href) ?? [];
+			cdn_urls.set(url.href, [...prev_cdn, article.old_id.toString()]);
+		} else {
+			const prev = absolute_urls.get(url.href) ?? [];
+			absolute_urls.set(url.href, [...prev, article.old_id.toString()]);
+		}
 	} catch (_e) {
 		if (!href.startsWith("/"))
 			throw new Error(`Invalid link: ${href}, doesn't start with /`);
@@ -42,12 +51,8 @@ async function check_link(
 			if (/\.[a-zA-Z0-9]+$/.test(href))
 				throw new Error(`Unsupported relative link: ${href}`);
 
-			/* await stage_media(
-				href,
-				article.old_id,
-				media_order_ref.current++,
-				convex_article_id,
-			); */
+			const prev = relative_links.get(href) ?? [];
+			relative_links.set(href, [...prev, article.old_id.toString()]);
 		}
 	}
 }
@@ -57,9 +62,10 @@ async function deserialize_html(
 	editor: PlateEditor,
 	article: Article,
 	convex_article_id: string,
-	media_order_ref: { current: number },
 	absolute_urls: Map<string, string[]>,
+	cdn_urls: Map<string, string[]>,
 	article_links: Map<string, string[]>,
+	relative_links: Map<string, string[]>,
 ) {
 	const tree = parser.parse(html);
 	const tasks: Promise<void>[] = [];
@@ -69,9 +75,10 @@ async function deserialize_html(
 				node,
 				article,
 				convex_article_id,
-				media_order_ref,
 				absolute_urls,
+				cdn_urls,
 				article_links,
+				relative_links,
 			),
 		),
 	);
@@ -87,8 +94,9 @@ export async function convert_article(
 ): Promise<TElement[]> {
 	const value: TElement[] = [];
 	const absolute_urls = new Map<string, string[]>();
+	const cdn_urls = new Map<string, string[]>();
 	const article_links = new Map<string, string[]>();
-	const media_order_ref = { current: 0 };
+	const relative_links = new Map<string, string[]>();
 
 	for (const block of article.content.blocks) {
 		if (block.type === "paragraph") {
@@ -99,9 +107,10 @@ export async function convert_article(
 				editor,
 				article,
 				convex_article_id,
-				media_order_ref,
 				absolute_urls,
+				cdn_urls,
 				article_links,
+				relative_links,
 			);
 			const node: TElement = {
 				type: "p",
@@ -154,7 +163,6 @@ export async function convert_article(
 				const finalUrl = await stage_media(
 					img_url,
 					article.old_id,
-					media_order_ref.current++,
 					convex_article_id,
 				);
 

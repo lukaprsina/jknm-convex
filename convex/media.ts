@@ -19,14 +19,10 @@ async function load_articles_for_media(
 	ctx: QueryCtx,
 	article_id: Id<"articles">,
 ) {
-	const mediaLinks = await ctx.db
+	const media_links = await ctx.db
 		.query("media_to_articles")
-		.withIndex("by_article_and_order", (q) => q.eq("article_id", article_id))
+		.withIndex("by_article", (q) => q.eq("article_id", article_id))
 		.collect();
-
-	const sorted = mediaLinks
-		.filter((ML): ML is NonNullable<typeof ML> => ML !== null)
-		.sort((a, b) => a.order - b.order);
 
 	// fetch article itself
 	const article = await ctx.db.get(article_id);
@@ -34,7 +30,7 @@ async function load_articles_for_media(
 
 	// fetch all media in parallel
 	const mediaList = await Promise.all(
-		sorted.map((link) =>
+		media_links.map((link) =>
 			ctx.db.get(link.media_id).then((m) => {
 				if (!m) throw new Error(`media ${link.media_id} not found`);
 				return m;
@@ -181,7 +177,6 @@ export const confirm_upload = mutation({
 		await ctx.db.insert("media_to_articles", {
 			article_id: args.article_id,
 			media_id: args.media_db_id,
-			order: 0, // Default order, can be updated later
 		});
 
 		const is_image = media.content_type.startsWith("image/");
@@ -315,7 +310,6 @@ export const link_media_to_article = mutation({
 	args: {
 		article_id: v.id("articles"),
 		media_id: v.id("media"),
-		order: v.number(),
 	},
 	handler: async (ctx, args) => {
 		/* const user_id = await ctx.auth.getUserIdentity();
@@ -354,7 +348,6 @@ export const link_media_to_article = mutation({
 		const link_id = await ctx.db.insert("media_to_articles", {
 			article_id: args.article_id,
 			media_id: args.media_id,
-			order: args.order,
 		});
 
 		return link_id;

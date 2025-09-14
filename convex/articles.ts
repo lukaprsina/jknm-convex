@@ -26,7 +26,7 @@ async function load_metadata_for_article(
 ) {
 	const author_links = await ctx.db
 		.query("articles_to_authors")
-		.withIndex("by_article_and_order", (q) => q.eq("article_id", article._id))
+		.withIndex("by_article", (q) => q.eq("article_id", article._id))
 		.collect();
 
 	const authors = await Promise.all(
@@ -355,7 +355,7 @@ async function update_article(
 		// Delete previous authors for this article
 		const previous_authors = await ctx.db
 			.query("articles_to_authors")
-			.withIndex("by_article_and_order", (q) => q.eq("article_id", article_id))
+			.withIndex("by_article", (q) => q.eq("article_id", article_id))
 			.collect();
 
 		for (const author_link of previous_authors) {
@@ -487,9 +487,7 @@ export const copy_published_into_draft = mutation({
 		// Copy authors
 		const authors = await ctx.db
 			.query("articles_to_authors")
-			.withIndex("by_article_and_order", (q) =>
-				q.eq("article_id", args.article_id),
-			)
+			.withIndex("by_article", (q) => q.eq("article_id", args.article_id))
 			.collect();
 
 		for (const author_link of authors) {
@@ -503,16 +501,13 @@ export const copy_published_into_draft = mutation({
 		// Copy media links
 		const media_links = await ctx.db
 			.query("media_to_articles")
-			.withIndex("by_article_and_order", (q) =>
-				q.eq("article_id", args.article_id),
-			)
+			.withIndex("by_article", (q) => q.eq("article_id", args.article_id))
 			.collect();
 
 		for (const media_link of media_links) {
 			await ctx.db.insert("media_to_articles", {
 				article_id: new_draft_id,
 				media_id: media_link.media_id,
-				order: media_link.order,
 			});
 		}
 
@@ -540,9 +535,7 @@ export const delete_article = mutation({
 		// Delete author links
 		const author_links = await ctx.db
 			.query("articles_to_authors")
-			.withIndex("by_article_and_order", (q) =>
-				q.eq("article_id", args.article_id),
-			)
+			.withIndex("by_article", (q) => q.eq("article_id", args.article_id))
 			.collect();
 
 		for (const link of author_links) {
@@ -552,9 +545,7 @@ export const delete_article = mutation({
 		// Delete media links
 		const media_links = await ctx.db
 			.query("media_to_articles")
-			.withIndex("by_article_and_order", (q) =>
-				q.eq("article_id", args.article_id),
-			)
+			.withIndex("by_article", (q) => q.eq("article_id", args.article_id))
 			.collect();
 
 		for (const link of media_links) {
@@ -563,50 +554,5 @@ export const delete_article = mutation({
 
 		// Delete the article
 		await ctx.db.delete(args.article_id);
-	},
-});
-
-export const delete_everything = mutation({
-	handler: async (ctx) => {
-		const user_id = await ctx.auth.getUserIdentity();
-		if (!user_id) {
-			throw new Error("User must be authenticated to delete everything.");
-		}
-
-		// Delete all articles
-		const articles = await ctx.db.query("articles").collect();
-		for (const article of articles) {
-			await ctx.db.delete(article._id);
-		}
-
-		// Delete all author links
-		const articles_to_authors = await ctx.db
-			.query("articles_to_authors")
-			.collect();
-		for (const link of articles_to_authors) {
-			await ctx.db.delete(link._id);
-		}
-
-		// Delete all media
-		const media = await ctx.db.query("media").collect();
-		for (const item of media) {
-			await ctx.db.delete(item._id);
-		}
-
-		// Delete all media links
-		const media_to_articles = await ctx.db.query("media_to_articles").collect();
-		for (const link of media_to_articles) {
-			await ctx.db.delete(link._id);
-		}
-
-		await ctx.scheduler.runAfter(0, internal.media_sharp.empty_bucket);
-
-		console.log("All articles, authors, media, and B2 bucket cleared.", {
-			user_id,
-			article_count: articles.length,
-			author_link_count: articles_to_authors.length,
-			media_count: media.length,
-			media_link_count: media_to_articles.length,
-		});
 	},
 });

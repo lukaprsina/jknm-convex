@@ -121,15 +121,14 @@ const schema = defineSchema({
 		author_id: v.id("authors"),
 		order: v.number(),
 	})
-		.index("by_article_and_order", ["article_id", "order"])
+		.index("by_article", ["article_id", "order"])
 		.index("by_author", ["author_id"]),
 
 	media_to_articles: defineTable({
 		article_id: v.id("articles"),
 		media_id: v.id("media"),
-		order: v.number(),
 	})
-		.index("by_article_and_order", ["article_id", "order"])
+		.index("by_article", ["article_id"])
 		.index("by_media", ["media_id"]),
 });
 
