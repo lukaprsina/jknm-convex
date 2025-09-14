@@ -139,6 +139,12 @@ No match for URL http://www.jknm.sihttps//jknm.s3.eu-central-1.amazonaws.com/koc
 No match for URL https://https//jknm.s3.eu-central-1.amazonaws.com/kocevski-rog-je-ociscen-pnevmatik-05-06-2022/sidg.si/ (filename=)
 No match for URL https://www.jknm.sihttps//jknm.s3.eu-central-1.amazonaws.com/studenti-biologije-na-obisku-pri-letecih-dolenjcih-16-01-2024/dk8_43_presetnik_hudoklin_tri_desetletja_spremljanja_zatocisc_netopirjev.pdf (filename=dk8_43_presetnik_hudoklin_tri_desetletja_spremljanja_zatocisc_netopirjev.pdf)
 Wrote 69 mappings to converter/link_map.json
+
+IMPORTANT
+TODO:
+linki v listih
+210
+500
 */
 
 /* 

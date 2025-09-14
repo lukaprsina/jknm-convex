@@ -1,5 +1,7 @@
+import fs from "node:fs/promises";
 import { useConvexMutation } from "@convex-dev/react-query";
 import { createFileRoute } from "@tanstack/react-router";
+import { createServerFn } from "@tanstack/react-start";
 import { api } from "convex/_generated/api";
 import type { TElement } from "platejs";
 import {
@@ -8,14 +10,7 @@ import {
 	useEditorRef,
 	usePlateEditor,
 } from "platejs/react";
-import {
-	createContext,
-	use,
-	useEffect,
-	useMemo,
-	useRef,
-	useState,
-} from "react";
+import { createContext, use, useEffect, useState } from "react";
 import { EditorKit } from "~/components/editor-kit";
 import { Editor, EditorContainer } from "~/components/plate-ui/editor";
 import { Button } from "~/components/ui/button";
@@ -102,76 +97,36 @@ function ArticlePlateEditor() {
 	);
 }
 
+export type LinkMapsType = Record<string, string>;
+
 function ConfiguredPlateEditor() {
 	const editor = useEditorRef();
 	const editor_context = use(EditorContext);
 	const mounted = useEditorMounted();
+	const [linkMaps, setLinkMaps] = useState<LinkMapsType | undefined>(undefined);
 	useAutoAccept({
 		state: editor_context?.state,
 		setState: editor_context?.setState,
 		actions: editor_context?.actions,
 	});
 
-	// Move link tracking maps up here so they persist across article conversions
-	const absolute_urls = useMemo(() => new Map<string, string[]>(), []);
-	const cdn_urls = useMemo(() => new Map<string, string[]>(), []);
-	const article_links = useMemo(() => new Map<string, string[]>(), []);
-	const relative_links = useMemo(() => new Map<string, string[]>(), []);
-
-	// Track previous auto-accepting state so we can detect completion
-	const prev_auto_accepting = useRef<boolean | null>(null);
-
 	useEffect(() => {
-		const is_auto = !!editor_context?.state.is_auto_accepting;
-		const processed = editor_context?.state.auto_accept_progress.processed ?? 0;
-
-		// If we transitioned from auto-accepting true -> false and some items were processed,
-		// print the collected maps as plain objects.
-		if (
-			prev_auto_accepting.current === true &&
-			is_auto === false &&
-			processed > 0
-		) {
-			try {
-				const absolute_obj = Object.fromEntries(absolute_urls);
-				const cdn_obj = Object.fromEntries(cdn_urls);
-				const article_obj = Object.fromEntries(article_links);
-				const relative_obj = Object.fromEntries(relative_links);
-
-				// Print a single object with all maps converted to plain objects
-				console.log("Link analysis results:", {
-					absolute_urls: absolute_obj,
-					cdn_urls: cdn_obj,
-					article_links: article_obj,
-					relative_links: relative_obj,
-				});
-			} catch (e) {
-				console.error("Failed to stringify link maps:", e);
-			}
-		}
-
-		prev_auto_accepting.current = is_auto;
-	}, [
-		editor_context?.state.is_auto_accepting,
-		editor_context?.state.auto_accept_progress.processed,
-		absolute_urls,
-		cdn_urls,
-		article_links,
-		relative_links,
-		editor_context?.state,
-	]);
+		const fetch_link_maps = async () => {
+			const link_maps = await get_link_maps();
+			setLinkMaps(link_maps);
+		};
+		void fetch_link_maps();
+	}, []);
 
 	useEffect(() => {
 		if (!mounted) return;
 		const article =
 			editor_context?.state.articles[editor_context?.state.current_index];
-		if (!article) return;
+		if (!article || !linkMaps) return;
 
 		// Only proceed if we have the article mapping (draft created)
 		const mapping = editor_context?.state.article_mapping;
 		if (!mapping) return;
-
-		// console.log("Loading article", article.id, article.title);
 
 		editor.tf.reset();
 
@@ -182,24 +137,10 @@ function ConfiguredPlateEditor() {
 				article,
 				editor,
 				convex_article_id,
-				absolute_urls,
-				cdn_urls,
-				article_links,
-				relative_links,
+				linkMaps,
 			);
 			editor.tf.setValue(value);
 			editor_context?.actions.set_converted_content(editor.children);
-			/* try {
-			} catch (error) {
-				console.error("Failed to convert article:", error);
-				const error_value = [
-					{
-						type: "p",
-						children: [{ text: `Error converting article: ${error}` }],
-					},
-				];
-				editor.tf.setValue(error_value);
-			} */
 		};
 
 		void load_value();
@@ -210,10 +151,7 @@ function ConfiguredPlateEditor() {
 		editor,
 		mounted,
 		editor_context?.actions.set_converted_content,
-		absolute_urls,
-		article_links,
-		cdn_urls,
-		relative_links,
+		linkMaps,
 	]);
 
 	return (
@@ -222,6 +160,12 @@ function ConfiguredPlateEditor() {
 		</EditorContainer>
 	);
 }
+
+const get_link_maps = createServerFn().handler(async () => {
+	const link_map_raw = await fs.readFile("converter/link_map.json", "utf-8");
+	const link_map = JSON.parse(link_map_raw) as Record<string, string>;
+	return link_map satisfies LinkMapsType;
+});
 
 function RouteComponent() {
 	const create_draft_mutation = useConvexMutation(api.articles.create_draft);
@@ -578,7 +522,6 @@ function RouteComponent() {
 									search,
 									"found index",
 									idx,
-									{ a: state.articles },
 								);
 								if (idx >= 0) {
 									actions.set_index(idx);
