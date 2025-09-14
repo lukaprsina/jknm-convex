@@ -80,7 +80,7 @@ function Home() {
 	);
 
 	const delete_everything = useMutation({
-		mutationFn: useConvexMutation(api.articles.delete_everything),
+		mutationFn: useConvexMutation(api.delete_everything.delete_everything),
 	});
 
 	const sync_google_authors = useMutation({

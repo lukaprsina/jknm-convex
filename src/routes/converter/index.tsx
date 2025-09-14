@@ -16,18 +16,18 @@ import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import { Input } from "~/components/ui/input";
 import { Separator } from "~/components/ui/separator";
 import { convert_article } from "~/lib/converter/convert-article";
-import type { Article } from "~/lib/converter/types";
-import { useActions } from "~/lib/converter/use-actions";
-import { useAutoAccept } from "~/lib/converter/use-auto";
 import {
 	get_article_mapping,
 	init_database,
 	type NewArticleCacheEntry,
 	type ProblemEntry,
 	put_article_mapping,
-} from "~/lib/converter-db";
+} from "~/lib/converter/converter-db";
+import type { Article } from "~/lib/converter/types";
+import { useActions } from "~/lib/converter/use-actions";
+import { useAutoAccept } from "~/lib/converter/use-auto";
 
-export const OLD_MEDIA_DIRECTORY = "C:/Users/luka/Desktop/jknm-b2/jknm-novice";
+export const OLD_MEDIA_DIRECTORY = "C:/Users/luka/Desktop/original-media";
 export const NEW_MEDIA_DIRECTORY = "C:/Users/luka/Desktop/converted-media";
 
 export const Route = createFileRoute("/converter/")({

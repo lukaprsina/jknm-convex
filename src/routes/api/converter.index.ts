@@ -1,12 +1,12 @@
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
 import { createServerFileRoute } from "@tanstack/react-start/server";
-import type { Article } from "~/lib/converter/types";
 import type {
 	MediaCacheEntry,
 	NewArticleCacheEntry,
 	ProblemEntry,
-} from "~/lib/converter-db";
+} from "~/lib/converter/converter-db";
+import type { Article } from "~/lib/converter/types";
 
 /**
  * Get the converter directory path

@@ -4,7 +4,7 @@ import type { PlateEditor } from "platejs/react";
 import rehypeParse from "rehype-parse";
 import { unified } from "unified";
 import { visit } from "unist-util-visit";
-import { record_problem } from "~/lib/converter-db";
+import { record_problem } from "~/lib/converter/converter-db";
 import { stage_media } from "./stage-media";
 import type { Article } from "./types";
 
@@ -41,6 +41,7 @@ async function check_link(
 			// Return if href ends with a file extension (e.g., .jpg, .png, .pdf)
 			if (/\.[a-zA-Z0-9]+$/.test(href))
 				throw new Error(`Unsupported relative link: ${href}`);
+
 			/* await stage_media(
 				href,
 				article.id,

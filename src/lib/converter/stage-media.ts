@@ -11,7 +11,7 @@ import {
 	normalize_legacy_media_key,
 	put_media_entry,
 	record_problem,
-} from "~/lib/converter-db";
+} from "~/lib/converter/converter-db";
 import {
 	NEW_MEDIA_DIRECTORY,
 	OLD_MEDIA_DIRECTORY,

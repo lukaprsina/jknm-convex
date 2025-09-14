@@ -9,7 +9,7 @@ import type {
 	MediaCacheEntry,
 	NewArticleCacheEntry,
 	ProblemEntry,
-} from "~/lib/converter-db";
+} from "~/lib/converter/converter-db";
 import {
 	get_all_article_mappings,
 	get_all_legacy_articles,
@@ -21,7 +21,7 @@ import {
 	put_media_entry,
 	record_problem,
 	wipe_all_stores,
-} from "~/lib/converter-db";
+} from "~/lib/converter/converter-db";
 import type { ConverterState } from "../../routes/converter";
 import type { Article } from "./types";
 
@@ -40,7 +40,7 @@ export function useActions(
 	const create_draft_mutation = useConvexMutation(api.articles.create_draft);
 	const publish_draft_mutation = useConvexMutation(api.articles.publish_draft);
 	const delete_everything_mutation = useConvexMutation(
-		api.articles.delete_everything,
+		api.delete_everything.delete_everything,
 	);
 
 	const actions = {
