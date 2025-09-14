@@ -91,12 +91,12 @@ export async function convert_article(
 	article: Article,
 	editor: PlateEditor,
 	convex_article_id: string,
+	absolute_urls: Map<string, string[]>,
+	cdn_urls: Map<string, string[]>,
+	article_links: Map<string, string[]>,
+	relative_links: Map<string, string[]>,
 ): Promise<TElement[]> {
 	const value: TElement[] = [];
-	const absolute_urls = new Map<string, string[]>();
-	const cdn_urls = new Map<string, string[]>();
-	const article_links = new Map<string, string[]>();
-	const relative_links = new Map<string, string[]>();
 
 	for (const block of article.content.blocks) {
 		if (block.type === "paragraph") {

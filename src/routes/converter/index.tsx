@@ -8,7 +8,14 @@ import {
 	useEditorRef,
 	usePlateEditor,
 } from "platejs/react";
-import { createContext, use, useEffect, useState } from "react";
+import {
+	createContext,
+	use,
+	useEffect,
+	useMemo,
+	useRef,
+	useState,
+} from "react";
 import { EditorKit } from "~/components/editor-kit";
 import { Editor, EditorContainer } from "~/components/plate-ui/editor";
 import { Button } from "~/components/ui/button";
@@ -105,6 +112,55 @@ function ConfiguredPlateEditor() {
 		actions: editor_context?.actions,
 	});
 
+	// Move link tracking maps up here so they persist across article conversions
+	const absolute_urls = useMemo(() => new Map<string, string[]>(), []);
+	const cdn_urls = useMemo(() => new Map<string, string[]>(), []);
+	const article_links = useMemo(() => new Map<string, string[]>(), []);
+	const relative_links = useMemo(() => new Map<string, string[]>(), []);
+
+	// Track previous auto-accepting state so we can detect completion
+	const prev_auto_accepting = useRef<boolean | null>(null);
+
+	useEffect(() => {
+		const is_auto = !!editor_context?.state.is_auto_accepting;
+		const processed = editor_context?.state.auto_accept_progress.processed ?? 0;
+
+		// If we transitioned from auto-accepting true -> false and some items were processed,
+		// print the collected maps as plain objects.
+		if (
+			prev_auto_accepting.current === true &&
+			is_auto === false &&
+			processed > 0
+		) {
+			try {
+				const absolute_obj = Object.fromEntries(absolute_urls);
+				const cdn_obj = Object.fromEntries(cdn_urls);
+				const article_obj = Object.fromEntries(article_links);
+				const relative_obj = Object.fromEntries(relative_links);
+
+				// Print a single object with all maps converted to plain objects
+				console.log("Link analysis results:", {
+					absolute_urls: absolute_obj,
+					cdn_urls: cdn_obj,
+					article_links: article_obj,
+					relative_links: relative_obj,
+				});
+			} catch (e) {
+				console.error("Failed to stringify link maps:", e);
+			}
+		}
+
+		prev_auto_accepting.current = is_auto;
+	}, [
+		editor_context?.state.is_auto_accepting,
+		editor_context?.state.auto_accept_progress.processed,
+		absolute_urls,
+		cdn_urls,
+		article_links,
+		relative_links,
+		editor_context?.state,
+	]);
+
 	useEffect(() => {
 		if (!mounted) return;
 		const article =
@@ -122,7 +178,15 @@ function ConfiguredPlateEditor() {
 		// Load value asynchronously
 		const load_value = async () => {
 			const convex_article_id = mapping.article_id;
-			const value = await convert_article(article, editor, convex_article_id);
+			const value = await convert_article(
+				article,
+				editor,
+				convex_article_id,
+				absolute_urls,
+				cdn_urls,
+				article_links,
+				relative_links,
+			);
 			editor.tf.setValue(value);
 			editor_context?.actions.set_converted_content(editor.children);
 			/* try {
@@ -146,6 +210,10 @@ function ConfiguredPlateEditor() {
 		editor,
 		mounted,
 		editor_context?.actions.set_converted_content,
+		absolute_urls,
+		article_links,
+		cdn_urls,
+		relative_links,
 	]);
 
 	return (
