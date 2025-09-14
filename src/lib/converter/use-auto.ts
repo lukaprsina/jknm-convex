@@ -92,7 +92,7 @@ export function useAutoAccept({
 								...prev.auto_accept_errors,
 								{
 									index: prev.current_index,
-									article_id: article.id,
+									article_id: article.old_id,
 									title: article.title,
 									error: String(error),
 								},

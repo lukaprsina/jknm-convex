@@ -218,17 +218,17 @@ function RouteComponent() {
 			if (!article) return;
 
 			try {
-				let mapping = await get_article_mapping(article.id);
+				let mapping = await get_article_mapping(article.old_id);
 
 				// If no mapping exists, create a draft
 				if (!mapping) {
 					// console.log("Creating draft for article:", article.title);
 					const { id } = await create_draft_mutation({});
-					await put_article_mapping(article.id, id, "draft");
+					await put_article_mapping(article.old_id, id, "draft");
 					mapping = {
 						article_id: id,
 						status: "draft" as const,
-						legacy_id: article.id,
+						legacy_id: article.old_id,
 					};
 				}
 

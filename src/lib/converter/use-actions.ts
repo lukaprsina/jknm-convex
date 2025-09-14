@@ -142,7 +142,7 @@ export function useActions(
 					article_id = id;
 
 					// Store mapping
-					await put_article_mapping(article.id, id, "draft");
+					await put_article_mapping(article.old_id, id, "draft");
 				}
 
 				// Use the converted content from editor or fallback to basic content
@@ -163,14 +163,14 @@ export function useActions(
 
 				// Update mapping to published
 				await put_article_mapping(
-					article.id,
+					article.old_id,
 					article_id,
 					"published",
 					new Date(article.created_at).getTime(),
 				);
 
 				// Refresh mapping
-				const mapping = await get_article_mapping(article.id);
+				const mapping = await get_article_mapping(article.old_id);
 				setState(
 					(prev) =>
 						({

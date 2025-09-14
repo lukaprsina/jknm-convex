@@ -27,7 +27,7 @@ async function check_link(
 	try {
 		const url = new URL(href);
 		const prev = absolute_urls.get(url.href) ?? [];
-		absolute_urls.set(url.href, [...prev, article.id.toString()]);
+		absolute_urls.set(url.href, [...prev, article.old_id.toString()]);
 	} catch (_e) {
 		if (!href.startsWith("/"))
 			throw new Error(`Invalid link: ${href}, doesn't start with /`);
@@ -36,7 +36,7 @@ async function check_link(
 			const id = href.substring("/novica?id=".length);
 			if (!id) throw new Error("Invalid novica link, missing id");
 			const prev = article_links.get(id) ?? [];
-			article_links.set(id, [...prev, article.id.toString()]);
+			article_links.set(id, [...prev, article.old_id.toString()]);
 		} else {
 			// Return if href ends with a file extension (e.g., .jpg, .png, .pdf)
 			if (/\.[a-zA-Z0-9]+$/.test(href))
@@ -44,7 +44,7 @@ async function check_link(
 
 			/* await stage_media(
 				href,
-				article.id,
+				article.old_id,
 				media_order_ref.current++,
 				convex_article_id,
 			); */
@@ -153,7 +153,7 @@ export async function convert_article(
 			try {
 				const finalUrl = await stage_media(
 					img_url,
-					article.id,
+					article.old_id,
 					media_order_ref.current++,
 					convex_article_id,
 				);
@@ -177,13 +177,15 @@ export async function convert_article(
 			} catch (error) {
 				console.error("Failed to stage media:", img_url, error);
 				await record_problem(
-					article.id,
+					article.old_id,
 					"missing_media",
 					`Failed to stage media: ${img_url} - ${error}`,
 					img_url,
 				);
 				const placeholder_html = `<p>[Missing image: ${img_url}]</p>`;
-				const html = editor.api.html.deserialize({ element: placeholder_html });
+				const html = editor.api.html.deserialize({
+					element: placeholder_html,
+				});
 				value.push(html[0] as TElement);
 			}
 		}

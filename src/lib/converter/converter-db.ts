@@ -202,7 +202,7 @@ export async function load_legacy_articles(articles: Article[]): Promise<void> {
 
 			for (const article of articles) {
 				const entry: LegacyArticleEntry = {
-					legacy_id: article.id,
+					legacy_id: article.old_id,
 					article,
 				};
 

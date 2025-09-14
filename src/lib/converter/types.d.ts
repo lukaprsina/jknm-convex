@@ -1,6 +1,6 @@
 export interface Article {
-	id: number;
-	old_id: number | null;
+	// id: number;
+	old_id: number;
 	title: string;
 	url: string;
 	created_at: Date;
