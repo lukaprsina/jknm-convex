@@ -7,7 +7,7 @@ import { unified } from "unified";
 import type { Node } from "unist";
 import { record_problem } from "~/lib/converter/converter-db";
 import type { LinkMapsType } from "~/routes/converter";
-import { stage_media } from "./stage-media";
+import { stage_document_media, stage_media } from "./stage-media";
 import type { Article } from "./types";
 
 const parser = unified().use(rehypeParse, { fragment: true });
@@ -60,14 +60,6 @@ async function modify_link(
 
 	try {
 		const _url = new URL(href);
-		const link = Object.hasOwn(link_maps, href) ? link_maps[href] : undefined;
-
-		if (typeof link === "undefined") {
-			throw new Error(`No mapping for link: ${href}`);
-		}
-
-		node.properties.href = `https://www.example.com?link=${encodeURIComponent(link)}`;
-		return true;
 	} catch {
 		if (!href.startsWith("/"))
 			throw new Error(`Invalid link: ${href}, doesn't start with /`);
@@ -80,9 +72,34 @@ async function modify_link(
 			if (/\.[a-zA-Z0-9]+$/.test(href))
 				throw new Error(`Unsupported relative link: ${href}`);
 		}
+
+		return false;
 	}
 
-	return false;
+	const link_mapped = Object.hasOwn(link_maps.link_map, href)
+		? link_maps.link_map[href]
+		: undefined;
+	const link_full = Object.hasOwn(link_maps.full_urls, href) ? href : undefined;
+
+	if (typeof link_mapped === "undefined" && typeof link_full === "undefined") {
+		console.warn("No mapping for link:", href, article.old_id);
+		throw new Error(`No mapping for link: ${href}`);
+	}
+
+	const link = link_mapped ?? link_full;
+	if (!link) throw new Error(`UNREACHABLE: ${href}`);
+
+	// node.properties.href = `https://www.example.com?link=${encodeURIComponent(link)}`;
+	const filename = link.split("/").slice(-1)[0];
+	const original_url = await stage_document_media(
+		article.old_id,
+		convex_article_id,
+		link,
+		filename,
+	);
+
+	node.properties.href = original_url;
+	return true;
 }
 
 async function deserialize_html(
@@ -104,34 +121,18 @@ async function deserialize_html(
 	const descendants = editor.api.html.deserialize({ element: html });
 	return descendants; */
 	const tree = parser.parse(html);
-	let replaced_any = false;
 
 	await visitAsync(tree, async (node) => {
 		if (!isAnchor(node)) return;
-		console.log(node.properties.href);
 
 		if (throw_if_link)
 			throw new Error(`Unexpected link in article content: ${article.old_id}`);
 
-		const result = await modify_link(
-			node,
-			article,
-			convex_article_id,
-			link_maps,
-		);
-		if (result) replaced_any = true;
+		await modify_link(node, article, convex_article_id, link_maps);
 	});
 
 	const new_html = toHtml(tree);
 	const serialized = editor.api.html.deserialize({ element: new_html });
-	const serialized_fu = editor.api.html.deserialize({ element: html });
-	if (replaced_any)
-		console.log("Rewrote HTML:", {
-			new_html,
-			serialized,
-			html,
-			serialized_fu,
-		});
 	return serialized;
 }
 
@@ -219,6 +220,12 @@ export async function convert_article(
 		} else if (block.type === "image") {
 			const img_url = block.data.file?.url;
 			if (!img_url) throw new Error("Image block missing file url");
+
+			// TODO
+			const early_return: boolean = 1 + 1 === 2;
+			if (early_return) {
+				return value;
+			}
 
 			try {
 				// TODO

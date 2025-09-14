@@ -135,21 +135,40 @@ async function walk_and_map_files(
 
 /* 
 bun run .\scripts\analyze_links.ts
+both 606
 No match for URL http://www.jknm.sihttps//jknm.s3.eu-central-1.amazonaws.com/kocevski-rog-je-ociscen-pnevmatik-05-06-2022/si (filename=si)
 No match for URL https://https//jknm.s3.eu-central-1.amazonaws.com/kocevski-rog-je-ociscen-pnevmatik-05-06-2022/sidg.si/ (filename=)
+
+idk lol
 No match for URL https://www.jknm.sihttps//jknm.s3.eu-central-1.amazonaws.com/studenti-biologije-na-obisku-pri-letecih-dolenjcih-16-01-2024/dk8_43_presetnik_hudoklin_tri_desetletja_spremljanja_zatocisc_netopirjev.pdf (filename=dk8_43_presetnik_hudoklin_tri_desetletja_spremljanja_zatocisc_netopirjev.pdf)
 Wrote 69 mappings to converter/link_map.json
 
 IMPORTANT
 TODO:
 linki v listih
+14
 210
 500
-*/
 
-/* 
-Missing URLs:
-  link to an image 606
-  http://www.jknm.sihttps//jknm.s3.eu-central-1.amazonaws.com/kocevski-rog-je-ociscen-pnevmatik-05-06-2022/si
-  https://https//jknm.s3.eu-central-1.amazonaws.com/kocevski-rog-je-ociscen-pnevmatik-05-06-2022/sidg.si/
+no mappings
+16
+http://www.jknm.sihttps://jknm.s3.eu-central-1.amazonaws.com/pecenevka-hvalnica-norosti-16-11-2009/851_pecenevka.pdf
+
+116
+http://www.jknm.sihttps://jknm.s3.eu-central-1.amazonaws.com/pecenevka-hvalnica-norosti-16-11-2009/851_pecenevka.pdf
+
+145
+http://www.jknm.sihttps://jknm.s3.eu-central-1.amazonaws.com/desant-na-kunc-09-04-2010/669_ledena_kunc.pdf
+
+455
+http://www.jknm.sihttps://jknm.s3.eu-central-1.amazonaws.com/dolenjski-jamarski-tabor-2016-16-10-2016/dk4_13_bucar_dolenjski_jamarski_tabori.pdf
+
+515
+http://www.jknm.sihttps://jknm.s3.eu-central-1.amazonaws.com/krka-zivi-in-dan-dozivetij-08-06-2018/dk5_21_prsina_rovi_pod_mestnim_jedrom_novo_mesto.pdf
+
+578
+http://www.jknm.sihttps://jknm.s3.eu-central-1.amazonaws.com/nova-odkritja-v-pihalniku-14-04-2021/dk1_15_ladisic_jama_pihalnik_nad_podturnom.pdf
+
+633
+https://www.jknm.sihttps://jknm.s3.eu-central-1.amazonaws.com/studenti-biologije-na-obisku-pri-letecih-dolenjcih-16-01-2024/dk8_43_presetnik_hudoklin_tri_desetletja_spremljanja_zatocisc_netopirjev.pdf
 */

@@ -254,7 +254,6 @@ export const stage_legacy_media = mutation({
 		filename: v.string(),
 		content_type: v.string(),
 		size_bytes: v.number(),
-		legacy_key: v.string(),
 	},
 	handler: async (ctx, args) => {
 		/* const user_id = await ctx.auth.getUserIdentity();

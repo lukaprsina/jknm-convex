@@ -50,6 +50,7 @@ export interface ProblemEntry {
 	legacy_id: number;
 	kind:
 		| "missing_media"
+		| "missing_document"
 		| "bad_block"
 		| "unexpected_link"
 		| "invalid_document"

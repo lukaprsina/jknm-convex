@@ -116,99 +116,20 @@ export async function stage_media(
 		const url = new URL(media_url);
 		legacy_media_key = normalize_legacy_media_key(url.pathname);
 	} catch {
-		// If it's not a URL, treat it as a path
-		legacy_media_key = normalize_legacy_media_key(media_url);
 		throw new Error(`Invalid URL in stage_media: ${media_url}`);
 	}
 
-	// Check if media is already cached
-	const existing_media = await get_media_entry(legacy_media_key);
-	if (existing_media) {
-		// Media already staged, just link it to the article
-		/* console.log("Linking existing media to article:", {
-			article_id: convex_article_id,
-			media_id: existing_media.media_id,
-		}); */
-		await convex.mutation(api.media.link_media_to_article, {
-			article_id: convex_article_id as Id<"articles">,
-			media_id: existing_media.media_id as Id<"media">,
-		});
-		return `${existing_media.base_url}/original${extname_b(existing_media.filename)}`;
-	}
-
 	try {
-		// 1. Check if source file exists and get its size
 		const source_path = join_b(OLD_MEDIA_DIRECTORY, legacy_media_key);
 		const filename = basename_b(legacy_media_key);
-		const content_type = mime.getType(filename);
-		if (!content_type) {
-			throw new Error(`Could not determine content type for file: ${filename}`);
-		}
-
-		const media_type = get_media_type(content_type);
-
-		const file_check = await check_file_server({
-			data: { file_path: source_path },
-		});
-
-		if (!file_check.success || !file_check.exists) {
-			throw new Error(
-				`Source file does not exist: ${source_path} - ${file_check.error || "File not found"}`,
-			);
-		}
-
-		const size_bytes = file_check.size_bytes;
-		if (typeof size_bytes !== "number") {
-			throw new Error("Failed to get file size");
-		}
-
-		// 2. Call the convex stage_legacy_media mutation
-		const media = await convex.mutation(api.media.stage_legacy_media, {
-			filename,
-			content_type,
-			size_bytes,
-			legacy_key: legacy_media_key,
-		});
-
-		// 3. Copy file to NEW_MEDIA_DIRECTORY/<media_id>/original<ext>
-		const ext = extname_b(filename);
-		const target_dir = join_b(NEW_MEDIA_DIRECTORY, media._id);
-		const target_path = join_b(target_dir, `original${ext}`);
-
-		const copy_result = await copy_file_server({
-			data: { source_path, target_path, target_dir },
-		});
-
-		if (!copy_result.success) {
-			throw new Error(`Failed to copy file: ${copy_result.error}`);
-		}
-
-		// 4. Store in media cache
-		const cache_entry: MediaCacheEntry = {
+		const original_url = create_media_url(
 			legacy_media_key,
-			media_id: media._id,
-			type: media_type,
+			source_path,
 			filename,
-			content_type,
-			size_bytes,
-			base_url: media.base_url,
-		};
+			convex_article_id,
+		);
 
-		await put_media_entry(cache_entry);
-
-		// 5. Call link_media_to_article mutation if article_id is provided
-		/* console.log("Linking new media to article:", {
-			article_id: convex_article_id,
-			media_id: media._id,
-			order,
-		}); */
-		await convex.mutation(api.media.link_media_to_article, {
-			article_id: convex_article_id as Id<"articles">,
-			media_id: media._id,
-		});
-
-		// Return the final URL
-		return media.original.url;
+		return original_url;
 	} catch (error) {
 		console.error("Failed to stage media:", media_url, error);
 
@@ -223,4 +144,118 @@ export async function stage_media(
 		// Re-throw the error to be handled by convert_article with proper placeholder
 		throw error;
 	}
+}
+
+export async function stage_document_media(
+	legacy_id: number,
+	convex_article_id: string,
+	source_path: string,
+	filename: string,
+): Promise<string> {
+	try {
+		const original_url = await create_media_url(
+			filename,
+			source_path,
+			filename,
+			convex_article_id,
+		);
+
+		return original_url;
+	} catch (error) {
+		console.error("Failed to stage document media:", filename, error);
+
+		// Record the problem for debugging
+		await record_problem(
+			legacy_id,
+			"missing_document",
+			`Failed to stage document media: ${filename} - ${error instanceof Error ? error.message : String(error)}`,
+			filename,
+		);
+
+		// Re-throw the error to be handled by convert_article with proper placeholder
+		throw error;
+	}
+}
+
+async function create_media_url(
+	legacy_media_key: string,
+	source_path: string,
+	filename: string,
+	convex_article_id: string,
+) {
+	// 0: Check if media is already cached
+	const existing_media = await get_media_entry(legacy_media_key);
+	if (existing_media) {
+		// Media already staged, just link it to the article
+		await convex.mutation(api.media.link_media_to_article, {
+			article_id: convex_article_id as Id<"articles">,
+			media_id: existing_media.media_id as Id<"media">,
+		});
+		return `${existing_media.base_url}/original${extname_b(existing_media.filename)}`;
+	}
+
+	// 1. Check if source file exists and get its size
+	const content_type = mime.getType(filename);
+	if (!content_type) {
+		throw new Error(`Could not determine content type for file: ${filename}`);
+	}
+
+	const media_type = get_media_type(content_type);
+
+	const file_check = await check_file_server({
+		data: { file_path: source_path },
+	});
+
+	if (!file_check.success || !file_check.exists) {
+		throw new Error(
+			`Source file does not exist: ${source_path} - ${file_check.error || "File not found"}`,
+		);
+	}
+
+	const size_bytes = file_check.size_bytes;
+	if (typeof size_bytes !== "number") {
+		throw new Error("Failed to get file size");
+	}
+
+	// 2. Call the convex stage_legacy_media mutation
+	const media = await convex.mutation(api.media.stage_legacy_media, {
+		filename,
+		content_type,
+		size_bytes,
+	});
+
+	// 3. Copy file to NEW_MEDIA_DIRECTORY/<media_id><ext>
+	const ext = extname_b(filename);
+	const target_dir = join_b(NEW_MEDIA_DIRECTORY, media._id);
+	const target_path = join_b(target_dir, `original${ext}`);
+
+	const copy_result = await copy_file_server({
+		data: { source_path, target_path, target_dir },
+	});
+
+	if (!copy_result.success) {
+		throw new Error(`Failed to copy file: ${copy_result.error}`);
+	}
+
+	// 4. Store in media cache
+	const cache_entry: MediaCacheEntry = {
+		legacy_media_key,
+		media_id: media._id,
+		type: media_type,
+		filename,
+		content_type,
+		size_bytes,
+		base_url: media.base_url,
+	};
+
+	await put_media_entry(cache_entry);
+
+	// 5. Call link_media_to_article mutation if article_id is provided
+	await convex.mutation(api.media.link_media_to_article, {
+		article_id: convex_article_id as Id<"articles">,
+		media_id: media._id,
+	});
+
+	// Return the final URL
+	return media.original.url;
 }

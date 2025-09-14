@@ -97,7 +97,10 @@ function ArticlePlateEditor() {
 	);
 }
 
-export type LinkMapsType = Record<string, string>;
+export type LinkMapsType = {
+	link_map: Record<string, string>;
+	full_urls: Record<string, number[]>;
+};
 
 function ConfiguredPlateEditor() {
 	const editor = useEditorRef();
@@ -163,8 +166,10 @@ function ConfiguredPlateEditor() {
 
 const get_link_maps = createServerFn().handler(async () => {
 	const link_map_raw = await fs.readFile("converter/link_map.json", "utf-8");
+	const full_urls_raw = await fs.readFile("converter/full_urls.json", "utf-8");
 	const link_map = JSON.parse(link_map_raw) as Record<string, string>;
-	return link_map satisfies LinkMapsType;
+	const full_urls = JSON.parse(full_urls_raw) as Record<string, number[]>;
+	return { link_map, full_urls } satisfies LinkMapsType;
 });
 
 function RouteComponent() {
