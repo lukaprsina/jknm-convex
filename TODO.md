@@ -1,3 +1,20 @@
+Tecaj_jamar_pripravnik_2013a.xls Error: Could not determine content type for file: Tecaj_jamar_pripravnik_2013a.xls
+    at create_media_url (stage-media.ts:200:9)
+
+Tecaj_jamar_pripravnik_2014.xls Error: Could not determine content type for file: Tecaj_jamar_pripravnik_2014.xls
+
+Uncaught (in promise) Error: No mapping for link: http://www.dzrjl.si
+
+convert-article.ts:260 
+ Failed to stage media: https://jknm-novice.s3.eu-central-003.backblazeb2.com/v-iskanju-monolister-27-09-2017/slika_4.jpg Error: Caption deserialized to multiple nodes
+
+--
+
+VEČKRAT ISTO NOVICO DODAŠ, napačne publishash
+CREATION TIME JE NAPAČEN
+--
+
+
 `6. 7.`
 Filtriraj Accordion animacija ne dela
 

@@ -172,3 +172,37 @@ http://www.jknm.sihttps://jknm.s3.eu-central-1.amazonaws.com/nova-odkritja-v-pih
 633
 https://www.jknm.sihttps://jknm.s3.eu-central-1.amazonaws.com/studenti-biologije-na-obisku-pri-letecih-dolenjcih-16-01-2024/dk8_43_presetnik_hudoklin_tri_desetletja_spremljanja_zatocisc_netopirjev.pdf
 */
+
+/* 
+še enkrat:
+117
+http://www.jknm.sihttps://jknm.s3.eu-central-1.amazonaws.com/podzemni-vodovodarji-3-09-10-2009/4669_solnovo.pdf
+
+Tecaj_jamar_pripravnik_2012.xls
+
+298
+http://www.jknm.sihttps://jknm.s3.eu-central-1.amazonaws.com/dan-varnosti-in-tehnike-2012-23-12-2012/518_kostanjeviska.pdf
+
+Tecaj_jamar_pripravnik_2013a.xls
+
+Tecaj_jamar_pripravnik_2014.xls
+
+No mapping for link: http://www.dzrjl.si 360
+
+412
+http://www.jknm.sihttps://jknm.s3.eu-central-1.amazonaws.com/jojkinovac-2015-06-11-2015/dk3_14_bucar_pregled_jamarskih_raziskav_na_planini_grmec.pdf
+
+563
+http://www.jknm.sihttps://jknm.s3.eu-central-1.amazonaws.com/lukenjska-jama-kot-arheolosko-najdisce-18-06-2020/dk1_11_osole_lukenjska_jama_arheolosko_najdisce.pdf
+
+No mapping for link: https://www.kanin.si 567
+
+606
+http://www.jknm.sihttps://jknm.s3.eu-central-1.amazonaws.com/kocevski-rog-je-ociscen-pnevmatik-05-06-2022/si
+
+674
+https://suhokranjske-novice.com/interpretacijski-center-na-dvoru-dozivel-jamarski-krst/
+
+662
+https://www.jknm.si/media/img/novice/2024/32/Slovenske_novice___Trnuljcica.pdf
+*/

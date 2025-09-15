@@ -15,7 +15,7 @@ import {
 import {
 	NEW_MEDIA_DIRECTORY,
 	OLD_MEDIA_DIRECTORY,
-} from "../../routes/converter/index";
+} from "~/routes/converter/index";
 
 const convexQueryClient = new ConvexQueryClient(
 	import.meta.env.VITE_CONVEX_URL,
@@ -131,7 +131,7 @@ export async function stage_media(
 
 		return original_url;
 	} catch (error) {
-		console.error("Failed to stage media:", media_url, error);
+		// console.error("Failed to stage media:", media_url, error);
 
 		// Record the problem for debugging
 		await record_problem(

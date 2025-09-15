@@ -75,7 +75,10 @@ async function modify_link(
 
 		return false;
 	}
-
+	/*
+	TODO:
+	Uncaught (in promise) Error: Could not determine content type for file: watch?v=zzqJSxM_Eu8
+	*/
 	const link_mapped = Object.hasOwn(link_maps.link_map, href)
 		? link_maps.link_map[href]
 		: undefined;
@@ -86,15 +89,16 @@ async function modify_link(
 		throw new Error(`No mapping for link: ${href}`);
 	}
 
-	const link = link_mapped ?? link_full;
-	if (!link) throw new Error(`UNREACHABLE: ${href}`);
+	if (link_full) return false;
+
+	if (!link_mapped) throw new Error(`UNREACHABLE: ${href}`);
 
 	// node.properties.href = `https://www.example.com?link=${encodeURIComponent(link)}`;
-	const filename = link.split("/").slice(-1)[0];
+	const filename = link_mapped.split("/").slice(-1)[0];
 	const original_url = await stage_document_media(
 		article.old_id,
 		convex_article_id,
-		link,
+		link_mapped,
 		filename,
 	);
 
@@ -110,16 +114,6 @@ async function deserialize_html(
 	link_maps: LinkMapsType,
 	throw_if_link = true,
 ) {
-	/* const tree = parser.parse(html);
-	const tasks: Promise<void>[] = [];
-	visit(tree, "element", (node) =>
-		tasks.push(
-			modify_link(node, article, convex_article_id, link_maps, throw_if_link),
-		),
-	);
-	await Promise.all(tasks);
-	const descendants = editor.api.html.deserialize({ element: html });
-	return descendants; */
 	const tree = parser.parse(html);
 
 	await visitAsync(tree, async (node) => {
@@ -222,7 +216,7 @@ export async function convert_article(
 			if (!img_url) throw new Error("Image block missing file url");
 
 			// TODO
-			const early_return: boolean = 1 + 1 === 2;
+			const early_return: boolean = 1 + 1 === 3;
 			if (early_return) {
 				return value;
 			}
@@ -263,7 +257,7 @@ export async function convert_article(
 
 				value.push(first_html as TElement);
 			} catch (error) {
-				console.error("Failed to stage media:", img_url, error);
+				// console.error("Failed to stage media:", img_url, error);
 				await record_problem(
 					article.old_id,
 					"missing_media",
