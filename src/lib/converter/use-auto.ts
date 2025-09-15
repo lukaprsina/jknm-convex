@@ -105,7 +105,7 @@ export function useAutoAccept({
 		// Add a small delay to prevent rapid firing
 		const timeout = setTimeout(() => {
 			void process_current_article();
-		}, 100);
+		}, 2000);
 
 		return () => clearTimeout(timeout);
 	}, [

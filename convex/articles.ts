@@ -144,7 +144,7 @@ export const search_articles_unified = query({
 				.query("articles")
 				.withSearchIndex("search_content_by_year", (q) => {
 					let search = q
-						.search("content_markdown", args.search_term)
+						.search("content_text", args.search_term)
 						.eq("status", "published");
 					if (args.year) {
 						search = search.eq("published_year", args.year);
@@ -444,6 +444,10 @@ export const publish_draft = mutation({
 			args.author_ids,
 		);
 
+		if (article.draft_to_published_ref) {
+			ctx.db.delete(article.draft_to_published_ref);
+		}
+
 		// Update slug with the actual title
 		const slug = slugify_title(title, args.article_id);
 		await ctx.db.patch(args.article_id, { slug });
@@ -475,6 +479,7 @@ export const copy_published_into_draft = mutation({
 			title: article.title,
 			slug: "ERROR",
 			content_json: article.content_json,
+			draft_to_published_ref: args.article_id,
 			view_count: 0,
 			updated_at: Date.now(),
 			created_by: user.subject as Id<"users">,

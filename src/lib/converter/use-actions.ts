@@ -33,6 +33,13 @@ const get_articles = createServerFn().handler(async () => {
 	return articles;
 });
 
+function deep_clone<T>(value: T): T {
+	if (typeof globalThis.structuredClone === "function") {
+		return globalThis.structuredClone(value) as T;
+	}
+	return JSON.parse(JSON.stringify(value)) as T;
+}
+
 export function useActions(
 	state: ConverterState,
 	setState: React.Dispatch<React.SetStateAction<ConverterState>>,
@@ -150,7 +157,9 @@ export function useActions(
 					throw new Error("No converted content available");
 				}
 
-				const content_json = JSON.stringify(state.converted_content);
+				const content_for_publish = deep_clone(state.converted_content);
+				const content_json = JSON.stringify(content_for_publish);
+				const date = new Date(article.created_at).getTime();
 
 				// Publish the draft
 				await publish_draft_mutation({
@@ -158,7 +167,7 @@ export function useActions(
 					content_json: content_json,
 					thumbnail: undefined, // TODO: Handle thumbnail properly
 					author_ids: [], // TODO: Map legacy authors
-					published_at: new Date(article.created_at).getTime(),
+					published_at: date,
 				});
 
 				// Update mapping to published
@@ -166,7 +175,7 @@ export function useActions(
 					article.old_id,
 					article_id,
 					"published",
-					new Date(article.created_at).getTime(),
+					date,
 				);
 
 				// Refresh mapping
@@ -402,9 +411,10 @@ export function useActions(
 
 		set_converted_content: useCallback(
 			(content: TElement[]) => {
+				const cloned = deep_clone(content);
 				setState(
 					(prev) =>
-						({ ...prev, converted_content: content }) satisfies ConverterState,
+						({ ...prev, converted_content: cloned }) satisfies ConverterState,
 				);
 			},
 			[setState],

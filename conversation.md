@@ -302,7 +302,7 @@ After all accepted:
 ### Phase F: Integrity Audit
 1. Link check pass (external anchors).
 2. Identify orphan media (reference_count == 0).
-3. Optionally regenerate content_markdown for all articles (if needed for search index).
+3. Optionally regenerate content_text for all articles (if needed for search index).
 4. Final thumbnail selection pass (maybe manual cropping UI later).
 
 ---

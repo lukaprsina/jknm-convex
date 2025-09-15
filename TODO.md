@@ -12,6 +12,7 @@ convert-article.ts:260
 
 VEČKRAT ISTO NOVICO DODAŠ, napačne publishash
 CREATION TIME JE NAPAČEN
+VEČ DRAFTOV JE OSTALO
 --
 
 

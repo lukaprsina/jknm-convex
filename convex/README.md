@@ -28,7 +28,7 @@ This directory contains the Convex backend implementation for a blog site, migra
 - `status`: "draft" | "published" | "archived" | "deleted"
 - `content_json`: optional any (PlateJS editor content)
 - `content_html`: optional string
-- `content_markdown`: optional string (for full-text search)
+- `content_text`: optional string (for full-text search)
 - `excerpt`: optional string (for previews/SEO)
 - `view_count`: number
 - `thumbnail_crop`: optional object with x, y, width, height
@@ -51,7 +51,7 @@ This directory contains the Convex backend implementation for a blog site, migra
 
 **Search Index:**
 
-- `search_content`: full-text search on `content_markdown` with `status` filter
+- `search_content`: full-text search on `content_text` with `status` filter
 
 #### `articles_to_authors`
 

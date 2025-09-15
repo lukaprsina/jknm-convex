@@ -27,11 +27,13 @@ const schema = defineSchema({
 		slug: v.string(),
 		status: article_status_validator,
 		content_json: v.string(), // PlateJS Value type
-		content_markdown: v.optional(v.string()), // For full-text search
+		content_text: v.optional(v.string()), // For full-text search
 		excerpt: v.optional(v.string()), // For previews/SEO
+
 		view_count: v.number(),
 		thumbnail: v.optional(thumbnail_validator),
 		legacy_id: v.optional(v.number()),
+		draft_to_published_ref: v.optional(v.id("articles")), // Link draft to published version
 		updated_at: v.number(), // Unix timestamp
 		// created_at: v.number(), // Automatically managed by Convex
 		created_by: v.id("users"), // User who created the article
@@ -52,7 +54,7 @@ const schema = defineSchema({
 		.index("by_status_and_updated_at", ["status", "updated_at"])
 		// Search index with year filtering support
 		.searchIndex("search_content_by_year", {
-			searchField: "content_markdown",
+			searchField: "content_text",
 			filterFields: ["status", "published_year"],
 		}),
 

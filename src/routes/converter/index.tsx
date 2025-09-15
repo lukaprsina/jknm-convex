@@ -143,7 +143,7 @@ function ConfiguredPlateEditor() {
 				linkMaps,
 			);
 			editor.tf.setValue(value);
-			editor_context?.actions.set_converted_content(editor.children);
+			editor_context?.actions.set_converted_content(value);
 		};
 
 		void load_value();
