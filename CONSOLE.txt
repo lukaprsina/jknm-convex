@@ -1,0 +1,108 @@
+convert-article.ts:89 
+ Uncaught (in promise) Error: No mapping for link: http://www.jknm.sihttps://jknm.s3.eu-central-1.amazonaws.com/nova-odkritja-v-pihalniku-14-04-2021/dk1_15_ladisic_jama_pihalnik_nad_podturnom.pdf
+    at modify_link (convert-article.ts:89:9)
+    at convert-article.ts:125:9
+    at visitAsync (convert-article.ts:27:8)
+    at visitAsync (convert-article.ts:32:10)
+    at async deserialize_html (convert-article.ts:119:2)
+    at async convert_article (convert-article.ts:145:17)
+    at async load_value (index.tsx:139:18)
+convert-article.ts:88 
+ No mapping for link: http://www.jknm.sihttps://jknm.s3.eu-central-1.amazonaws.com/nova-odkritja-v-pihalniku-14-04-2021/dk1_15_ladisic_jama_pihalnik_nad_podturnom.pdf 578
+convert-article.ts:89 
+ Uncaught (in promise) Error: No mapping for link: http://www.jknm.sihttps://jknm.s3.eu-central-1.amazonaws.com/nova-odkritja-v-pihalniku-14-04-2021/dk1_15_ladisic_jama_pihalnik_nad_podturnom.pdf
+    at modify_link (convert-article.ts:89:9)
+    at convert-article.ts:125:9
+    at visitAsync (convert-article.ts:27:8)
+    at visitAsync (convert-article.ts:32:10)
+    at async deserialize_html (convert-article.ts:119:2)
+    at async convert_article (convert-article.ts:145:17)
+    at async load_value (index.tsx:139:18)
+convert-article.ts:88 
+ No mapping for link: http://www.jknm.sihttps://jknm.s3.eu-central-1.amazonaws.com/kocevski-rog-je-ociscen-pnevmatik-05-06-2022/si 606
+convert-article.ts:89 
+ Uncaught (in promise) Error: No mapping for link: http://www.jknm.sihttps://jknm.s3.eu-central-1.amazonaws.com/kocevski-rog-je-ociscen-pnevmatik-05-06-2022/si
+    at modify_link (convert-article.ts:89:9)
+    at convert-article.ts:125:9
+    at visitAsync (convert-article.ts:27:8)
+    at visitAsync (convert-article.ts:32:10)
+    at async deserialize_html (convert-article.ts:119:2)
+    at async convert_article (convert-article.ts:145:17)
+    at async load_value (index.tsx:139:18)
+convert-article.ts:88 
+ No mapping for link: http://www.jknm.sihttps://jknm.s3.eu-central-1.amazonaws.com/kocevski-rog-je-ociscen-pnevmatik-05-06-2022/si 606
+convert-article.ts:89 
+ Uncaught (in promise) Error: No mapping for link: http://www.jknm.sihttps://jknm.s3.eu-central-1.amazonaws.com/kocevski-rog-je-ociscen-pnevmatik-05-06-2022/si
+    at modify_link (convert-article.ts:89:9)
+    at convert-article.ts:125:9
+    at visitAsync (convert-article.ts:27:8)
+    at visitAsync (convert-article.ts:32:10)
+    at async deserialize_html (convert-article.ts:119:2)
+    at async convert_article (convert-article.ts:145:17)
+    at async load_value (index.tsx:139:18)
+convert-article.ts:88 
+ No mapping for link: https://www.jknm.sihttps://jknm.s3.eu-central-1.amazonaws.com/studenti-biol…8_43_presetnik_hudoklin_tri_desetletja_spremljanja_zatocisc_netopirjev.pdf 633
+convert-article.ts:89 
+ Uncaught (in promise) Error: No mapping for link: https://www.jknm.sihttps://jknm.s3.eu-central-1.amazonaws.com/studenti-biol…8_43_presetnik_hudoklin_tri_desetletja_spremljanja_zatocisc_netopirjev.pdf
+    at modify_link (convert-article.ts:89:9)
+    at convert-article.ts:125:9
+    at visitAsync (convert-article.ts:27:8)
+    at visitAsync (convert-article.ts:32:10)
+    at async deserialize_html (convert-article.ts:119:2)
+    at async convert_article (convert-article.ts:145:17)
+    at async load_value (index.tsx:139:18)
+convert-article.ts:88 
+ No mapping for link: https://www.jknm.sihttps://jknm.s3.eu-central-1.amazonaws.com/studenti-biol…8_43_presetnik_hudoklin_tri_desetletja_spremljanja_zatocisc_netopirjev.pdf 633
+convert-article.ts:89 
+ Uncaught (in promise) Error: No mapping for link: https://www.jknm.sihttps://jknm.s3.eu-central-1.amazonaws.com/studenti-biol…8_43_presetnik_hudoklin_tri_desetletja_spremljanja_zatocisc_netopirjev.pdf
+    at modify_link (convert-article.ts:89:9)
+    at convert-article.ts:125:9
+    at visitAsync (convert-article.ts:27:8)
+    at visitAsync (convert-article.ts:32:10)
+    at async deserialize_html (convert-article.ts:119:2)
+    at async convert_article (convert-article.ts:145:17)
+    at async load_value (index.tsx:139:18)
+convert-article.ts:88 
+ No mapping for link: https://www.jknm.si/media/img/novice/2024/32/Slovenske_novice___Trnuljcica.pdf 662
+convert-article.ts:89 
+ Uncaught (in promise) Error: No mapping for link: https://www.jknm.si/media/img/novice/2024/32/Slovenske_novice___Trnuljcica.pdf
+    at modify_link (convert-article.ts:89:9)
+    at convert-article.ts:125:9
+    at visitAsync (convert-article.ts:27:8)
+    at visitAsync (convert-article.ts:32:10)
+    at async deserialize_html (convert-article.ts:119:2)
+    at async convert_article (convert-article.ts:145:17)
+    at async load_value (index.tsx:139:18)
+convert-article.ts:88 
+ No mapping for link: https://www.jknm.si/media/img/novice/2024/32/Slovenske_novice___Trnuljcica.pdf 662
+convert-article.ts:89 
+ Uncaught (in promise) Error: No mapping for link: https://www.jknm.si/media/img/novice/2024/32/Slovenske_novice___Trnuljcica.pdf
+    at modify_link (convert-article.ts:89:9)
+    at convert-article.ts:125:9
+    at visitAsync (convert-article.ts:27:8)
+    at visitAsync (convert-article.ts:32:10)
+    at async deserialize_html (convert-article.ts:119:2)
+    at async convert_article (convert-article.ts:145:17)
+    at async load_value (index.tsx:139:18)
+convert-article.ts:88 
+ No mapping for link: https://suhokranjske-novice.com/interpretacijski-center-na-dvoru-dozivel-jamarski-krst/ 674
+convert-article.ts:89 
+ Uncaught (in promise) Error: No mapping for link: https://suhokranjske-novice.com/interpretacijski-center-na-dvoru-dozivel-jamarski-krst/
+    at modify_link (convert-article.ts:89:9)
+    at convert-article.ts:125:9
+    at visitAsync (convert-article.ts:27:8)
+    at visitAsync (convert-article.ts:32:10)
+    at async deserialize_html (convert-article.ts:119:2)
+    at async convert_article (convert-article.ts:145:17)
+    at async load_value (index.tsx:139:18)
+convert-article.ts:88 
+ No mapping for link: https://suhokranjske-novice.com/interpretacijski-center-na-dvoru-dozivel-jamarski-krst/ 674
+convert-article.ts:89 
+ Uncaught (in promise) Error: No mapping for link: https://suhokranjske-novice.com/interpretacijski-center-na-dvoru-dozivel-jamarski-krst/
+    at modify_link (convert-article.ts:89:9)
+    at convert-article.ts:125:9
+    at visitAsync (convert-article.ts:27:8)
+    at visitAsync (convert-article.ts:32:10)
+    at async deserialize_html (convert-article.ts:119:2)
+    at async convert_article (convert-article.ts:145:17)
+    at async load_value (index.tsx:139:18)

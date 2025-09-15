@@ -164,6 +164,7 @@ export function useActions(
 				// Publish the draft
 				await publish_draft_mutation({
 					article_id: article_id as Id<"articles">,
+					legacy_id: article.old_id,
 					content_json: content_json,
 					thumbnail: undefined, // TODO: Handle thumbnail properly
 					author_ids: [], // TODO: Map legacy authors

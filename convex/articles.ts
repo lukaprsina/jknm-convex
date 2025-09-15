@@ -3,7 +3,7 @@ import { paginationOptsValidator } from "convex/server";
 import { v } from "convex/values";
 import type { Value } from "platejs";
 import slugify from "slugify";
-import { internal } from "./_generated/api";
+import { api } from "./_generated/api";
 import type { Doc, Id } from "./_generated/dataModel";
 import {
 	type MutationCtx,
@@ -410,6 +410,7 @@ export const update_draft = mutation({
 export const publish_draft = mutation({
 	args: {
 		article_id: v.id("articles"),
+		legacy_id: v.optional(v.number()),
 		thumbnail: v.optional(thumbnail_validator),
 		author_ids: v.array(v.string()),
 		published_at: v.optional(v.number()),
@@ -440,12 +441,21 @@ export const publish_draft = mutation({
 				published_at,
 				published_year: new Date(published_at).getFullYear(),
 				slug: "ERROR", //slugify_title("", args.article_id), // Will be updated below with actual title
+				legacy_id: args.legacy_id,
 			},
 			args.author_ids,
 		);
 
 		if (article.draft_to_published_ref) {
-			ctx.db.delete(article.draft_to_published_ref);
+			// Use the centralized delete_article mutation to ensure join tables are cleaned up
+			const referenced_id = article.draft_to_published_ref;
+			const existing = await ctx.db.get(referenced_id);
+			if (existing) {
+				// delete_article is a public mutation; call it via the generated `api` reference
+				await ctx.runMutation(api.articles.delete_article, {
+					article_id: referenced_id,
+				});
+			}
 		}
 
 		// Update slug with the actual title
@@ -471,6 +481,22 @@ export const copy_published_into_draft = mutation({
 		const article = await ctx.db.get(args.article_id);
 		if (!article || article.status !== "published") {
 			throw new Error("Article not found or is not published.");
+		}
+
+		// Ensure there's not already a draft referencing this published article
+		const existing_draft = await ctx.db
+			.query("articles")
+			.withIndex("by_draft_to_published_ref", (q) =>
+				q.eq("draft_to_published_ref", args.article_id),
+			)
+			.first();
+
+		if (existing_draft) {
+			return {
+				ok: false as const,
+				error: "draft_exists" as const,
+				draft_id: existing_draft._id,
+			};
 		}
 
 		// Create a new draft article
@@ -518,7 +544,7 @@ export const copy_published_into_draft = mutation({
 
 		// We don't need to copy actual B2 files
 
-		return new_draft_id;
+		return { ok: true as const, draft_id: new_draft_id };
 	},
 });
 

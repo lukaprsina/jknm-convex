@@ -43,6 +43,8 @@ const schema = defineSchema({
 		published_year: v.optional(v.number()), // Extracted year for efficient filtering
 	})
 		.index("by_slug", ["slug"])
+		// Index to quickly find a draft that references a published article
+		.index("by_draft_to_published_ref", ["draft_to_published_ref"])
 		.index("by_legacy_id", ["legacy_id"])
 		// Compound indexes for efficient year + status filtering
 		.index("by_status_and_published_year", [

@@ -2,6 +2,8 @@ import { useEditorMounted } from "platejs/react";
 import { useEffect } from "react";
 import type { ConverterActions, ConverterState } from "~/routes/converter";
 
+const TIMEOUT_MS = 5000;
+
 // Automated loop for processing articles
 export function useAutoAccept({
 	state,
@@ -105,7 +107,7 @@ export function useAutoAccept({
 		// Add a small delay to prevent rapid firing
 		const timeout = setTimeout(() => {
 			void process_current_article();
-		}, 2000);
+		}, TIMEOUT_MS);
 
 		return () => clearTimeout(timeout);
 	}, [
