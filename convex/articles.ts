@@ -121,6 +121,18 @@ export const get_by_legacy_id = query({
 	},
 });
 
+export const get_all = query({
+	args: {},
+	handler: async (ctx) => {
+		const user_id = await ctx.auth.getUserIdentity();
+		if (!user_id) {
+			throw new Error("User must be authenticated to get all articles.");
+		}
+		const articles = await ctx.db.query("articles").collect();
+		return articles;
+	},
+});
+
 /**
  * Unified search function that handles both regular queries and full-text search
  * with author and year filtering
@@ -423,6 +435,8 @@ export const publish_draft = mutation({
 		}
 
 		const article = await ctx.db.get(args.article_id);
+
+		console.log("Publishing article", { article_id: args.article_id });
 
 		if (!article || article.status !== "draft") {
 			throw new Error("Article not found or is not a draft.");

@@ -65,7 +65,7 @@ export function ArticleSidebar({
 									key={sub_item.label}
 									label={sub_item.label}
 									link={sub_item.link}
-									edit_link={sub_item.edit_link}
+									edit_button={sub_item.edit_button}
 								/>
 							))}
 						</SidebarMenuSub>
@@ -81,7 +81,7 @@ function ArticleSidebarSubItem({
 	status,
 	label,
 	link,
-	edit_link,
+	edit_button,
 }: ArticleSidebarByStatusSubItem) {
 	const { isMobile } = useSidebar();
 	const delete_article = useMutation({
@@ -91,8 +91,8 @@ function ArticleSidebarSubItem({
 	const match_route = useMatchRoute();
 
 	return (
-		<SidebarMenuSubItem>
-			<SidebarMenuSubButton asChild>
+		<SidebarMenuSubItem className="overflow-ellipsis whitespace-nowrap">
+			<SidebarMenuSubButton className="w-[calc(100%-2rem)]" asChild>
 				{link({ children: label })}
 			</SidebarMenuSubButton>
 			<DropdownMenu>
@@ -121,7 +121,7 @@ function ArticleSidebarSubItem({
 						})}
 					</DropdownMenuItem>
 					<DropdownMenuItem asChild>
-						{edit_link({
+						{edit_button({
 							children: (
 								<>
 									<EditIcon size={14} className="text-muted-foreground" />
