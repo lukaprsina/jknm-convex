@@ -4,7 +4,7 @@ import { useConvexMutation } from "@convex-dev/react-query";
 import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { useEditorRef, usePluginOption } from "platejs/react";
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import DatePickerDemo from "~/components/date-time";
 import { ImageSelector } from "~/components/plate-ui/image-selector";
 import PublishImageCropper from "~/components/plate-ui/publish-image-cropper";
@@ -87,10 +87,12 @@ export function PublishDialog() {
 					{selectedImage && (
 						<PublishImageCropper className="m-10" image={selectedImage} />
 					)}
-					<ImageSelector
-						selectedImage={selectedImage}
-						setSelectedImage={setSelectedImage}
-					/>
+					<Suspense fallback={<div className="p-6">Nalaganje...</div>}>
+						<ImageSelector
+							selectedImage={selectedImage}
+							setSelectedImage={setSelectedImage}
+						/>
+					</Suspense>
 				</div>
 				<DialogFooter className="px-6 pb-6 sm:justify-start">
 					<DialogClose asChild>
