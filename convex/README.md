@@ -25,7 +25,7 @@ This directory contains the Convex backend implementation for a blog site, migra
 - `title`: string
 - `slug`: string (URL-friendly version)
 - `url`: string (full URL for legacy support)
-- `status`: "draft" | "published" | "archived" | "deleted"
+- `status`: "draft" | "published" | "deleted"
 - `content_json`: optional any (PlateJS editor content)
 - `content_html`: optional string
 - `content_text`: optional string (for full-text search)
@@ -38,7 +38,6 @@ This directory contains the Convex backend implementation for a blog site, migra
 - `created_at`: number (Unix timestamp)
 - `deleted_at`: optional number (Unix timestamp)
 - `published_at`: optional number (Unix timestamp)
-- `archived_at`: optional number (Unix timestamp)
 
 **Indexes:**
 

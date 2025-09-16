@@ -466,7 +466,7 @@ export const publish_draft = mutation({
 			const existing = await ctx.db.get(referenced_id);
 			if (existing) {
 				// delete_article is a public mutation; call it via the generated `api` reference
-				await ctx.runMutation(api.articles.delete_article, {
+				await ctx.runMutation(api.articles.hard_delete, {
 					article_id: referenced_id,
 				});
 			}
@@ -562,7 +562,62 @@ export const copy_published_into_draft = mutation({
 	},
 });
 
-export const delete_article = mutation({
+export const restore = mutation({
+	args: {
+		article_id: v.id("articles"),
+	},
+	handler: async (ctx, args) => {
+		const user_id = await ctx.auth.getUserIdentity();
+		if (!user_id) {
+			throw new Error("User must be authenticated to restore an article.");
+		}
+
+		const article = await ctx.db.get(args.article_id);
+		if (!article) {
+			throw new Error("Article not found.");
+		}
+
+		if (article.status !== "deleted") {
+			// Not deleted, nothing to do
+			return;
+		}
+
+		await ctx.db.patch(args.article_id, {
+			status: "draft",
+			updated_at: Date.now(),
+		});
+	},
+});
+
+export const soft_delete = mutation({
+	args: {
+		article_id: v.id("articles"),
+	},
+	handler: async (ctx, args) => {
+		const user_id = await ctx.auth.getUserIdentity();
+		if (!user_id) {
+			throw new Error("User must be authenticated to delete an article.");
+		}
+
+		const article = await ctx.db.get(args.article_id);
+		if (!article) {
+			throw new Error("Article not found.");
+		}
+
+		if (article.status === "deleted") {
+			// Already deleted
+			return;
+		}
+
+		await ctx.db.patch(args.article_id, {
+			status: "deleted",
+			// slug: `deleted-${args.article_id}-${Date.now()}`,
+			updated_at: Date.now(),
+		});
+	},
+});
+
+export const hard_delete = mutation({
 	args: {
 		article_id: v.id("articles"),
 	},

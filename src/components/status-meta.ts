@@ -18,6 +18,5 @@ type StatusInfo = {
 export const status_meta = new Map<ArticleStatus, StatusInfo>([
 	["draft", { label: "Osnutki", icon: Edit3Icon }],
 	["published", { label: "Objavljeno", icon: CheckCircleIcon }],
-	["archived", { label: "Arhiv", icon: ArchiveIcon }],
 	["deleted", { label: "Koš", icon: Trash2Icon }],
 ]);

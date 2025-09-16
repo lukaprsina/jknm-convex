@@ -5,6 +5,7 @@ import { useConvexMutation } from "@convex-dev/react-query";
 import { useMutation } from "@tanstack/react-query";
 import { useMatchRoute, useNavigate } from "@tanstack/react-router";
 import {
+	ArchiveRestoreIcon,
 	EditIcon,
 	ExternalLinkIcon,
 	MoreHorizontalIcon,
@@ -62,6 +63,7 @@ export function ArticleSidebar({
 								<ArticleSidebarSubItem
 									id={sub_item.id}
 									status={sub_item.status}
+									slug={sub_item.slug}
 									key={sub_item.label}
 									label={sub_item.label}
 									link={sub_item.link}
@@ -76,19 +78,140 @@ export function ArticleSidebar({
 	);
 }
 
+export type CopyPublishedIntoDraftMutation =
+	typeof api.articles.copy_published_into_draft;
+
+export function useCopyPublishedIntoDraftMutation() {
+	const navigate = useNavigate();
+
+	const copy_published_into_draft_mutation = useMutation<
+		CopyPublishedIntoDraftMutation["_returnType"],
+		Error,
+		CopyPublishedIntoDraftMutation["_args"]
+	>({
+		mutationFn: useConvexMutation(api.articles.copy_published_into_draft),
+		onSuccess: ({ ok, draft_id }) => {
+			if (!ok) {
+				alert("Napaka pri kopiranju objavljenega članka v osnutek.");
+				return;
+			}
+
+			navigate({
+				to: "/admin/$status/$article_slug/uredi",
+				params: { article_slug: draft_id, status: "draft" },
+			});
+		},
+	});
+
+	return copy_published_into_draft_mutation;
+}
+
 function ArticleSidebarSubItem({
 	id,
 	status,
+	slug,
 	label,
 	link,
 	edit_button,
 }: ArticleSidebarByStatusSubItem) {
 	const { isMobile } = useSidebar();
-	const delete_article = useMutation({
-		mutationFn: useConvexMutation(api.articles.delete_article),
-	});
 	const navigate = useNavigate();
 	const match_route = useMatchRoute();
+
+	const delete_article_mutation = useMutation({
+		mutationFn: useConvexMutation(api.articles.soft_delete),
+	});
+
+	const restore_article_mutation = useMutation({
+		mutationFn: useConvexMutation(api.articles.restore),
+	});
+
+	const copy_published_into_draft_mutation =
+		useCopyPublishedIntoDraftMutation();
+
+	let edit_component: React.ReactNode;
+	if (status === "published") {
+		edit_component = (
+			<DropdownMenuItem asChild>
+				{edit_button({
+					children: (
+						<>
+							<EditIcon size={14} className="text-muted-foreground" />
+							<span>Uredi</span>
+						</>
+					),
+					onClick: () => {
+						copy_published_into_draft_mutation.mutate({ article_id: id });
+					},
+				})}
+			</DropdownMenuItem>
+		);
+	} else if (status === "draft") {
+		edit_component = (
+			<DropdownMenuItem asChild>
+				{edit_button({
+					children: (
+						<>
+							<EditIcon size={14} className="text-muted-foreground" />
+							<span>Uredi</span>
+						</>
+					),
+					onClick: () => {
+						navigate({
+							to: "/admin/$status/$article_slug/uredi",
+							params: { article_slug: slug, status: "draft" },
+						});
+					},
+				})}
+			</DropdownMenuItem>
+		);
+	} else {
+		edit_component = null;
+	}
+
+	let delete_component: React.ReactNode;
+	if (status !== "deleted") {
+		delete_component = (
+			<DropdownMenuItem
+				onClick={() => {
+					const is_viewing = match_route({
+						to: "/admin/$status/$article_slug",
+						params: { article_slug: id, status },
+						fuzzy: true,
+					});
+
+					delete_article_mutation.mutate({ article_id: id });
+
+					if (is_viewing) {
+						navigate({
+							to: "/admin",
+						});
+					}
+				}}
+			>
+				<Trash2Icon size={14} className="text-muted-foreground" />
+				<span>Zbriši</span>
+			</DropdownMenuItem>
+		);
+	} else {
+		delete_component = null;
+	}
+
+	let restore_component: React.ReactNode;
+	if (status === "deleted") {
+		restore_component = (
+			<DropdownMenuItem
+				onClick={() => {
+					restore_article_mutation.mutate({ article_id: id });
+				}}
+			>
+				<ArchiveRestoreIcon size={14} className="text-muted-foreground" />
+				<span>Obnovi</span>
+			</DropdownMenuItem>
+		);
+	} else {
+		restore_component = null;
+	}
 
 	return (
 		<SidebarMenuSubItem className="overflow-ellipsis whitespace-nowrap">
@@ -99,7 +222,7 @@ function ArticleSidebarSubItem({
 				<DropdownMenuTrigger asChild>
 					<SidebarMenuAction showOnHover>
 						<MoreHorizontalIcon />
-						<span className="sr-only">More</span>
+						<span className="sr-only">Več</span>
 					</SidebarMenuAction>
 				</DropdownMenuTrigger>
 				<DropdownMenuContent
@@ -120,41 +243,20 @@ function ArticleSidebarSubItem({
 							),
 						})}
 					</DropdownMenuItem>
-					<DropdownMenuItem asChild>
-						{edit_button({
-							children: (
-								<>
-									<EditIcon size={14} className="text-muted-foreground" />
-									<span>Uredi</span>
-								</>
-							),
-						})}
-					</DropdownMenuItem>
-					<DropdownMenuItem>
-						<ShareIcon size={14} className="text-muted-foreground" />
-						<span>Deli</span>
-					</DropdownMenuItem>
-					<DropdownMenuSeparator />
-					<DropdownMenuItem
-						onClick={() => {
-							const is_viewing = match_route({
-								to: "/admin/$status/$article_slug",
-								params: { article_slug: id, status },
-								fuzzy: true,
-							});
-
-							if (is_viewing) {
-								navigate({
-									to: "/admin",
-								});
-							}
-
-							delete_article.mutate({ article_id: id });
-						}}
-					>
-						<Trash2Icon size={14} className="text-muted-foreground" />
-						<span>Zbriši</span>
-					</DropdownMenuItem>
+					{edit_component}
+					{delete_component && (
+						<DropdownMenuItem>
+							<ShareIcon size={14} className="text-muted-foreground" />
+							<span>Deli</span>
+						</DropdownMenuItem>
+					)}
+					{!delete_component && restore_component}
+					{delete_component && (
+						<>
+							<DropdownMenuSeparator />
+							{delete_component}
+						</>
+					)}
 				</DropdownMenuContent>
 			</DropdownMenu>
 		</SidebarMenuSubItem>

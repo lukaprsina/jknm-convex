@@ -4,7 +4,6 @@ import { v } from "convex/values";
 export const article_status_validator = v.union(
 	v.literal("draft"),
 	v.literal("published"),
-	v.literal("archived"),
 	v.literal("deleted"),
 );
 
@@ -39,7 +38,6 @@ const schema = defineSchema({
 		created_by: v.id("users"), // User who created the article
 		deleted_at: v.optional(v.number()), // Unix timestamp
 		published_at: v.optional(v.number()), // Unix timestamp
-		archived_at: v.optional(v.number()), // Unix timestamp
 		published_year: v.optional(v.number()), // Extracted year for efficient filtering
 	})
 		.index("by_slug", ["slug"])

@@ -2,26 +2,14 @@ import { api } from "@convex/_generated/api";
 import type { Doc, Id } from "@convex/_generated/dataModel";
 import type { article_status_validator } from "@convex/schema";
 import { convexQuery, useConvexMutation } from "@convex-dev/react-query";
-import {
-	type UseMutateFunction,
-	UseMutationResult,
-	useMutation,
-	useSuspenseQuery,
-} from "@tanstack/react-query";
-import {
-	Link,
-	type LinkProps,
-	type NavigateFn,
-	useLinkProps,
-	useNavigate,
-} from "@tanstack/react-router";
+import { useMutation, useSuspenseQuery } from "@tanstack/react-query";
+import { Link, type LinkProps, useNavigate } from "@tanstack/react-router";
 import type { EmptyObject } from "better-auth/react";
 import type { Infer } from "convex/values";
 import { HomeIcon, type LucideIcon, PlusIcon, ShieldIcon } from "lucide-react";
 import { type ReactNode, useMemo } from "react";
 import { NavProjects } from "~/components/nav-projects";
 import { status_meta } from "~/components/status-meta";
-import { Button } from "~/components/ui/button";
 import { Sidebar, SidebarContent, SidebarRail } from "~/components/ui/sidebar";
 import { SidebarSecondary } from "~/components/ui/sidebar-secondary";
 import { cn } from "~/lib/utils";
@@ -30,6 +18,7 @@ import { ArticleSidebar } from "./-article-sidebar";
 export type ArticleSidebarByStatusSubItem = {
 	id: Id<"articles">;
 	status: ArticleStatus;
+	slug: string;
 	label: string;
 	link: (props: LinkProps) => ReactNode;
 	edit_button: (props: React.ComponentProps<"button">) => ReactNode;
@@ -44,8 +33,6 @@ export type ArticleSidebarByStatusItem = {
 };
 
 type ArticleStatus = Infer<typeof article_status_validator>;
-type CopyPublishedIntoDraftMutation =
-	typeof api.articles.copy_published_into_draft;
 
 const status_order = Array.from(status_meta.keys());
 
@@ -59,40 +46,16 @@ export function AdminSidebar({
 
 	const navigate = useNavigate();
 
-	const copy_published_into_draft_mutation = useMutation<
-		CopyPublishedIntoDraftMutation["_returnType"],
-		Error,
-		CopyPublishedIntoDraftMutation["_args"]
-	>({
-		mutationFn: useConvexMutation(api.articles.copy_published_into_draft),
-		onSuccess: ({ ok, draft_id }) => {
-			if (!ok) {
-				alert("Napaka pri kopiranju objavljenega članka v osnutek.");
-				return;
-			}
-
-			navigate({
-				to: "/admin/$status/$article_slug/uredi",
-				params: { article_slug: draft_id, status: "draft" },
-			});
-		},
-	});
-
 	const sidebar_content = useMemo(() => {
 		const sidebar_items: ArticleSidebarByStatusItem[] = status_order.map(
 			(status) => {
 				const articles = articles_by_status[status] ?? [];
-				return create_sidebar_item(
-					articles,
-					status,
-					navigate,
-					copy_published_into_draft_mutation.mutate,
-				);
+				return create_sidebar_item(articles, status);
 			},
 		);
 
 		return <ArticleSidebar articles_by_status={sidebar_items} />;
-	}, [articles_by_status, copy_published_into_draft_mutation, navigate]);
+	}, [articles_by_status]);
 
 	const create_mutation = useMutation<
 		typeof api.articles.create_draft._returnType,
@@ -144,12 +107,6 @@ export function AdminSidebar({
 function create_sidebar_item(
 	articles: Doc<"articles">[],
 	status: ArticleStatus,
-	navigate: NavigateFn,
-	copy_published_into_draft_mutation: UseMutateFunction<
-		CopyPublishedIntoDraftMutation["_returnType"],
-		Error,
-		CopyPublishedIntoDraftMutation["_args"]
-	>,
 ) {
 	const meta = status_meta.get(status);
 	if (!meta) throw new Error("Status meta not found");
@@ -163,6 +120,7 @@ function create_sidebar_item(
 		),
 		items: articles.map((article) => ({
 			id: article._id,
+			slug: article.slug,
 			status: article.status,
 			label: article.title,
 			link: (props: LinkProps) => (
@@ -176,26 +134,7 @@ function create_sidebar_item(
 				/>
 			),
 			edit_button: ({ className, ...props }) => (
-				<button
-					{...props}
-					className={cn(className, "w-full")}
-					onClick={() => {
-						if (
-							article.status === "published" ||
-							article.status === "archived"
-						) {
-							copy_published_into_draft_mutation({ article_id: article._id });
-						} else if (article.status === "draft") {
-							navigate({
-								to: "/admin/$status/$article_slug/uredi",
-								params: {
-									article_slug: article.slug,
-									status: "draft",
-								},
-							});
-						}
-					}}
-				/>
+				<button {...props} className={cn(className, "w-full")} />
 			),
 		})),
 	};

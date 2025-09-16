@@ -107,10 +107,10 @@ export function ImageSelector({
 		}),
 	);
 
-	const _skeletonIds = Array.from(
+	/* const _skeletonIds = Array.from(
 		{ length: 6 },
 		() => `skeleton-${Math.random().toString(36).substring(2, 9)}`,
-	);
+	); */
 
 	useEffect(() => {
 		const first_image = images_for_article.media.at(0);
