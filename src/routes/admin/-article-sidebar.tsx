@@ -13,6 +13,18 @@ import {
 	Trash2Icon,
 } from "lucide-react";
 import {
+	AlertDialog,
+	AlertDialogAction,
+	AlertDialogCancel,
+	AlertDialogContent,
+	AlertDialogDescription,
+	AlertDialogFooter,
+	AlertDialogHeader,
+	AlertDialogTitle,
+	AlertDialogTrigger,
+} from "~/components/ui/alert-dialog";
+import { Button } from "~/components/ui/button";
+import {
 	DropdownMenu,
 	DropdownMenuContent,
 	DropdownMenuItem,
@@ -122,6 +134,10 @@ function ArticleSidebarSubItem({
 		mutationFn: useConvexMutation(api.articles.soft_delete),
 	});
 
+	const hard_delete_article_mutation = useMutation({
+		mutationFn: useConvexMutation(api.articles.hard_delete),
+	});
+
 	const restore_article_mutation = useMutation({
 		mutationFn: useConvexMutation(api.articles.restore),
 	});
@@ -170,7 +186,54 @@ function ArticleSidebarSubItem({
 	}
 
 	let delete_component: React.ReactNode;
-	if (status !== "deleted") {
+	if (status === "deleted") {
+		delete_component = (
+			<AlertDialog>
+				<AlertDialogTrigger asChild>
+					<DropdownMenuItem>
+						<Trash2Icon size={14} className="text-muted-foreground" />
+						<span>Trajno zbriši</span>
+					</DropdownMenuItem>
+				</AlertDialogTrigger>
+				<AlertDialogContent>
+					<AlertDialogHeader>
+						<AlertDialogTitle>Potrdi trajno brisanje</AlertDialogTitle>
+						<AlertDialogDescription>
+							Ali res želiš trajno izbrisati ta članek? Tega dejanja ni mogoče
+							razveljaviti.
+						</AlertDialogDescription>
+					</AlertDialogHeader>
+					<AlertDialogFooter>
+						<AlertDialogCancel>Prekliči</AlertDialogCancel>
+						<AlertDialogAction
+							onClick={() => {
+								const is_viewing = match_route({
+									to: "/admin/$status/$article_slug",
+									params: {
+										article_slug: slug,
+										status: status,
+									},
+									fuzzy: true,
+								});
+
+								hard_delete_article_mutation.mutate({
+									article_id: id,
+								});
+
+								if (is_viewing) {
+									navigate({
+										to: "/admin",
+									});
+								}
+							}}
+						>
+							Potrdi brisanje
+						</AlertDialogAction>
+					</AlertDialogFooter>
+				</AlertDialogContent>
+			</AlertDialog>
+		);
+	} else {
 		delete_component = (
 			<DropdownMenuItem
 				onClick={() => {
@@ -193,8 +256,6 @@ function ArticleSidebarSubItem({
 				<span>Zbriši</span>
 			</DropdownMenuItem>
 		);
-	} else {
-		delete_component = null;
 	}
 
 	let restore_component: React.ReactNode;

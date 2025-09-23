@@ -3,12 +3,18 @@ import { useConvexMutation } from "@convex-dev/react-query";
 import { useMutation } from "@tanstack/react-query";
 import { Link, useMatchRoute, useNavigate } from "@tanstack/react-router";
 import type { Doc } from "convex/_generated/dataModel";
+import { ArchiveRestoreIcon, EditIcon, Trash2Icon } from "lucide-react";
 import {
-	ArchiveRestoreIcon,
-	EditIcon,
-	Trash2Icon,
-	TrashIcon,
-} from "lucide-react";
+	AlertDialog,
+	AlertDialogAction,
+	AlertDialogCancel,
+	AlertDialogContent,
+	AlertDialogDescription,
+	AlertDialogFooter,
+	AlertDialogHeader,
+	AlertDialogTitle,
+	AlertDialogTrigger,
+} from "~/components/ui/alert-dialog";
 import { Button } from "~/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import { useCopyPublishedIntoDraftMutation } from "../-article-sidebar";
@@ -19,6 +25,10 @@ export function ArticleCard({ article }: { article: Doc<"articles"> }) {
 
 	const delete_article_mutation = useMutation({
 		mutationFn: useConvexMutation(api.articles.soft_delete),
+	});
+
+	const hard_delete_article_mutation = useMutation({
+		mutationFn: useConvexMutation(api.articles.hard_delete),
 	});
 
 	const restore_article_mutation = useMutation({
@@ -58,7 +68,54 @@ export function ArticleCard({ article }: { article: Doc<"articles"> }) {
 	}
 
 	let delete_component: React.ReactNode;
-	if (article.status !== "deleted") {
+	if (article.status === "deleted") {
+		delete_component = (
+			<AlertDialog>
+				<AlertDialogTrigger asChild>
+					<Button variant="destructive">
+						<Trash2Icon size={14} className="text-muted-foreground" />
+						<span>Trajno zbriši</span>
+					</Button>
+				</AlertDialogTrigger>
+				<AlertDialogContent>
+					<AlertDialogHeader>
+						<AlertDialogTitle>Potrdi trajno brisanje</AlertDialogTitle>
+						<AlertDialogDescription>
+							Ali res želiš trajno izbrisati ta članek? Tega dejanja ni mogoče
+							razveljaviti.
+						</AlertDialogDescription>
+					</AlertDialogHeader>
+					<AlertDialogFooter>
+						<AlertDialogCancel>Prekliči</AlertDialogCancel>
+						<AlertDialogAction
+							onClick={() => {
+								const is_viewing = match_route({
+									to: "/admin/$status/$article_slug",
+									params: {
+										article_slug: article.slug,
+										status: article.status,
+									},
+									fuzzy: true,
+								});
+
+								hard_delete_article_mutation.mutate({
+									article_id: article._id,
+								});
+
+								if (is_viewing) {
+									navigate({
+										to: "/admin",
+									});
+								}
+							}}
+						>
+							Potrdi brisanje
+						</AlertDialogAction>
+					</AlertDialogFooter>
+				</AlertDialogContent>
+			</AlertDialog>
+		);
+	} else {
 		delete_component = (
 			<Button
 				variant="destructive"
@@ -82,8 +139,6 @@ export function ArticleCard({ article }: { article: Doc<"articles"> }) {
 				<span>Zbriši</span>
 			</Button>
 		);
-	} else {
-		delete_component = null;
 	}
 
 	let restore_component: React.ReactNode;
@@ -125,7 +180,7 @@ export function ArticleCard({ article }: { article: Doc<"articles"> }) {
 			{/* Buttons positioned absolutely */}
 			<div className="absolute top-4 right-4 ml-auto flex gap-2">
 				{edit_component}
-				{!delete_component && restore_component}
+				{restore_component}
 				{delete_component}
 			</div>
 		</div>
