@@ -9,7 +9,7 @@ export const Route = createFileRoute("/admin")({
 	},
 });
 
-export default function Page() {
+function Page() {
 	/* const { data: draft_articles } = useSuspenseQuery(
 		convexQuery(api.articles.get_all_of_status, { status: "draft" }),
 	);

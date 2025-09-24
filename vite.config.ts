@@ -55,9 +55,7 @@ export default defineConfig({
 		tsConfigPaths({
 			projects: ["./tsconfig.json"],
 		}),
-		tanstackStart({
-			customViteReactPlugin: true,
-		}),
+		tanstackStart(),
 		viteReact(),
 	],
 	resolve: {

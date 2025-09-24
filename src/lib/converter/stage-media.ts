@@ -26,7 +26,7 @@ const convex = convexQueryClient.convexClient;
  * Server function to check if a file exists and get its size
  */
 const check_file_server = createServerFn({ method: "POST" })
-	.validator((data: { file_path: string }) => data)
+	.inputValidator((data: { file_path: string }) => data)
 	.handler(async ({ data }) => {
 		try {
 			const stats = await fs.promises.stat(data.file_path);
@@ -48,7 +48,7 @@ const check_file_server = createServerFn({ method: "POST" })
  * Server function to handle file operations that need Node.js filesystem access
  */
 const copy_file_server = createServerFn({ method: "POST" })
-	.validator(
+	.inputValidator(
 		(data: { source_path: string; target_path: string; target_dir: string }) =>
 			data,
 	)
