@@ -1,5 +1,5 @@
-import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
-import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+// import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
+// import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { v } from "convex/values";
 import { internal } from "./_generated/api";
 import type { Id } from "./_generated/dataModel";
@@ -83,16 +83,18 @@ export const generate_presigned_upload_url = mutation({
 		content_type: v.string(),
 		size_bytes: v.number(),
 	},
-	handler: async (ctx, args) => {
+	handler: async (ctx) => {
 		const user_id = await ctx.auth.getUserIdentity();
 		if (!user_id) {
 			throw new Error(
 				"User must be authenticated to generate a presigned URL.",
 			);
 		}
+		// TODO: re-enable presigned URLs
+		throw new Error("Presigned uploads are currently disabled.");
 
 		// B2 S3-compatible endpoint
-		const client = new S3Client({
+		/* const client = new S3Client({
 			endpoint: `https://s3.${process.env.VITE_AWS_REGION}.backblazeb2.com`,
 			region: process.env.VITE_AWS_REGION,
 			credentials: {
@@ -147,7 +149,7 @@ export const generate_presigned_upload_url = mutation({
 			presigned_url: presignedUrl,
 			key: media_db_id,
 			src: storage_url,
-		};
+		}; */
 	},
 });
 

@@ -18,7 +18,7 @@ import { Route as AdminIndexRouteImport } from './routes/admin/index'
 import { Route as ApiConverterRouteImport } from './routes/api/converter'
 import { Route as NovicaArticle_slugIndexRouteImport } from './routes/novica/$article_slug.index'
 import { Route as AdminStatusIndexRouteImport } from './routes/admin/$status/index'
-import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
+import { Route as ApiAuthSplatRouteImport } from './routes/api/auth.$'
 import { Route as AdminStatusArticle_slugIndexRouteImport } from './routes/admin/$status/$article_slug.index'
 import { Route as AdminStatusArticle_slugUrediIndexRouteImport } from './routes/admin/$status/$article_slug.uredi.index'
 

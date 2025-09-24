@@ -39,25 +39,17 @@ export default defineConfig({
 	},
 	preview: {
 		port: 3000,
-		host: true, // This enables listening on all network interfaces
+		// host: true,
 		allowedHosts: [".jknm.site"],
 		// allowedHosts: true,
 	},
 	server: {
-		// Also add this for development server
-		host: true, // This enables listening on all network interfaces
+		host: true,
 		port: 3000,
 		allowedHosts: [".jknm.site"],
 		// allowedHosts: true,
 	},
-	plugins: [
-		tailwindcss(),
-		tsConfigPaths({
-			projects: ["./tsconfig.json"],
-		}),
-		tanstackStart(),
-		viteReact(),
-	],
+	plugins: [tailwindcss(), tsConfigPaths(), tanstackStart(), viteReact()],
 	resolve: {
 		alias: {
 			"~": path.resolve(__dirname, "./src"),

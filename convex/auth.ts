@@ -20,10 +20,16 @@ export const createAuth = (
 		},
 		baseURL: site_url,
 		database: auth_component.adapter(ctx),
-		// Configure simple, non-verified email/password to get started
-		emailAndPassword: {
-			enabled: true,
-			requireEmailVerification: false,
+		socialProviders: {
+			google: {
+				clientId: process.env.GOOGLE_CLIENT_ID as string,
+				clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
+			},
+		},
+		user: {
+			deleteUser: {
+				enabled: true,
+			},
 		},
 		plugins: [
 			// The Convex plugin is required for Convex compatibility
