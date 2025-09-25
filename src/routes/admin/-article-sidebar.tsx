@@ -12,6 +12,7 @@ import {
 	ShareIcon,
 	Trash2Icon,
 } from "lucide-react";
+import { Fragment } from "react/jsx-runtime";
 import {
 	AlertDialog,
 	AlertDialogAction,
@@ -23,7 +24,6 @@ import {
 	AlertDialogTitle,
 	AlertDialogTrigger,
 } from "~/components/ui/alert-dialog";
-import { Button } from "~/components/ui/button";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -72,15 +72,17 @@ export function ArticleSidebar({
 						</SidebarMenuButton>
 						<SidebarMenuSub>
 							{item.items?.map((sub_item) => (
-								<ArticleSidebarSubItem
-									id={sub_item.id}
-									status={sub_item.status}
-									slug={sub_item.slug}
-									key={sub_item.label}
-									label={sub_item.label}
-									link={sub_item.link}
-									edit_button={sub_item.edit_button}
-								/>
+								<Fragment key={sub_item.id.toString()}>
+									<ArticleSidebarSubItem
+										id={sub_item.id}
+										status={sub_item.status}
+										slug={sub_item.slug}
+										key={sub_item.label}
+										label={sub_item.label}
+										link={sub_item.link}
+										edit_button={sub_item.edit_button}
+									/>
+								</Fragment>
 							))}
 						</SidebarMenuSub>
 					</SidebarMenuItem>

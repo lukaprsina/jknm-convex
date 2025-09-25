@@ -8,6 +8,9 @@ Uncaught (in promise) Error: No mapping for link: http://www.dzrjl.si
 convert-article.ts:260 
  Failed to stage media: https://jknm-novice.s3.eu-central-003.backblazeb2.com/v-iskanju-monolister-27-09-2017/slika_4.jpg Error: Caption deserialized to multiple nodes
 
+v trash so enaka imena in uporabljam title kot key:
+-article-sidebar.tsx:75  Encountered two children with the same key, `hey2 electric bogaloo`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version
+
 --
 
 VEČKRAT ISTO NOVICO DODAŠ, napačne publishash

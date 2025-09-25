@@ -1,3 +1,4 @@
+import { Link } from "@tanstack/react-router";
 import {
 	BookIcon,
 	type LucideIcon,
@@ -49,12 +50,6 @@ export interface SiteNavbarProps {
 }
 
 export const SiteNavbar = ({
-	logo = {
-		url: "https://www.shadcnblocks.com",
-		src: "https://deifkwefumgah.cloudfront.net/shadcnblocks/block/logos/shadcnblockscom-icon.svg",
-		alt: "logo",
-		title: "Shadcnblocks.com",
-	},
 	menu = [
 		{ title: "Home", url: "#" },
 		{
@@ -129,6 +124,12 @@ export const SiteNavbar = ({
 		},
 	],
 }: SiteNavbarProps) => {
+	const logo = (
+		<Link to="/" className="flex items-center gap-2">
+			<img src="/logo.svg" className="max-h-8" alt="logo" />
+		</Link>
+	);
+
 	return (
 		<section className="py-4">
 			{/* https://v3.tailwindcss.com/docs/container - you have to center it manually now */}
@@ -136,13 +137,7 @@ export const SiteNavbar = ({
 				{/* Desktop Menu */}
 				<nav className="hidden justify-between lg:flex">
 					<div className="flex items-center gap-6">
-						{/* Logo */}
-						<a href={logo.url} className="flex items-center gap-2">
-							<img src={logo.src} className="max-h-8" alt={logo.alt} />
-							<span className="font-semibold text-lg tracking-tighter">
-								{logo.title}
-							</span>
-						</a>
+						{logo}
 						<div className="flex items-center">
 							<NavigationMenu viewport={false}>
 								<NavigationMenuList>
@@ -156,10 +151,7 @@ export const SiteNavbar = ({
 				{/* Mobile Menu */}
 				<div className="block lg:hidden">
 					<div className="flex items-center justify-between">
-						{/* Logo */}
-						<a href={logo.url} className="flex items-center gap-2">
-							<img src={logo.src} className="max-h-8" alt={logo.alt} />
-						</a>
+						{logo}
 						<Sheet>
 							<SheetTrigger asChild>
 								<Button variant="outline" size="icon">
@@ -168,11 +160,7 @@ export const SiteNavbar = ({
 							</SheetTrigger>
 							<SheetContent className="overflow-y-auto">
 								<SheetHeader>
-									<SheetTitle>
-										<a href={logo.url} className="flex items-center gap-2">
-											<img src={logo.src} className="max-h-8" alt={logo.alt} />
-										</a>
-									</SheetTitle>
+									<SheetTitle>{logo}</SheetTitle>
 								</SheetHeader>
 								<div className="flex flex-col gap-6 p-4">
 									<Accordion

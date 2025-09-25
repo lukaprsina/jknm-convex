@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as AdminRouteRouteImport } from './routes/admin/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as TestIndexRouteImport } from './routes/test.index'
 import { Route as PrijavaIndexRouteImport } from './routes/prijava.index'
 import { Route as NovicaIndexRouteImport } from './routes/novica/index'
 import { Route as ConverterIndexRouteImport } from './routes/converter/index'
@@ -18,7 +19,7 @@ import { Route as AdminIndexRouteImport } from './routes/admin/index'
 import { Route as ApiConverterRouteImport } from './routes/api/converter'
 import { Route as NovicaArticle_slugIndexRouteImport } from './routes/novica/$article_slug.index'
 import { Route as AdminStatusIndexRouteImport } from './routes/admin/$status/index'
-import { Route as ApiAuthSplatRouteImport } from './routes/api/auth.$'
+import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 import { Route as AdminStatusArticle_slugIndexRouteImport } from './routes/admin/$status/$article_slug.index'
 import { Route as AdminStatusArticle_slugUrediIndexRouteImport } from './routes/admin/$status/$article_slug.uredi.index'
 
@@ -30,6 +31,11 @@ const AdminRouteRoute = AdminRouteRouteImport.update({
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TestIndexRoute = TestIndexRouteImport.update({
+  id: '/test/',
+  path: '/test/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PrijavaIndexRoute = PrijavaIndexRouteImport.update({
@@ -93,6 +99,7 @@ export interface FileRoutesByFullPath {
   '/converter': typeof ConverterIndexRoute
   '/novica': typeof NovicaIndexRoute
   '/prijava': typeof PrijavaIndexRoute
+  '/test': typeof TestIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/admin/$status': typeof AdminStatusIndexRoute
   '/novica/$article_slug': typeof NovicaArticle_slugIndexRoute
@@ -106,6 +113,7 @@ export interface FileRoutesByTo {
   '/converter': typeof ConverterIndexRoute
   '/novica': typeof NovicaIndexRoute
   '/prijava': typeof PrijavaIndexRoute
+  '/test': typeof TestIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/admin/$status': typeof AdminStatusIndexRoute
   '/novica/$article_slug': typeof NovicaArticle_slugIndexRoute
@@ -121,6 +129,7 @@ export interface FileRoutesById {
   '/converter/': typeof ConverterIndexRoute
   '/novica/': typeof NovicaIndexRoute
   '/prijava/': typeof PrijavaIndexRoute
+  '/test/': typeof TestIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/admin/$status/': typeof AdminStatusIndexRoute
   '/novica/$article_slug/': typeof NovicaArticle_slugIndexRoute
@@ -137,6 +146,7 @@ export interface FileRouteTypes {
     | '/converter'
     | '/novica'
     | '/prijava'
+    | '/test'
     | '/api/auth/$'
     | '/admin/$status'
     | '/novica/$article_slug'
@@ -150,6 +160,7 @@ export interface FileRouteTypes {
     | '/converter'
     | '/novica'
     | '/prijava'
+    | '/test'
     | '/api/auth/$'
     | '/admin/$status'
     | '/novica/$article_slug'
@@ -164,6 +175,7 @@ export interface FileRouteTypes {
     | '/converter/'
     | '/novica/'
     | '/prijava/'
+    | '/test/'
     | '/api/auth/$'
     | '/admin/$status/'
     | '/novica/$article_slug/'
@@ -178,6 +190,7 @@ export interface RootRouteChildren {
   ConverterIndexRoute: typeof ConverterIndexRoute
   NovicaIndexRoute: typeof NovicaIndexRoute
   PrijavaIndexRoute: typeof PrijavaIndexRoute
+  TestIndexRoute: typeof TestIndexRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
   NovicaArticle_slugIndexRoute: typeof NovicaArticle_slugIndexRoute
 }
@@ -196,6 +209,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/test/': {
+      id: '/test/'
+      path: '/test'
+      fullPath: '/test'
+      preLoaderRoute: typeof TestIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/prijava/': {
@@ -297,6 +317,7 @@ const rootRouteChildren: RootRouteChildren = {
   ConverterIndexRoute: ConverterIndexRoute,
   NovicaIndexRoute: NovicaIndexRoute,
   PrijavaIndexRoute: PrijavaIndexRoute,
+  TestIndexRoute: TestIndexRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
   NovicaArticle_slugIndexRoute: NovicaArticle_slugIndexRoute,
 }

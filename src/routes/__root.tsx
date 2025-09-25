@@ -71,7 +71,20 @@ export const Route = createRootRouteWithContext<{
 		],
 		links: [
 			{ rel: "stylesheet", href: appCss },
-			{ rel: "icon", href: "/favicon.ico" },
+			{
+				rel: "icon",
+				type: "image/png",
+				href: "/favicon-96x96.png",
+				sizes: "96x96",
+			},
+			{ rel: "icon", type: "image/svg+xml", href: "/favicon.svg" },
+			{ rel: "shortcut icon", href: "/favicon.ico" },
+			{
+				rel: "apple-touch-icon",
+				sizes: "180x180",
+				href: "/apple-touch-icon.png",
+			},
+			{ rel: "manifest", href: "/site.webmanifest" },
 		],
 		scripts: [
 			// { src: "https://unpkg.com/@styleglide/theme-editor" },
@@ -110,35 +123,18 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 				<HeadContent />
 			</head>
 			<body>
-				<div className="flex h-screen min-h-0 flex-col">
-					<div className="flex min-h-0 flex-grow flex-col">
-						{children}
-						<Toaster />
-					</div>
-				</div>
-				<ReactQueryDevtools buttonPosition="bottom-left" />
-				<TanStackRouterDevtools position="bottom-right" />
-				<Scripts />
+				{/* <div className="flex h-screen min-h-0 flex-col"> */}
+				{/* <div className="flex min-h-0 flex-grow flex-col"> */}
+				{children}
+				<Toaster />
+				{/* </div> */}
+				{/* </div> */}
+				{/* <ReactQueryDevtools buttonPosition="bottom-left" /> */}
+				{/* <TanStackRouterDevtools position="bottom-right" /> */}
+				{/* <Scripts /> */}
 			</body>
 		</html>
 	);
 }
 
-/* {
-		rel: 'apple-touch-icon',
-		sizes: '180x180',
-		href: '/apple-touch-icon.png',
-	  },
-	  {
-		rel: 'icon',
-		type: 'image/png',
-		sizes: '32x32',
-		href: '/favicon-32x32.png',
-	  },
-	  {
-		rel: 'icon',
-		type: 'image/png',
-		sizes: '16x16',
-		href: '/favicon-16x16.png',
-	  },
-	  { rel: 'manifest', href: '/site.webmanifest', color: '#fffff' }, */
+/*  */
