@@ -2,6 +2,7 @@ import type { Id } from "@convex/_generated/dataModel";
 import { useConvexMutation } from "@convex-dev/react-query";
 import { useMutation } from "@tanstack/react-query";
 import { api } from "convex/_generated/api";
+import { useConvex } from "convex/react";
 import { usePluginOption } from "platejs/react";
 import { useState } from "react";
 import { SavePlugin } from "~/components/plugins/save-kit";
@@ -29,6 +30,7 @@ export function useUploadFile({
 	onUploadProgress,
 	onUploadBegin,
 }: UseUploadFileProps = {}) {
+	const convex = useConvex();
 	const [isUploading, setIsUploading] = useState(false);
 	const [progress, setProgress] = useState(0);
 	const [uploadedFile, setUploadedFile] = useState<UploadedFile | null>(null);
@@ -47,24 +49,51 @@ export function useUploadFile({
 	// The main upload mutation that chains both operations
 	const mutation = useMutation<UploadedFile, Error, File>({
 		mutationFn: async (file: File) => {
-			// Step 1: Get presigned URL from Convex
+			// Step 1: Record intent (creates media record and schedules presign action)
 			const upload_info = await get_presigned_url({
 				filename: file.name,
 				content_type: file.type,
 				size_bytes: file.size,
 			});
-
 			const file_content = await file.arrayBuffer();
 
-			// Upload to S3 with progress tracking using XMLHttpRequest
+			// Step 2: Poll for presigned URL availability
+			const media_id = upload_info.key as Id<"media">;
+			let presigned_url: string | undefined;
+
+			const max_wait_ms = 60_000; // 60s
+			const interval_ms = 1_000; // 1s
+			const start_time = Date.now();
+			// Imperatively call query via Convex client
+			while (Date.now() - start_time < max_wait_ms) {
+				const intent = await convex.query(api.media.get_upload_intent, {
+					id: media_id,
+				});
+				if (intent.upload_error) {
+					throw new Error(
+						`Failed to create presigned URL: ${intent.upload_error}`,
+					);
+				}
+				if (intent.presigned_url) {
+					presigned_url = intent.presigned_url;
+					break;
+				}
+				await new Promise((r) => setTimeout(r, interval_ms));
+			}
+
+			if (!presigned_url) {
+				throw new Error("Timed out waiting for presigned URL");
+			}
+
+			// Step 3: Upload to B2 with progress tracking using XMLHttpRequest
 			await new Promise<void>((resolve, reject) => {
 				const xhr = new XMLHttpRequest();
 
 				xhr.upload.addEventListener("progress", (event) => {
 					if (event.lengthComputable) {
-						const progressPercent = (event.loaded / event.total) * 100;
-						setProgress(progressPercent);
-						onUploadProgress?.({ progress: progressPercent });
+						const progress_percent = (event.loaded / event.total) * 100;
+						setProgress(progress_percent);
+						onUploadProgress?.({ progress: progress_percent });
 					}
 				});
 
@@ -87,7 +116,7 @@ export function useUploadFile({
 				// https://www.backblaze.com/docs/cloud-storage-s3-compatible-api
 				// https://github.com/backblaze-b2-samples/b2-browser-upload
 				// B2 doesn't support POST for presigned URLs, so we use PUT
-				xhr.open("PUT", upload_info.presigned_url);
+				xhr.open("PUT", presigned_url!);
 				xhr.setRequestHeader("Content-Type", file.type);
 				xhr.send(file_content);
 			});

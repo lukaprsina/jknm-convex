@@ -83,25 +83,13 @@ export const generate_presigned_upload_url = mutation({
 		content_type: v.string(),
 		size_bytes: v.number(),
 	},
-	handler: async (ctx) => {
+	handler: async (ctx, args) => {
 		const user_id = await ctx.auth.getUserIdentity();
 		if (!user_id) {
 			throw new Error(
 				"User must be authenticated to generate a presigned URL.",
 			);
 		}
-		// TODO: re-enable presigned URLs
-		throw new Error("Presigned uploads are currently disabled.");
-
-		// B2 S3-compatible endpoint
-		/* const client = new S3Client({
-			endpoint: `https://s3.${process.env.VITE_AWS_REGION}.backblazeb2.com`,
-			region: process.env.VITE_AWS_REGION,
-			credentials: {
-				accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
-				secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
-			},
-		});
 
 		// Create the media record first to get the ID
 		const media_db_id = await ctx.db.insert("media", {
@@ -135,21 +123,36 @@ export const generate_presigned_upload_url = mutation({
 			},
 		});
 
-		const putObjectCommand = new PutObjectCommand({
-			Bucket: process.env.VITE_AWS_BUCKET_NAME,
-			Key: key,
-			ContentType: args.content_type,
-		});
-
-		const presignedUrl = await getSignedUrl(client, putObjectCommand, {
-			expiresIn: 10 * 60, // 10 minutes
+		// Schedule Node action to generate a presigned URL and save it back
+		await ctx.scheduler.runAfter(0, internal.media_sharp.upload_presigned, {
+			content_type: args.content_type,
+			filename: key,
 		});
 
 		return {
-			presigned_url: presignedUrl,
 			key: media_db_id,
 			src: storage_url,
-		}; */
+		};
+	},
+});
+
+export const get_upload_intent = query({
+	args: { id: v.id("media") },
+	handler: async (ctx, args) => {
+		const user_id = await ctx.auth.getUserIdentity();
+		if (!user_id) {
+			throw new Error("User must be authenticated to get upload intent.");
+		}
+		const doc = await ctx.db.get(args.id);
+		if (!doc) throw new Error(`Media with ID ${args.id} not found.`);
+		return {
+			presigned_url: doc.presigned_url ?? null,
+			presigned_expires_at: doc.presigned_expires_at ?? null,
+			upload_status: doc.upload_status,
+			upload_error: doc.upload_error ?? null,
+			original: doc.original,
+			base_url: doc.base_url,
+		};
 	},
 });
 
@@ -231,6 +234,33 @@ export const save_variants = internalMutation({
 			srcsets: args.srcsets,
 			blur_placeholder: args.blur_placeholder,
 			upload_status: args.upload_status,
+		});
+	},
+});
+
+export const save_presigned_upload = internalMutation({
+	args: {
+		media_id: v.id("media"),
+		presigned_url: v.string(),
+		presigned_expires_at: v.number(),
+	},
+	handler: async (ctx, args) => {
+		await ctx.db.patch(args.media_id, {
+			presigned_url: args.presigned_url,
+			presigned_expires_at: args.presigned_expires_at,
+		});
+	},
+});
+
+export const save_upload_error = internalMutation({
+	args: {
+		media_id: v.id("media"),
+		error: v.string(),
+	},
+	handler: async (ctx, args) => {
+		await ctx.db.patch(args.media_id, {
+			upload_error: args.error,
+			upload_status: "failed",
 		});
 	},
 });

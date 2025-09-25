@@ -6,6 +6,7 @@ import {
 	PutObjectCommand,
 	S3Client,
 } from "@aws-sdk/client-s3";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { v } from "convex/values";
 import sharp from "sharp";
 import { internal } from "./_generated/api";
@@ -261,5 +262,54 @@ export const empty_bucket = internalAction({
 		);
 
 		console.log("Bucket emptied.", listResponse.Contents?.length ?? 0);
+	},
+});
+
+export const upload_presigned = internalAction({
+	args: {
+		filename: v.string(),
+		content_type: v.string(),
+	},
+	// Returns presigned URL and media DB ID
+	handler: async (ctx, args) => {
+		// Scheduled internal action runs without a user context
+		try {
+			// B2 S3-compatible endpoint
+			const client = new S3Client({
+				endpoint: `https://s3.${process.env.VITE_AWS_REGION}.backblazeb2.com`,
+				region: process.env.VITE_AWS_REGION,
+				credentials: {
+					accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
+					secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
+				},
+			});
+
+			const putObjectCommand = new PutObjectCommand({
+				Bucket: process.env.VITE_AWS_BUCKET_NAME,
+				Key: args.filename,
+				ContentType: args.content_type,
+			});
+
+			const presignedUrl = await getSignedUrl(client, putObjectCommand, {
+				expiresIn: 10 * 60, // 10 minutes
+			});
+
+			// Extract media id from filename: `${media_db_id}/original.ext`
+			const media_id = args.filename.split("/")[0] as Id<"media">;
+
+			await ctx.runMutation(internal.media.save_presigned_upload, {
+				media_id,
+				presigned_url: presignedUrl,
+				presigned_expires_at: Date.now() + 10 * 60 * 1000,
+			});
+		} catch (err) {
+			const message = err instanceof Error ? err.message : String(err);
+			const media_id = args.filename.split("/")[0] as Id<"media">;
+			await ctx.runMutation(internal.media.save_upload_error, {
+				media_id,
+				error: message,
+			});
+			throw err;
+		}
 	},
 });

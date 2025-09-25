@@ -40,90 +40,10 @@ interface MenuItem {
 }
 
 export interface SiteNavbarProps {
-	logo?: {
-		url: string;
-		src: string;
-		alt: string;
-		title: string;
-	};
 	menu?: MenuItem[];
 }
 
-export const SiteNavbar = ({
-	menu = [
-		{ title: "Home", url: "#" },
-		{
-			title: "Products",
-			url: "#",
-			items: [
-				{
-					title: "Blog",
-					description: "The latest industry news, updates, and info",
-					// className="size-5 shrink-0"
-					icon: BookIcon,
-					url: "#",
-				},
-				{
-					title: "Company",
-					description: "Our mission is to innovate and empower the world",
-					icon: TreesIcon,
-					url: "#",
-				},
-				{
-					title: "Careers",
-					description: "Browse job listing and discover our workspace",
-					icon: SunsetIcon,
-					url: "#",
-				},
-				{
-					title: "Support",
-					description:
-						"Get in touch with our support team or visit our community forums",
-					icon: ZapIcon,
-					url: "#",
-				},
-			],
-		},
-		{
-			title: "Resources",
-			url: "#",
-			items: [
-				{
-					title: "Help Center",
-					description: "Get all the answers you need right here",
-					icon: ZapIcon,
-					url: "#",
-				},
-				{
-					title: "Contact Us",
-					description: "We are here to help you with any questions you have",
-					icon: SunsetIcon,
-					url: "#",
-				},
-				{
-					title: "Status",
-					description: "Check the current status of our services and APIs",
-					icon: TreesIcon,
-					url: "#",
-				},
-				{
-					title: "Terms of Service",
-					description: "Our terms and conditions for using our services",
-					icon: BookIcon,
-					url: "#",
-				},
-			],
-		},
-		{
-			title: "Pricing",
-			url: "#",
-		},
-		{
-			title: "Blog",
-			url: "#",
-		},
-	],
-}: SiteNavbarProps) => {
+export const SiteNavbar = ({ menu = DEFAULT_MENU }: SiteNavbarProps) => {
 	const logo = (
 		<Link to="/" className="flex items-center gap-2">
 			<img src="/logo.svg" className="max-h-8" alt="logo" />
@@ -131,25 +51,38 @@ export const SiteNavbar = ({
 	);
 
 	return (
-		<section className="py-4">
-			{/* https://v3.tailwindcss.com/docs/container - you have to center it manually now */}
-			<div className="container mx-auto px-4">
-				{/* Desktop Menu */}
-				<nav className="hidden justify-between lg:flex">
-					<div className="flex items-center gap-6">
-						{logo}
-						<div className="flex items-center">
-							<NavigationMenu viewport={false}>
-								<NavigationMenuList>
-									{menu.map((item) => renderMenuItem(item))}
-								</NavigationMenuList>
-							</NavigationMenu>
-						</div>
+		<>
+			{/* Desktop: Row 1 (non-sticky, scrolls away) */}
+			<header className="hidden bg-gray-100 py-4 lg:block">
+				{/* https://v3.tailwindcss.com/docs/container - you have to center it manually now */}
+				<div className="mx-auto flex w-full items-center justify-center px-4">
+					{/* {logo} */}
+					<Link to="/" className="flex items-center gap-2">
+						<img src="/logo.svg" className="w-52" alt="logo" />
+					</Link>
+					<div className="flex items-center gap-4">
+						{/* Placeholder for search / icons on desktop top row */}
+						{/* <Search /> <UserMenu /> */}
 					</div>
-				</nav>
+				</div>
+			</header>
 
-				{/* Mobile Menu */}
-				<div className="block lg:hidden">
+			{/* Desktop: Row 2 (sticky) */}
+			<nav className="sticky top-0 z-40 hidden border-gray-200 border-b bg-white/80 backdrop-blur-md lg:block">
+				<div className="container mx-auto px-4">
+					<div className="flex items-center justify-center py-3">
+						<NavigationMenu viewport={false}>
+							<NavigationMenuList>
+								{menu.map((item) => renderMenuItem(item))}
+							</NavigationMenuList>
+						</NavigationMenu>
+					</div>
+				</div>
+			</nav>
+
+			{/* Mobile header (single row with drawer) */}
+			<section className="py-4 lg:hidden">
+				<div className="container mx-auto px-4">
 					<div className="flex items-center justify-between">
 						{logo}
 						<Sheet>
@@ -175,8 +108,8 @@ export const SiteNavbar = ({
 						</Sheet>
 					</div>
 				</div>
-			</div>
-		</section>
+			</section>
+		</>
 	);
 };
 
@@ -253,3 +186,77 @@ const SubMenuLink = ({ item }: { item: MenuItem }) => {
 		</a>
 	);
 };
+
+const DEFAULT_MENU: MenuItem[] = [
+	{ title: "Home", url: "#" },
+	{
+		title: "Products",
+		url: "#",
+		items: [
+			{
+				title: "Blog",
+				description: "The latest industry news, updates, and info",
+				// className="size-5 shrink-0"
+				icon: BookIcon,
+				url: "#",
+			},
+			{
+				title: "Company",
+				description: "Our mission is to innovate and empower the world",
+				icon: TreesIcon,
+				url: "#",
+			},
+			{
+				title: "Careers",
+				description: "Browse job listing and discover our workspace",
+				icon: SunsetIcon,
+				url: "#",
+			},
+			{
+				title: "Support",
+				description:
+					"Get in touch with our support team or visit our community forums",
+				icon: ZapIcon,
+				url: "#",
+			},
+		],
+	},
+	{
+		title: "Resources",
+		url: "#",
+		items: [
+			{
+				title: "Help Center",
+				description: "Get all the answers you need right here",
+				icon: ZapIcon,
+				url: "#",
+			},
+			{
+				title: "Contact Us",
+				description: "We are here to help you with any questions you have",
+				icon: SunsetIcon,
+				url: "#",
+			},
+			{
+				title: "Status",
+				description: "Check the current status of our services and APIs",
+				icon: TreesIcon,
+				url: "#",
+			},
+			{
+				title: "Terms of Service",
+				description: "Our terms and conditions for using our services",
+				icon: BookIcon,
+				url: "#",
+			},
+		],
+	},
+	{
+		title: "Pricing",
+		url: "#",
+	},
+	{
+		title: "Blog",
+		url: "#",
+	},
+];

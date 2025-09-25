@@ -99,6 +99,11 @@ const schema = defineSchema({
 		// Blur placeholder for lazy loading
 		blur_placeholder: v.optional(v.string()), // base64 data URL
 
+		// Async presigned upload flow support
+		presigned_url: v.optional(v.string()),
+		presigned_expires_at: v.optional(v.number()), // Unix timestamp (ms)
+		upload_error: v.optional(v.string()),
+
 		upload_status: v.union(
 			v.literal("pending"),
 			v.literal("staged"),
