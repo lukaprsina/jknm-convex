@@ -75,7 +75,7 @@ export function Footer() {
 
 						<div className="mt-6">
 							<h3 className="mb-4 font-semibold">Spremljajte nas</h3>
-							<div className="flex items-center gap-4">
+							<div className="-ml-[10px] flex items-center gap-4">
 								<FacebookIcon />
 								<YoutubeIcon />
 								<InstagramIcon />
