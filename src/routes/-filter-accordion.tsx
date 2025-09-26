@@ -1,6 +1,8 @@
 import { getRouteApi, useNavigate } from "@tanstack/react-router";
 import equal from "fast-deep-equal";
-import { useId, useState } from "react";
+import { useEffect, useId, useMemo, useState } from "react";
+import { useDebounceValue } from "usehooks-ts";
+import { SelectWithClear } from "~/components/select-w-clear";
 import {
 	Accordion,
 	AccordionContent,
@@ -10,7 +12,6 @@ import {
 import { AuthorSelect } from "~/components/ui/author-select";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
-import { YearDropdown } from "~/components/ui/year-dropdown";
 import { YearSelectorHorizontal } from "~/components/ui/year-selector-horizontal";
 import { DEFAULT_SEARCH_VALUES } from ".";
 
@@ -22,10 +23,40 @@ export function FilterAccordion() {
 	const search_id = useId();
 	const year_id = useId();
 
-	const navigate = useNavigate({ from: home_route.id });
+	const navigate = useNavigate();
 	const [isOpen, setIsOpen] = useState(
 		!equal(home_search, DEFAULT_SEARCH_VALUES),
 	);
+
+	const [searchValue, setSearchValue] = useState(home_search.iskanje ?? "");
+
+	const [debouncedSearch] = useDebounceValue(searchValue, 300, {
+		leading: false,
+		trailing: true,
+		maxWait: 1000,
+	});
+
+	const years = useMemo(() => {
+		const currentYear = new Date().getFullYear();
+		const startYear = 2008;
+		return Array.from(
+			{ length: currentYear - startYear + 1 },
+			(_, i) => currentYear - i, // Reverse order to show newest first
+		);
+	}, []);
+
+	useEffect(() => {
+		const callback = async () => {
+			await navigate({
+				from: home_route.id,
+				to: home_route.id,
+				search: (prev) => ({ ...prev, iskanje: debouncedSearch || undefined }),
+				replace: true,
+			});
+		};
+
+		void callback();
+	}, [debouncedSearch, navigate]);
 
 	return (
 		<Accordion
@@ -38,7 +69,10 @@ export function FilterAccordion() {
 				<div className="flex w-full justify-end">
 					<AccordionTrigger className="grow-0">Filtriraj</AccordionTrigger>
 				</div>
-				<AccordionContent className="grid grid-rows-2 gap-6 text-balance px-2">
+				<AccordionContent
+					className="flex flex-col gap-6 text-balance px-2 pt-0 pb-4"
+					parentClassName="overflow-visible"
+				>
 					{/* First row - Year selector */}
 					<div className="hidden space-y-2 xl:block">
 						<Label className="pr-2 font-medium text-sm">Leto</Label>
@@ -58,9 +92,7 @@ export function FilterAccordion() {
 					<div className="flex flex-col gap-4 md:flex-row">
 						{/* Author dropdown */}
 						<div className="w-auto space-y-2">
-							<Label htmlFor="author-select" className="font-medium text-sm">
-								Avtorji
-							</Label>
+							<Label className="font-medium text-sm">Avtorji</Label>
 							<AuthorSelect
 								authors={authors}
 								selectedAuthors={home_search.avtorji}
@@ -82,30 +114,22 @@ export function FilterAccordion() {
 								id={search_id}
 								type="text"
 								placeholder="Filtriraj članke..."
-								value={home_search.iskanje ?? ""}
-								onChange={async (event) =>
-									await navigate({
-										from: home_route.id,
-										search: (prev) => ({
-											...prev,
-											iskanje: event.target.value,
-										}),
-									})
-								}
-								className="w-auto min-w-[200px]"
+								value={searchValue}
+								onChange={(event) => {
+									setSearchValue(event.target.value);
+								}}
+								// className="min-w-[200px]"
 							/>
 						</div>
 
-						<div className="flex flex-col">
-							<Label
-								htmlFor="year-dropdown"
-								className="pr-2 font-medium text-sm"
-							>
+						{/* flex flex-col */}
+						<div className="w-auto space-y-2">
+							{/* <Label htmlFor={year_id} className="pr-2 font-medium text-sm">
 								Leto
 							</Label>
 							<YearDropdown
 								id={year_id}
-								className="xl:hidden"
+								// className="xl:hidden"
 								selectedYear={home_search.leto ?? undefined}
 								onYearChange={async (year) =>
 									await navigate({
@@ -113,6 +137,24 @@ export function FilterAccordion() {
 										search: (prev) => ({ ...prev, leto: year }),
 									})
 								}
+							/> */}
+							<SelectWithClear
+								value={String(home_search.leto ?? "")}
+								setValue={async (v) =>
+									await navigate({
+										from: home_route.id,
+										search: (prev) => ({
+											...prev,
+											leto: v ? Number(v) : undefined,
+										}),
+									})
+								}
+								items={years.map((year) => ({
+									id: String(year),
+									label: String(year),
+								}))}
+								placeholder="Izberi leto..."
+								label="Leto"
 							/>
 						</div>
 					</div>

@@ -43,7 +43,7 @@ export function YearDropdown({
 				</Button>
 			</DropdownMenuTrigger>
 			<DropdownMenuContent
-				className={cn("max-h-60 overflow-y-auto", className)}
+				className={cn("max-h-60", className)}
 			>
 				{years.map((year) => (
 					<DropdownMenuItem key={year} onClick={() => handleYearSelect(year)}>

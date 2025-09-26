@@ -26,6 +26,7 @@ import {
 import {
 	Sheet,
 	SheetContent,
+	SheetDescription,
 	SheetHeader,
 	SheetTitle,
 	SheetTrigger,
@@ -48,7 +49,8 @@ export const SiteNavbar = ({ menu = DEFAULT_MENU }: SiteNavbarProps) => {
 	return (
 		<>
 			{/* Desktop: Row 1 (non-sticky, scrolls away) */}
-			<header className="hidden bg-gray-100 py-4 lg:block">
+			{/* bg-gray-100 */}
+			<header className="hidden py-4 lg:block">
 				{/* https://v3.tailwindcss.com/docs/container - you have to center it manually now */}
 				<div className="mx-auto flex w-full items-center justify-center px-4">
 					<Link to="/" className="flex items-center gap-2">
@@ -62,7 +64,8 @@ export const SiteNavbar = ({ menu = DEFAULT_MENU }: SiteNavbarProps) => {
 			</header>
 
 			{/* Desktop: Row 2 (sticky) */}
-			<nav className="sticky top-0 z-40 hidden border-gray-200 border-b bg-white/80 backdrop-blur-md lg:block">
+			{/* border-gray-200 border-b */}
+			<nav className="sticky top-0 z-40 hidden bg-background/50 backdrop-blur-md lg:block">
 				<div className="container mx-auto px-4">
 					<div className="flex items-center justify-center py-3">
 						<NavigationMenu viewport={false}>
@@ -85,7 +88,10 @@ export const SiteNavbar = ({ menu = DEFAULT_MENU }: SiteNavbarProps) => {
 									<Menu className="size-4" />
 								</Button>
 							</SheetTrigger>
-							<SheetContent className="overflow-y-auto">
+							<SheetContent
+								aria-describedby={undefined}
+								className="overflow-y-auto"
+							>
 								<SheetHeader>
 									<SheetTitle>
 										<Logo />

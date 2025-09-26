@@ -1,22 +1,19 @@
-import { convexQuery, useConvexMutation } from "@convex-dev/react-query";
-import { useMutation } from "@tanstack/react-query";
+import { convexQuery } from "@convex-dev/react-query";
 import {
 	createFileRoute,
 	getRouteApi,
 	Link,
 	stripSearchParams,
 } from "@tanstack/react-router";
-import { fallback, zodValidator } from "@tanstack/zod-adapter";
 import { api } from "convex/_generated/api";
 import { usePaginatedQuery } from "convex/react";
 import { useEffect } from "react";
 import { useIntersectionObserver } from "usehooks-ts";
-import { z } from "zod";
+import { array, nullable, number, object, optional, string } from "valibot";
 import { ButtonGroup } from "~/components/button-group";
 import { Footer } from "~/components/layout/footer2";
 import { SiteNavbar } from "~/components/layout/site-navbar";
 import { Button } from "~/components/ui/button";
-import { auth_client } from "~/lib/auth-client";
 import { FilterAccordion } from "./-filter-accordion";
 
 const DEFAULT_NUM_ITEMS = 10;
@@ -28,16 +25,10 @@ export const DEFAULT_SEARCH_VALUES = {
 };
 
 // properties must be in slovenian because they appear in the URL
-const article_search_validator = z.object({
-	avtorji: fallback(z.array(z.string()), DEFAULT_SEARCH_VALUES.avtorji).default(
-		DEFAULT_SEARCH_VALUES.avtorji,
-	),
-	leto: fallback(z.number().nullable(), DEFAULT_SEARCH_VALUES.leto).default(
-		DEFAULT_SEARCH_VALUES.leto,
-	),
-	iskanje: fallback(z.string(), DEFAULT_SEARCH_VALUES.iskanje).default(
-		DEFAULT_SEARCH_VALUES.iskanje,
-	),
+export const article_search_validator = object({
+	avtorji: optional(array(string()), DEFAULT_SEARCH_VALUES.avtorji),
+	leto: optional(nullable(number()), DEFAULT_SEARCH_VALUES.leto),
+	iskanje: optional(string(), DEFAULT_SEARCH_VALUES.iskanje),
 });
 
 export const Route = createFileRoute("/")({
@@ -60,7 +51,7 @@ export const Route = createFileRoute("/")({
 			authors,
 		};
 	},
-	validateSearch: zodValidator(article_search_validator),
+	validateSearch: article_search_validator,
 	search: { middlewares: [stripSearchParams(DEFAULT_SEARCH_VALUES)] },
 });
 
@@ -79,13 +70,13 @@ function Home() {
 		{ initialNumItems: DEFAULT_NUM_ITEMS },
 	);
 
-	const delete_everything = useMutation({
+	/* const delete_everything = useMutation({
 		mutationFn: useConvexMutation(api.delete_everything.delete_everything),
 	});
 
 	const sync_google_authors = useMutation({
 		mutationFn: useConvexMutation(api.authors.sync_google_authors),
-	});
+	}); */
 
 	// Sentinel for infinite loading
 	const { isIntersecting, ref } = useIntersectionObserver({ threshold: 0.5 });

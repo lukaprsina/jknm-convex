@@ -94,7 +94,8 @@ function NavigationMenuTrigger({
 						// Clear animation state after animation duration
 						setTimeout(() => {
 							setIsAnimating(false);
-						}, 500); // Match your animation duration
+							/* TODO: was 500 */
+						}, 300); // Match your animation duration
 					}
 				}
 			});

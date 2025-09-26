@@ -1,7 +1,7 @@
 "use client";
 
 import type { api } from "convex/_generated/api";
-import { useCallback, useEffect, useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import MultipleSelector, { type Option } from "~/components/ui/multiselect";
 
 interface AuthorSelectProps {
@@ -44,13 +44,13 @@ export function AuthorSelect({
 		[onAuthorsChange],
 	);
 
-	useEffect(() => {
+	/* useEffect(() => {
 		console.log("Selected authors changed:", {
 			selectedAuthors,
 			authorOptions,
 			selectedOptions,
 		});
-	}, [selectedAuthors, authorOptions, selectedOptions]);
+	}, [selectedAuthors, authorOptions, selectedOptions]); */
 
 	return (
 		<MultipleSelector
