@@ -1,134 +1,94 @@
-interface MenuItem {
-	title: string;
-	links: {
-		text: string;
-		url: string;
-	}[];
-}
+import {
+	FacebookIcon,
+	InstagramIcon,
+	TwitterIcon,
+	YoutubeIcon,
+} from "~/components/icons";
+import { Logo } from "../logo";
+import { DEFAULT_MENU } from "./site-navbar";
 
-interface Footer2Props {
-	logo?: {
-		url: string;
-		src: string;
-		alt: string;
-		title: string;
-	};
-	tagline?: string;
-	menuItems?: MenuItem[];
-	copyright?: string;
-	bottomLinks?: {
-		text: string;
-		url: string;
-	}[];
-}
+export function Footer() {
+	const year = new Date().getFullYear();
 
-const Footer2 = ({
-	logo = {
-		src: "https://deifkwefumgah.cloudfront.net/shadcnblocks/block/block-1.svg",
-		alt: "blocks for shadcn/ui",
-		title: "Shadcnblocks.com",
-		url: "https://www.shadcnblocks.com",
-	},
-	tagline = "Components made easy.",
-	menuItems = [
-		{
-			title: "Product",
-			links: [
-				{ text: "Overview", url: "#" },
-				{ text: "Pricing", url: "#" },
-				{ text: "Marketplace", url: "#" },
-				{ text: "Features", url: "#" },
-				{ text: "Integrations", url: "#" },
-				{ text: "Pricing", url: "#" },
-			],
-		},
-		{
-			title: "Company",
-			links: [
-				{ text: "About", url: "#" },
-				{ text: "Team", url: "#" },
-				{ text: "Blog", url: "#" },
-				{ text: "Careers", url: "#" },
-				{ text: "Contact", url: "#" },
-				{ text: "Privacy", url: "#" },
-			],
-		},
-		{
-			title: "Resources",
-			links: [
-				{ text: "Help", url: "#" },
-				{ text: "Sales", url: "#" },
-				{ text: "Advertise", url: "#" },
-			],
-		},
-		{
-			title: "Social",
-			links: [
-				{ text: "Twitter", url: "#" },
-				{ text: "Instagram", url: "#" },
-				{ text: "LinkedIn", url: "#" },
-			],
-		},
-	],
-	copyright = "© 2024 Shadcnblocks.com. All rights reserved.",
-	bottomLinks = [
-		{ text: "Terms and Conditions", url: "#" },
-		{ text: "Privacy Policy", url: "#" },
-	],
-}: Footer2Props) => {
 	return (
-		<section className="py-32">
-			{/* https://v3.tailwindcss.com/docs/container - you have to center it manually now */}
-			<div className="container mx-auto px-4">
-				<footer>
-					<div className="grid grid-cols-2 gap-8 lg:grid-cols-6">
-						<div className="col-span-2 mb-8 lg:mb-0">
-							<div className="flex items-center gap-2 lg:justify-start">
-								<a href="https://shadcnblocks.com">
-									<img
-										src={logo.src}
-										alt={logo.alt}
-										title={logo.title}
-										className="h-10"
-									/>
-								</a>
-								<p className="font-semibold text-xl">{logo.title}</p>
-							</div>
-							<p className="mt-4 font-bold">{tagline}</p>
+		<footer className="py-32">
+			<div className="container mx-auto px-4 py-12">
+				<div className="grid gap-8 md:grid-cols-3">
+					<div>
+						<div className="flex items-center gap-3">
+							<Logo className="w-32" />
 						</div>
-						{menuItems.map((section, sectionIdx) => (
-							<div key={`${section.title}-${sectionIdx}`}>
-								<h3 className="mb-4 font-bold">{section.title}</h3>
-								<ul className="space-y-4 text-muted-foreground">
-									{section.links.map((link, linkIdx) => (
-										<li
-											key={`${link.url}-${linkIdx}`}
-											className="font-medium hover:text-primary"
-										>
-											<a href={link.url}>{link.text}</a>
-										</li>
-									))}
-								</ul>
-							</div>
-						))}
+						<address className="mt-4 text-sm not-italic">
+							Jamarski klub Novo mesto
+							<br />
+							Seidlova cesta 29
+							<br />
+							8000 Novo mesto
+						</address>
+						<div className="mt-4 text-sm">
+							<p>
+								<strong>TRR:</strong> 02970-0020299064
+							</p>
+							<p>
+								<strong>Davčna številka:</strong> 82533113
+							</p>
+							<p>Nismo zavezanci za DDV</p>
+						</div>
 					</div>
-					<div className="mt-24 flex flex-col justify-between gap-4 border-t pt-8 font-medium text-muted-foreground text-sm md:flex-row md:items-center">
-						<p>{copyright}</p>
-						<ul className="flex gap-4">
-							{bottomLinks.map((link, linkIdx) => (
-								<li
-									key={`${link.url}-${linkIdx}`}
-									className="underline hover:text-primary"
+
+					<div>
+						<h3 className="mb-4 font-semibold">Stik z nami</h3>
+						<ul className="space-y-2 text-sm">
+							<li className="flex items-center">
+								<a
+									href="mailto:info@jknm.si"
+									className="text-muted-foreground underline hover:text-primary"
 								>
-									<a href={link.url}>{link.text}</a>
-								</li>
-							))}
+									info@jknm.si
+								</a>
+							</li>
+							<li className="flex items-center">
+								<a
+									href="tel:+38641871385"
+									className="text-muted-foreground underline hover:text-primary"
+								>
+									+386 (0)41 871 385
+								</a>
+								<span className="ml-2">Zdravko Bučar</span>
+							</li>
 						</ul>
 					</div>
-				</footer>
-			</div>
-		</section>
-	);
-};
 
-export { Footer2 };
+					<div>
+						<h3 className="mb-4 font-semibold">Povezave</h3>
+						<div className="flex flex-wrap gap-3 text-sm">
+							{DEFAULT_MENU.map((m) => (
+								<a
+									key={m.title}
+									href={m.url}
+									className="text-muted-foreground underline hover:text-primary"
+								>
+									{m.title}
+								</a>
+							))}
+						</div>
+
+						<div className="mt-6">
+							<h3 className="mb-4 font-semibold">Spremljajte nas</h3>
+							<div className="flex items-center gap-4">
+								<FacebookIcon />
+								<YoutubeIcon />
+								<InstagramIcon />
+								<TwitterIcon />
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div className="mt-8 border-gray-700 border-t pt-6 text-center text-gray-400 text-sm">
+					<p>{`© ${year} Jamarski klub Novo mesto. Vse pravice pridržane.`}</p>
+				</div>
+			</div>
+		</footer>
+	);
+}

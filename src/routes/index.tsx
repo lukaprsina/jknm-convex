@@ -12,7 +12,7 @@ import { usePaginatedQuery } from "convex/react";
 import { useEffect } from "react";
 import { useIntersectionObserver } from "usehooks-ts";
 import { z } from "zod";
-import { Footer2 } from "~/components/layout/footer2";
+import { Footer } from "~/components/layout/footer2";
 import { SiteNavbar } from "~/components/layout/site-navbar";
 import { Button } from "~/components/ui/button";
 import { auth_client } from "~/lib/auth-client";
@@ -151,19 +151,17 @@ function Home() {
 							Sinhroniziraj Google avtorje
 						</Button>
 					</div>
-					<div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+					{/* <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
 						{search_api.results?.map((article) => (
 							<ArticleCard key={article._id} article={article} />
 						))}
 					</div>
-					{/* Display a message if no articles are found */}
 					{search_api.status === "Exhausted" &&
 						search_api.results.length === 0 && (
 							<div className="text-center text-gray-500">
 								<p>Ni najdenih novic.</p>
 							</div>
 						)}
-					{/* Sentinel for infinite scroll */}
 					{search_api.status === "CanLoadMore" && (
 						<div
 							ref={ref}
@@ -176,7 +174,7 @@ function Home() {
 						>
 							<span>Nalagam...</span>
 						</div>
-					)}
+					)} */}
 				</div>
 				{/* {Array.from({ length: 50 }).map((_, index) => (
 					// biome-ignore lint/suspicious/noArrayIndexKey: lol
@@ -188,7 +186,7 @@ function Home() {
 					</p>
 				))} */}
 			</main>
-			<Footer2 />
+			<Footer />
 		</>
 	);
 }

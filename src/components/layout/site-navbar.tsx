@@ -30,6 +30,7 @@ import {
 	SheetTitle,
 	SheetTrigger,
 } from "~/components/ui/sheet";
+import { Logo } from "../logo";
 
 interface MenuItem {
 	title: string;
@@ -44,19 +45,12 @@ export interface SiteNavbarProps {
 }
 
 export const SiteNavbar = ({ menu = DEFAULT_MENU }: SiteNavbarProps) => {
-	const logo = (
-		<Link to="/" className="flex items-center gap-2">
-			<img src="/logo.svg" className="max-h-8" alt="logo" />
-		</Link>
-	);
-
 	return (
 		<>
 			{/* Desktop: Row 1 (non-sticky, scrolls away) */}
 			<header className="hidden bg-gray-100 py-4 lg:block">
 				{/* https://v3.tailwindcss.com/docs/container - you have to center it manually now */}
 				<div className="mx-auto flex w-full items-center justify-center px-4">
-					{/* {logo} */}
 					<Link to="/" className="flex items-center gap-2">
 						<img src="/logo.svg" className="w-52" alt="logo" />
 					</Link>
@@ -84,7 +78,7 @@ export const SiteNavbar = ({ menu = DEFAULT_MENU }: SiteNavbarProps) => {
 			<section className="py-4 lg:hidden">
 				<div className="container mx-auto px-4">
 					<div className="flex items-center justify-between">
-						{logo}
+						<Logo />
 						<Sheet>
 							<SheetTrigger asChild>
 								<Button variant="outline" size="icon">
@@ -93,7 +87,9 @@ export const SiteNavbar = ({ menu = DEFAULT_MENU }: SiteNavbarProps) => {
 							</SheetTrigger>
 							<SheetContent className="overflow-y-auto">
 								<SheetHeader>
-									<SheetTitle>{logo}</SheetTitle>
+									<SheetTitle>
+										<Logo />
+									</SheetTitle>
 								</SheetHeader>
 								<div className="flex flex-col gap-6 p-4">
 									<Accordion
@@ -187,7 +183,7 @@ const SubMenuLink = ({ item }: { item: MenuItem }) => {
 	);
 };
 
-const DEFAULT_MENU: MenuItem[] = [
+export const DEFAULT_MENU: MenuItem[] = [
 	{ title: "Home", url: "#" },
 	{
 		title: "Products",
