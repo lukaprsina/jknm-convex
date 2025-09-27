@@ -11,19 +11,22 @@ type Article = Prettify<ElementType<Articles>>;
 
 export function ArticleCard({ article }: { article: Article }) {
 	const thumbnail = article.thumbnail_full?.original;
-	if (!thumbnail) {
+	/* if (!thumbnail) {
 		return <p>Missing thumbnail</p>; // Handle missing thumbnail gracefully
-	}
+	} */
 
 	return (
 		<div className="relative mb-4 w-full">
 			<Link to="/novica/$article_slug" params={{ article_slug: article.slug }}>
 				<Card className="w-full p-4">
 					<img
-						src={thumbnail.url} // TODO
+						src={
+							thumbnail?.url ??
+							"https://images.unsplash.com/photo-1493612276216-ee3925520721?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8cmFuZG9tfGVufDB8fDB8fHww"
+						} // TODO
 						loading="lazy"
-						width={thumbnail.width}
-						height={thumbnail.height}
+						width={thumbnail?.width ?? 1500}
+						height={thumbnail?.height ?? 1000}
 						className="rounded-lg"
 						style={{
 							backgroundImage: article.thumbnail_full?.blur_placeholder

@@ -11,6 +11,7 @@ import {
 	type QueryCtx,
 	query,
 } from "./_generated/server";
+import { auth_component } from "./auth";
 import {
 	article_status_validator,
 	article_validator,
@@ -293,7 +294,7 @@ function slugify_title(title: string, id: Id<"articles">): string {
 export const create_draft = mutation({
 	args: {},
 	handler: async (ctx) => {
-		const user = await ctx.auth.getUserIdentity();
+		const user = await auth_component.safeGetAuthUser(ctx);
 
 		if (!user) {
 			throw new Error("User must be authenticated to create a draft article.");
@@ -313,7 +314,7 @@ export const create_draft = mutation({
 			]),
 			view_count: 0,
 			updated_at: Date.now(),
-			created_by: user.subject as Id<"users">,
+			created_by: user.userId as Id<"users">,
 		});
 
 		const slug = new_draft_id.toString();
@@ -485,7 +486,8 @@ export const copy_published_into_draft = mutation({
 		article_id: v.id("articles"),
 	},
 	handler: async (ctx, args) => {
-		const user = await ctx.auth.getUserIdentity();
+		const user = await auth_component.safeGetAuthUser(ctx);
+
 		if (!user) {
 			throw new Error(
 				"User must be authenticated to copy a published article.",
@@ -522,7 +524,7 @@ export const copy_published_into_draft = mutation({
 			draft_to_published_ref: args.article_id,
 			view_count: 0,
 			updated_at: Date.now(),
-			created_by: user.subject as Id<"users">,
+			created_by: user.userId as Id<"users">,
 		});
 
 		await ctx.db.patch(new_draft_id, {

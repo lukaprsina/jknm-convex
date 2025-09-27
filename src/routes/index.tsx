@@ -14,6 +14,7 @@ import { ButtonGroup } from "~/components/button-group";
 import { Footer } from "~/components/layout/footer2";
 import { SiteNavbar } from "~/components/layout/site-navbar";
 import { Button } from "~/components/ui/button";
+import { ArticleCard } from "./-article-card";
 import { FilterAccordion } from "./-filter-accordion";
 
 const DEFAULT_NUM_ITEMS = 10;
@@ -70,14 +71,6 @@ function Home() {
 		{ initialNumItems: DEFAULT_NUM_ITEMS },
 	);
 
-	/* const delete_everything = useMutation({
-		mutationFn: useConvexMutation(api.delete_everything.delete_everything),
-	});
-
-	const sync_google_authors = useMutation({
-		mutationFn: useConvexMutation(api.authors.sync_google_authors),
-	}); */
-
 	// Sentinel for infinite loading
 	const { isIntersecting, ref } = useIntersectionObserver({ threshold: 0.5 });
 
@@ -91,18 +84,10 @@ function Home() {
 	return (
 		<>
 			<SiteNavbar />
-			{/* <header className="flex w-full flex-col items-center">
-				<div className="py-8">
-					<img src="/logo.svg" alt="Logo" className="h-24" />
-				</div>
-
-				<Navbar />
-			</header> */}
-			{/* <Header /> */}
 			<main className="w-full flex-grow">
 				<div className="container mx-auto px-4">
 					<FilterAccordion />
-					<div className="flex w-full justify-center">
+					<div className="flex w-full justify-center py-5">
 						<ButtonGroup orientation="vertical">
 							<Button asChild variant="outline">
 								<Link to="/prijava">Prijava</Link>
@@ -112,41 +97,9 @@ function Home() {
 									Admin osnutki
 								</Link>
 							</Button>
-							{/* <Button
-								onClick={async () => {
-									const result = await auth_client.deleteUser();
-									console.log("Delete user result:", result);
-								}}
-								variant="outline"
-							>
-								Odstrani uporabnika
-							</Button>
-							<Button
-								onClick={async (event) => {
-									if (!event.ctrlKey && !event.shiftKey) return;
-
-									const conformation = confirm(
-										"Are you sure you want to delete every article and media?",
-									);
-
-									if (!conformation) return;
-
-									delete_everything.mutate({});
-								}}
-								variant="outline"
-							>
-								Zbriši vse
-							</Button>
-							<Button
-								onClick={async () => {
-									sync_google_authors.mutate({});
-								}}
-							>
-								Sinhroniziraj Google avtorje
-							</Button> */}
 						</ButtonGroup>
 					</div>
-					{/* <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+					<div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
 						{search_api.results?.map((article) => (
 							<ArticleCard key={article._id} article={article} />
 						))}
@@ -169,19 +122,65 @@ function Home() {
 						>
 							<span>Nalagam...</span>
 						</div>
-					)} */}
+					)}
 				</div>
-				{/* {Array.from({ length: 50 }).map((_, index) => (
-					// biome-ignore lint/suspicious/noArrayIndexKey: lol
-					<p key={index}>
-						Lorem ipsum, dolor sit amet consectetur adipisicing elit. In,
-						facilis numquam. Blanditiis asperiores quidem iusto explicabo
-						pariatur incidunt cupiditate provident ducimus nostrum. Eius
-						corporis magnam placeat suscipit, sapiente fugit. Ipsum?
-					</p>
-				))} */}
 			</main>
 			<Footer />
 		</>
 	);
 }
+
+/* const delete_everything = useMutation({
+	mutationFn: useConvexMutation(api.delete_everything.delete_everything),
+});
+
+const sync_google_authors = useMutation({
+	mutationFn: useConvexMutation(api.authors.sync_google_authors),
+}); */
+
+/* 
+<Button
+	onClick={async () => {
+		const result = await auth_client.deleteUser();
+		console.log("Delete user result:", result);
+	}}
+	variant="outline"
+>
+	Odstrani uporabnika
+</Button>
+<Button
+	onClick={async (event) => {
+		if (!event.ctrlKey && !event.shiftKey) return;
+
+		const conformation = confirm(
+			"Are you sure you want to delete every article and media?",
+		);
+
+		if (!conformation) return;
+
+		delete_everything.mutate({});
+	}}
+	variant="outline"
+>
+	Zbriši vse
+</Button>
+<Button
+	onClick={async () => {
+		sync_google_authors.mutate({});
+	}}
+>
+	Sinhroniziraj Google avtorje
+</Button>
+*/
+
+/* 
+{Array.from({ length: 50 }).map((_, index) => (
+	// biome-ignore lint/suspicious/noArrayIndexKey: lol
+	<p key={index}>
+		Lorem ipsum, dolor sit amet consectetur adipisicing elit. In,
+		facilis numquam. Blanditiis asperiores quidem iusto explicabo
+		pariatur incidunt cupiditate provident ducimus nostrum. Eius
+		corporis magnam placeat suscipit, sapiente fugit. Ipsum?
+	</p>
+))}
+*/

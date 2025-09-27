@@ -21,7 +21,6 @@ export function FilterAccordion() {
 	const home_search = home_route.useSearch();
 	const { authors } = home_route.useLoaderData();
 	const search_id = useId();
-	const year_id = useId();
 
 	const navigate = useNavigate();
 	const [isOpen, setIsOpen] = useState(
@@ -124,21 +123,8 @@ export function FilterAccordion() {
 
 						{/* flex flex-col */}
 						<div className="w-auto space-y-2">
-							{/* <Label htmlFor={year_id} className="pr-2 font-medium text-sm">
-								Leto
-							</Label>
-							<YearDropdown
-								id={year_id}
-								// className="xl:hidden"
-								selectedYear={home_search.leto ?? undefined}
-								onYearChange={async (year) =>
-									await navigate({
-										from: home_route.id,
-										search: (prev) => ({ ...prev, leto: year }),
-									})
-								}
-							/> */}
 							<SelectWithClear
+								className="min-w-[150px]"
 								value={String(home_search.leto ?? "")}
 								setValue={async (v) =>
 									await navigate({
