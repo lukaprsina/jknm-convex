@@ -15,6 +15,13 @@ export const thumbnail_validator = v.object({
 	height: v.number(),
 });
 
+export const headings_validator = v.array(
+	v.object({
+		level: v.number(),
+		text: v.string(),
+	}),
+);
+
 const schema = defineSchema({
 	users: defineTable({
 		email: v.string(),
@@ -28,6 +35,7 @@ const schema = defineSchema({
 		content_json: v.string(), // PlateJS Value type
 		content_text: v.optional(v.string()), // For full-text search
 		excerpt: v.optional(v.string()), // For previews/SEO
+		headings: v.optional(headings_validator), // For TOC
 
 		view_count: v.number(),
 		thumbnail: v.optional(thumbnail_validator),

@@ -56,10 +56,4 @@ export default defineConfig({
 			"@convex": path.resolve(__dirname, "./convex"),
 		},
 	},
-	/* build: {
-		rollupOptions: {
-			// temp fix: https://github.com/rollup/rollup/issues/6012
-			treeshake: false,
-		},
-	}, */
 });

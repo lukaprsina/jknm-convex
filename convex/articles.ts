@@ -6,6 +6,7 @@ import slugify from "slugify";
 import { api, internal } from "./_generated/api";
 import type { Doc, Id } from "./_generated/dataModel";
 import {
+	internalMutation,
 	type MutationCtx,
 	mutation,
 	type QueryCtx,
@@ -15,6 +16,7 @@ import { auth_component } from "./auth";
 import {
 	article_status_validator,
 	article_validator,
+	headings_validator,
 	thumbnail_validator,
 } from "./schema";
 
@@ -334,16 +336,16 @@ async function update_article(
 	additional_fields: Partial<Doc<"articles">> = {},
 	author_ids: string[] | undefined = undefined,
 ) {
-	let title = "Neimenovana novica"; // Default title
+	// let title = "Neimenovana novica"; // Default title
 	let parsed_content: Value;
 
 	try {
 		parsed_content = JSON.parse(content_json) as Value;
-	} catch (error) {
-		throw new Error(`Failed to parse content JSON: ${error}`);
+	} catch {
+		throw new Error("Failed to parse content JSON");
 	}
 
-	if (Array.isArray(parsed_content) && parsed_content.length > 0) {
+	/* if (Array.isArray(parsed_content) && parsed_content.length > 0) {
 		const firstNode = parsed_content[0];
 		if (firstNode.type === "h1" && firstNode.children.length > 0) {
 			const descendant = firstNode.children[0];
@@ -353,11 +355,11 @@ async function update_article(
 		}
 	} else {
 		throw new Error("Content JSON is not a valid array or is empty.");
-	}
+	} */
 
 	// Update the article with the new values
 	await ctx.db.patch(article_id, {
-		title,
+		// title,
 		content_json,
 		updated_at: Date.now(),
 		...additional_fields,
@@ -389,10 +391,11 @@ async function update_article(
 
 	ctx.scheduler.runAfter(0, internal.articles_plate.analyze_article, {
 		article_id,
+		// title,
 		article_content: content_json,
 	});
 
-	return { title, parsed_content };
+	return parsed_content;
 }
 
 export const update_draft = mutation({
@@ -425,6 +428,28 @@ export const update_draft = mutation({
 	},
 });
 
+export const update_analysis = internalMutation({
+	args: {
+		article_id: v.id("articles"),
+		title: v.string(),
+		content_text: v.string(),
+		excerpt: v.string(),
+		headings: headings_validator,
+	},
+	handler: async (ctx, args) => {
+		await ctx.db.patch(args.article_id, {
+			content_text: args.content_text,
+			excerpt: args.excerpt,
+			headings: args.headings,
+		});
+
+		// TODO: switch drafts to slugs too
+		// Update slug with the actual title
+		const slug = slugify_title(args.title, args.article_id);
+		await ctx.db.patch(args.article_id, { slug });
+	},
+});
+
 export const publish_draft = mutation({
 	args: {
 		article_id: v.id("articles"),
@@ -451,7 +476,8 @@ export const publish_draft = mutation({
 		const published_at = args.published_at ?? Date.now();
 
 		// Use the helper function to parse content, extract title and update authors/thumbnail
-		const { title } = await update_article(
+		// const { title } =
+		await update_article(
 			ctx,
 			args.article_id,
 			args.content_json,
@@ -477,10 +503,6 @@ export const publish_draft = mutation({
 				});
 			}
 		}
-
-		// Update slug with the actual title
-		const slug = slugify_title(title, args.article_id);
-		await ctx.db.patch(args.article_id, { slug });
 
 		return ctx.db.get(args.article_id);
 	},
