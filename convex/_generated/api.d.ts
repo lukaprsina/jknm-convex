@@ -9,6 +9,7 @@
  */
 
 import type * as articles from "../articles.js";
+import type * as articles_plate from "../articles_plate.js";
 import type * as auth from "../auth.js";
 import type * as authors from "../authors.js";
 import type * as authors_google from "../authors_google.js";
@@ -34,6 +35,7 @@ import type {
  */
 declare const fullApi: ApiFromModules<{
   articles: typeof articles;
+  articles_plate: typeof articles_plate;
   auth: typeof auth;
   authors: typeof authors;
   authors_google: typeof authors_google;

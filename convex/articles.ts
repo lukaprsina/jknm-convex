@@ -3,7 +3,7 @@ import { paginationOptsValidator } from "convex/server";
 import { v } from "convex/values";
 import type { Value } from "platejs";
 import slugify from "slugify";
-import { api } from "./_generated/api";
+import { api, internal } from "./_generated/api";
 import type { Doc, Id } from "./_generated/dataModel";
 import {
 	type MutationCtx,
@@ -386,6 +386,11 @@ async function update_article(
 			});
 		}
 	}
+
+	ctx.scheduler.runAfter(0, internal.articles_plate.analyze_article, {
+		article_id,
+		article_content: content_json,
+	});
 
 	return { title, parsed_content };
 }
