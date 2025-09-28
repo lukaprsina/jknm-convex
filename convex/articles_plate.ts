@@ -15,7 +15,12 @@ import { BaseTableKit } from "../src/components/plugins/table-base-kit";
 import { BaseToggleKit } from "../src/components/plugins/toggle-base-kit";
 import { internal } from "./_generated/api";
 import { internalAction } from "./_generated/server";
-import type { headings_validator } from "./schema";
+import { slugify_title } from "./articles";
+import {
+	article_status_validator,
+	type headings_validator,
+	thumbnail_validator,
+} from "./schema";
 
 // import { BaseEditorKit } from "~/components/editor-base-kit";
 
@@ -36,8 +41,11 @@ export const NoMathKit = [
 export const analyze_article = internalAction({
 	args: {
 		article_id: v.id("articles"),
-		// title: v.string(),
+		status: article_status_validator,
 		article_content: v.string(),
+		author_ids: v.optional(v.array(v.string())),
+		thumbnail: v.optional(thumbnail_validator),
+		published_at: v.optional(v.number()),
 	},
 	handler: async (ctx, args) => {
 		const content_json = JSON.parse(args.article_content);
@@ -85,12 +93,26 @@ export const analyze_article = internalAction({
 		const content_text = stripMarkdown(markdown).trim();
 		const excerpt = content_text.slice(0, EXCERPT_LENGTH).trim();
 
-		await ctx.runMutation(internal.articles.update_analysis, {
+		const title = headings.length > 0 ? headings[0].text : "Neimenovana novica";
+		let slug = "ERROR";
+		if (args.status === "published") {
+			slug = slugify_title(title, args.article_id);
+		} else {
+			slug = args.article_id.toString();
+		}
+
+		await ctx.runMutation(internal.articles.process_article_update, {
 			article_id: args.article_id,
-			title: headings.length > 0 ? headings[0].text : "Neimenovana novica",
+			status: args.status,
+			title,
+			slug,
 			content_text,
 			excerpt,
 			headings,
+			author_ids: args.author_ids,
+			content_json: args.article_content,
+			thumbnail: args.thumbnail,
+			published_at: args.published_at,
 		});
 	},
 });

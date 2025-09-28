@@ -1,13 +1,11 @@
 import type { PaginationResult } from "convex/server";
 import { paginationOptsValidator } from "convex/server";
 import { v } from "convex/values";
-import type { Value } from "platejs";
 import slugify from "slugify";
 import { api, internal } from "./_generated/api";
-import type { Doc, Id } from "./_generated/dataModel";
+import type { Doc, Id, TableNames } from "./_generated/dataModel";
 import {
 	internalMutation,
-	type MutationCtx,
 	mutation,
 	type QueryCtx,
 	query,
@@ -19,6 +17,7 @@ import {
 	headings_validator,
 	thumbnail_validator,
 } from "./schema";
+import { without_system_fields } from "./utils";
 
 /**
  * Helper function to load authors for an article in the correct order
@@ -282,7 +281,7 @@ async function get_articles_with_status_and_limit(
 	return articles_with_metadata;
 }
 
-function slugify_title(title: string, id: Id<"articles">): string {
+export function slugify_title(title: string, id: Id<"articles">): string {
 	const new_title = `${title ?? "Neimenovana novica"}-${id}`;
 
 	return slugify(new_title, {
@@ -329,74 +328,84 @@ export const create_draft = mutation({
 	},
 });
 
-async function update_article(
-	ctx: MutationCtx,
-	article_id: Id<"articles">,
-	content_json: string,
-	additional_fields: Partial<Doc<"articles">> = {},
-	author_ids: string[] | undefined = undefined,
-) {
-	// let title = "Neimenovana novica"; // Default title
-	let parsed_content: Value;
+export const process_article_update = internalMutation({
+	args: {
+		article_id: v.id("articles"),
+		slug: v.string(),
+		status: article_status_validator,
+		title: v.string(),
+		content_text: v.string(),
+		content_json: v.string(),
+		excerpt: v.string(),
+		headings: headings_validator,
+		author_ids: v.optional(v.array(v.string())),
+		thumbnail: v.optional(thumbnail_validator),
+		published_at: v.optional(v.number()),
+	},
+	handler: async (ctx, args) => {
+		const published_year = args.published_at
+			? new Date(args.published_at).getFullYear()
+			: undefined;
 
-	try {
-		parsed_content = JSON.parse(content_json) as Value;
-	} catch {
-		throw new Error("Failed to parse content JSON");
-	}
+		await ctx.db.patch(args.article_id, {
+			slug: args.slug,
+			title: args.title,
+			status: args.status,
+			content_text: args.content_text,
+			content_json: args.content_json,
+			excerpt: args.excerpt,
+			headings: args.headings,
+			thumbnail: args.thumbnail,
+			updated_at: Date.now(),
+			published_at: args.published_at,
+			published_year,
+		});
 
-	/* if (Array.isArray(parsed_content) && parsed_content.length > 0) {
-		const firstNode = parsed_content[0];
-		if (firstNode.type === "h1" && firstNode.children.length > 0) {
-			const descendant = firstNode.children[0];
-			title = descendant.text as string;
-		} else {
-			throw new Error("First node is not an H1 with text children.");
+		if (Array.isArray(args.author_ids)) {
+			// If author_ids supplied, replace existing article->author links
+			// Delete previous authors for this article
+			const previous_authors = await ctx.db
+				.query("articles_to_authors")
+				.withIndex("by_article", (q) => q.eq("article_id", args.article_id))
+				.collect();
+
+			for (const author_link of previous_authors) {
+				await ctx.db.delete(author_link._id);
+			}
+
+			// Insert new authors into the join table
+			for (let i = 0; i < args.author_ids.length; i++) {
+				const author_id = args.author_ids[i];
+
+				await ctx.db.insert("articles_to_authors", {
+					article_id: args.article_id,
+					author_id: author_id as Id<"authors">,
+					order: i,
+				});
+			}
 		}
-	} else {
-		throw new Error("Content JSON is not a valid array or is empty.");
-	} */
 
-	// Update the article with the new values
-	await ctx.db.patch(article_id, {
-		// title,
-		content_json,
-		updated_at: Date.now(),
-		...additional_fields,
-	});
+		// If this article is a draft that references a published article,
+		// and the draft was just published, delete the referenced article
+		if (args.status === "published") {
+			const article = await ctx.db.get(args.article_id);
+			if (!article) {
+				throw new Error("Article not found after process_article_update.");
+			}
 
-	// If author_ids supplied, replace existing article->author links
-	if (Array.isArray(author_ids)) {
-		// Delete previous authors for this article
-		const previous_authors = await ctx.db
-			.query("articles_to_authors")
-			.withIndex("by_article", (q) => q.eq("article_id", article_id))
-			.collect();
-
-		for (const author_link of previous_authors) {
-			await ctx.db.delete(author_link._id);
+			if (article.draft_to_published_ref) {
+				// Use the centralized delete_article mutation to ensure join tables are cleaned up
+				const referenced_id = article.draft_to_published_ref;
+				const existing = await ctx.db.get(referenced_id);
+				if (existing) {
+					await ctx.runMutation(api.articles.hard_delete, {
+						article_id: referenced_id,
+					});
+				}
+			}
 		}
-
-		// Insert new authors into the join table
-		for (let i = 0; i < author_ids.length; i++) {
-			const author_id = author_ids[i];
-
-			await ctx.db.insert("articles_to_authors", {
-				article_id,
-				author_id: author_id as Id<"authors">,
-				order: i,
-			});
-		}
-	}
-
-	ctx.scheduler.runAfter(0, internal.articles_plate.analyze_article, {
-		article_id,
-		// title,
-		article_content: content_json,
-	});
-
-	return parsed_content;
-}
+	},
+});
 
 export const update_draft = mutation({
 	args: {
@@ -411,42 +420,23 @@ export const update_draft = mutation({
 			throw new Error("User must be authenticated to update a draft article.");
 		}
 
-		const article = await ctx.db.get(args.id);
-
-		if (!article || article.status !== "draft") {
-			throw new Error("Article not found or is not a draft.");
-		}
-
 		// Use the helper function to update the article
-		await update_article(
+		/* await update_article(
 			ctx,
 			args.id,
+			article.status,
 			args.content_json,
-			{ thumbnail: args.thumbnail },
 			args.author_ids,
-		);
-	},
-});
+			{ thumbnail: args.thumbnail },
+		); */
 
-export const update_analysis = internalMutation({
-	args: {
-		article_id: v.id("articles"),
-		title: v.string(),
-		content_text: v.string(),
-		excerpt: v.string(),
-		headings: headings_validator,
-	},
-	handler: async (ctx, args) => {
-		await ctx.db.patch(args.article_id, {
-			content_text: args.content_text,
-			excerpt: args.excerpt,
-			headings: args.headings,
+		ctx.scheduler.runAfter(0, internal.articles_plate.analyze_article, {
+			article_id: args.id,
+			status: "draft",
+			article_content: args.content_json,
+			author_ids: args.author_ids,
+			thumbnail: args.thumbnail,
 		});
-
-		// TODO: switch drafts to slugs too
-		// Update slug with the actual title
-		const slug = slugify_title(args.title, args.article_id);
-		await ctx.db.patch(args.article_id, { slug });
 	},
 });
 
@@ -467,7 +457,7 @@ export const publish_draft = mutation({
 
 		const article = await ctx.db.get(args.article_id);
 
-		console.log("Publishing article", { article_id: args.article_id });
+		console.log("publishing article", { article_id: args.article_id });
 
 		if (!article || article.status !== "draft") {
 			throw new Error("Article not found or is not a draft.");
@@ -476,33 +466,27 @@ export const publish_draft = mutation({
 		const published_at = args.published_at ?? Date.now();
 
 		// Use the helper function to parse content, extract title and update authors/thumbnail
-		// const { title } =
-		await update_article(
+		/* await update_article(
 			ctx,
 			args.article_id,
+			"published",
 			args.content_json,
+			args.author_ids,
 			{
 				thumbnail: args.thumbnail,
-				status: "published",
 				published_at,
 				published_year: new Date(published_at).getFullYear(),
-				slug: "ERROR", //slugify_title("", args.article_id), // Will be updated below with actual title
 				legacy_id: args.legacy_id,
 			},
-			args.author_ids,
-		);
-
-		if (article.draft_to_published_ref) {
-			// Use the centralized delete_article mutation to ensure join tables are cleaned up
-			const referenced_id = article.draft_to_published_ref;
-			const existing = await ctx.db.get(referenced_id);
-			if (existing) {
-				// delete_article is a public mutation; call it via the generated `api` reference
-				await ctx.runMutation(api.articles.hard_delete, {
-					article_id: referenced_id,
-				});
-			}
-		}
+		); */
+		ctx.scheduler.runAfter(0, internal.articles_plate.analyze_article, {
+			article_id: args.article_id,
+			status: "published",
+			article_content: args.content_json,
+			author_ids: args.author_ids,
+			thumbnail: args.thumbnail,
+			published_at,
+		});
 
 		return ctx.db.get(args.article_id);
 	},
@@ -542,35 +526,22 @@ export const copy_published_into_draft = mutation({
 			};
 		}
 
+		const draft_fields = without_system_fields(article);
+		draft_fields.draft_to_published_ref = args.article_id;
+
+		draft_fields.published_at = undefined;
+		draft_fields.published_year = undefined;
+
+		// draft_fields.status = "draft";
+		// draft_fields.updated_at = Date.now();
+		// draft_fields.created_by = user.userId as Id<"users">;
+
 		// Create a new draft article
-		const new_draft_id = await ctx.db.insert("articles", {
-			status: "draft",
-			title: article.title,
-			slug: "ERROR",
-			content_json: article.content_json,
-			draft_to_published_ref: args.article_id,
-			view_count: 0,
-			updated_at: Date.now(),
-			created_by: user.userId as Id<"users">,
-		});
+		const new_draft_id = await ctx.db.insert("articles", draft_fields);
 
 		await ctx.db.patch(new_draft_id, {
 			slug: new_draft_id.toString(),
 		});
-
-		// Copy authors
-		const authors = await ctx.db
-			.query("articles_to_authors")
-			.withIndex("by_article", (q) => q.eq("article_id", args.article_id))
-			.collect();
-
-		for (const author_link of authors) {
-			await ctx.db.insert("articles_to_authors", {
-				article_id: new_draft_id,
-				author_id: author_link.author_id,
-				order: author_link.order,
-			});
-		}
 
 		// Copy media links
 		const media_links = await ctx.db
@@ -578,12 +549,35 @@ export const copy_published_into_draft = mutation({
 			.withIndex("by_article", (q) => q.eq("article_id", args.article_id))
 			.collect();
 
+		// Copy authors
+		const authors = await ctx.db
+			.query("articles_to_authors")
+			.withIndex("by_article", (q) => q.eq("article_id", args.article_id))
+			.collect();
+
+		/* for (const author_link of authors) {
+			await ctx.db.insert("articles_to_authors", {
+				article_id: new_draft_id,
+				author_id: author_link.author_id,
+				order: author_link.order,
+			});
+		} */
+
 		for (const media_link of media_links) {
 			await ctx.db.insert("media_to_articles", {
 				article_id: new_draft_id,
 				media_id: media_link.media_id,
 			});
 		}
+
+		ctx.scheduler.runAfter(0, internal.articles_plate.analyze_article, {
+			article_id: new_draft_id,
+			status: "draft",
+			article_content: draft_fields.content_json,
+			author_ids: authors.map((id) => id.toString()),
+			thumbnail: draft_fields.thumbnail,
+			// published_at: draft_fields.published_at,
+		});
 
 		// We don't need to copy actual B2 files
 
@@ -607,8 +601,7 @@ export const restore = mutation({
 		}
 
 		if (article.status !== "deleted") {
-			// Not deleted, nothing to do
-			return;
+			throw new Error("Article is not deleted.");
 		}
 
 		await ctx.db.patch(args.article_id, {
@@ -634,10 +627,10 @@ export const soft_delete = mutation({
 		}
 
 		if (article.status === "deleted") {
-			// Already deleted
-			return;
+			throw new Error("Article is not deleted.");
 		}
 
+		// TODO: slugs for deleted articles
 		await ctx.db.patch(args.article_id, {
 			status: "deleted",
 			// slug: `deleted-${args.article_id}-${Date.now()}`,
