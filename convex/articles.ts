@@ -570,6 +570,8 @@ export const copy_published_into_draft = mutation({
 			});
 		}
 
+		// this shouldn't fail because of the heading
+		// since published needs to have a title
 		ctx.scheduler.runAfter(0, internal.articles_plate.analyze_article, {
 			article_id: new_draft_id,
 			status: "draft",
@@ -644,8 +646,10 @@ export const hard_delete = mutation({
 		article_id: v.id("articles"),
 	},
 	handler: async (ctx, args) => {
-		const user_id = await ctx.auth.getUserIdentity();
+		const user_id = await auth_component.safeGetAuthUser(ctx);
+		console.log("hard deleting article", { args, user_id });
 		if (!user_id) {
+			// return;
 			throw new Error("User must be authenticated to delete an article.");
 		}
 

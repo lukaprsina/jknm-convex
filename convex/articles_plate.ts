@@ -102,13 +102,13 @@ export const analyze_article = internalAction({
 		}
 
 		await ctx.runMutation(internal.articles.process_article_update, {
-			article_id: args.article_id,
-			status: args.status,
 			title,
 			slug,
 			content_text,
 			excerpt,
 			headings,
+			article_id: args.article_id,
+			status: args.status,
 			author_ids: args.author_ids,
 			content_json: args.article_content,
 			thumbnail: args.thumbnail,

@@ -85,7 +85,11 @@ export function PublishDialog() {
 				/> */}
 				<div className="overflow-y-auto">
 					{selectedImage && (
-						<PublishImageCropper className="m-10" image={selectedImage} />
+						<PublishImageCropper
+							aspectRatio={16 / 9}
+							className="m-10"
+							image={selectedImage}
+						/>
 					)}
 					<Suspense fallback={<div className="p-6">Nalaganje...</div>}>
 						<ImageSelector
