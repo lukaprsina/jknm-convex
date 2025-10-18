@@ -168,7 +168,7 @@ export const optimize_image = internalAction({
 			const variant_results = await Promise.all(variant_promises);
 
 			// Build variants array according to new schema
-			const base_url = `https://gradivo.jknm.site/${args.image_db_id}`;
+			const base_url = `https://gradivo.jknm.org/${args.image_db_id}`;
 			const variants: VariantData[] = [];
 
 			for (const result of variant_results) {
