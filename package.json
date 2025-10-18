@@ -21,7 +21,8 @@
 		"react-lite-youtube-embed@2.5.1": "patches/react-lite-youtube-embed.patch"
 	},
 	"overrides": {
-		"rollup": "4.44.0"
+		"react-lite-youtube-embed": "2.5.1",
+		"react-player": "2.16.1"
 	},
 	"engines": {
 		"node": ">=22"

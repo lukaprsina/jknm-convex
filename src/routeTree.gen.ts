@@ -8,19 +8,15 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-import { createServerRootRoute } from '@tanstack/react-start/server'
-
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as AdminRouteRouteImport } from './routes/admin/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as PrijavaIndexRouteImport } from './routes/prijava.index'
 import { Route as NovicaArticle_slugIndexRouteImport } from './routes/novica/$article_slug.index'
 import { Route as AdminStatusIndexRouteImport } from './routes/admin/$status/index'
+import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 import { Route as AdminStatusArticle_slugIndexRouteImport } from './routes/admin/$status/$article_slug.index'
 import { Route as AdminStatusArticle_slugUrediIndexRouteImport } from './routes/admin/$status/$article_slug.uredi.index'
-import { ServerRoute as ApiAuthSplatServerRouteImport } from './routes/api/auth/$'
-
-const rootServerRouteImport = createServerRootRoute()
 
 const AdminRouteRoute = AdminRouteRouteImport.update({
   id: '/admin',
@@ -47,6 +43,11 @@ const AdminStatusIndexRoute = AdminStatusIndexRouteImport.update({
   path: '/$status/',
   getParentRoute: () => AdminRouteRoute,
 } as any)
+const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
+  id: '/api/auth/$',
+  path: '/api/auth/$',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminStatusArticle_slugIndexRoute =
   AdminStatusArticle_slugIndexRouteImport.update({
     id: '/$status/$article_slug/',
@@ -59,16 +60,12 @@ const AdminStatusArticle_slugUrediIndexRoute =
     path: '/$status/$article_slug/uredi/',
     getParentRoute: () => AdminRouteRoute,
   } as any)
-const ApiAuthSplatServerRoute = ApiAuthSplatServerRouteImport.update({
-  id: '/api/auth/$',
-  path: '/api/auth/$',
-  getParentRoute: () => rootServerRouteImport,
-} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteRouteWithChildren
   '/prijava': typeof PrijavaIndexRoute
+  '/api/auth/$': typeof ApiAuthSplatRoute
   '/admin/$status': typeof AdminStatusIndexRoute
   '/novica/$article_slug': typeof NovicaArticle_slugIndexRoute
   '/admin/$status/$article_slug': typeof AdminStatusArticle_slugIndexRoute
@@ -78,6 +75,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteRouteWithChildren
   '/prijava': typeof PrijavaIndexRoute
+  '/api/auth/$': typeof ApiAuthSplatRoute
   '/admin/$status': typeof AdminStatusIndexRoute
   '/novica/$article_slug': typeof NovicaArticle_slugIndexRoute
   '/admin/$status/$article_slug': typeof AdminStatusArticle_slugIndexRoute
@@ -88,6 +86,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteRouteWithChildren
   '/prijava/': typeof PrijavaIndexRoute
+  '/api/auth/$': typeof ApiAuthSplatRoute
   '/admin/$status/': typeof AdminStatusIndexRoute
   '/novica/$article_slug/': typeof NovicaArticle_slugIndexRoute
   '/admin/$status/$article_slug/': typeof AdminStatusArticle_slugIndexRoute
@@ -99,6 +98,7 @@ export interface FileRouteTypes {
     | '/'
     | '/admin'
     | '/prijava'
+    | '/api/auth/$'
     | '/admin/$status'
     | '/novica/$article_slug'
     | '/admin/$status/$article_slug'
@@ -108,6 +108,7 @@ export interface FileRouteTypes {
     | '/'
     | '/admin'
     | '/prijava'
+    | '/api/auth/$'
     | '/admin/$status'
     | '/novica/$article_slug'
     | '/admin/$status/$article_slug'
@@ -117,6 +118,7 @@ export interface FileRouteTypes {
     | '/'
     | '/admin'
     | '/prijava/'
+    | '/api/auth/$'
     | '/admin/$status/'
     | '/novica/$article_slug/'
     | '/admin/$status/$article_slug/'
@@ -127,28 +129,8 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AdminRouteRoute: typeof AdminRouteRouteWithChildren
   PrijavaIndexRoute: typeof PrijavaIndexRoute
+  ApiAuthSplatRoute: typeof ApiAuthSplatRoute
   NovicaArticle_slugIndexRoute: typeof NovicaArticle_slugIndexRoute
-}
-export interface FileServerRoutesByFullPath {
-  '/api/auth/$': typeof ApiAuthSplatServerRoute
-}
-export interface FileServerRoutesByTo {
-  '/api/auth/$': typeof ApiAuthSplatServerRoute
-}
-export interface FileServerRoutesById {
-  __root__: typeof rootServerRouteImport
-  '/api/auth/$': typeof ApiAuthSplatServerRoute
-}
-export interface FileServerRouteTypes {
-  fileServerRoutesByFullPath: FileServerRoutesByFullPath
-  fullPaths: '/api/auth/$'
-  fileServerRoutesByTo: FileServerRoutesByTo
-  to: '/api/auth/$'
-  id: '__root__' | '/api/auth/$'
-  fileServerRoutesById: FileServerRoutesById
-}
-export interface RootServerRouteChildren {
-  ApiAuthSplatServerRoute: typeof ApiAuthSplatServerRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -188,6 +170,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminStatusIndexRouteImport
       parentRoute: typeof AdminRouteRoute
     }
+    '/api/auth/$': {
+      id: '/api/auth/$'
+      path: '/api/auth/$'
+      fullPath: '/api/auth/$'
+      preLoaderRoute: typeof ApiAuthSplatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/$status/$article_slug/': {
       id: '/admin/$status/$article_slug/'
       path: '/$status/$article_slug'
@@ -201,17 +190,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin/$status/$article_slug/uredi'
       preLoaderRoute: typeof AdminStatusArticle_slugUrediIndexRouteImport
       parentRoute: typeof AdminRouteRoute
-    }
-  }
-}
-declare module '@tanstack/react-start/server' {
-  interface ServerFileRoutesByPath {
-    '/api/auth/$': {
-      id: '/api/auth/$'
-      path: '/api/auth/$'
-      fullPath: '/api/auth/$'
-      preLoaderRoute: typeof ApiAuthSplatServerRouteImport
-      parentRoute: typeof rootServerRouteImport
     }
   }
 }
@@ -237,14 +215,18 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRouteRoute: AdminRouteRouteWithChildren,
   PrijavaIndexRoute: PrijavaIndexRoute,
+  ApiAuthSplatRoute: ApiAuthSplatRoute,
   NovicaArticle_slugIndexRoute: NovicaArticle_slugIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-const rootServerRouteChildren: RootServerRouteChildren = {
-  ApiAuthSplatServerRoute: ApiAuthSplatServerRoute,
+
+import type { getRouter } from './router.tsx'
+import type { createStart } from '@tanstack/react-start'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+  }
 }
-export const serverRouteTree = rootServerRouteImport
-  ._addFileChildren(rootServerRouteChildren)
-  ._addFileTypes<FileServerRouteTypes>()

@@ -5,8 +5,8 @@
       "name": "jknm-convex",
       "dependencies": {
         "@ariakit/react": "^0.4.19",
-        "@aws-sdk/client-s3": "^3.911.0",
-        "@aws-sdk/s3-request-presigner": "^3.911.0",
+        "@aws-sdk/client-s3": "^3.913.0",
+        "@aws-sdk/s3-request-presigner": "^3.913.0",
         "@convex-dev/better-auth": "^0.9.6",
         "@convex-dev/react-query": "0.0.0-alpha.11",
         "@convex-dev/sharded-counter": "^0.1.8",
@@ -64,11 +64,11 @@
         "@tailwindcss/vite": "^4.1.14",
         "@tanstack/react-query": "^5.90.5",
         "@tanstack/react-query-devtools": "^5.90.2",
-        "@tanstack/react-router": "^1.133.3",
-        "@tanstack/react-router-devtools": "^1.133.3",
+        "@tanstack/react-router": "^1.133.13",
+        "@tanstack/react-router-devtools": "^1.133.13",
         "@tanstack/react-router-with-query": "^1.130.17",
-        "@tanstack/react-start": "^1.133.6",
-        "@tanstack/zod-adapter": "^1.133.3",
+        "@tanstack/react-start": "^1.133.13",
+        "@tanstack/zod-adapter": "^1.133.13",
         "@udecode/cn": "^49.0.15",
         "better-auth": "1.3.27",
         "class-variance-authority": "^0.7.1",
@@ -132,8 +132,12 @@
       },
     },
   },
+  "patchedDependencies": {
+    "react-lite-youtube-embed@2.5.1": "patches/react-lite-youtube-embed.patch",
+  },
   "overrides": {
-    "rollup": "4.44.0",
+    "react-lite-youtube-embed": "2.5.1",
+    "react-player": "2.16.1",
   },
   "packages": {
     "@ampproject/remapping": ["@ampproject/remapping@2.3.0", "", { "dependencies": { "@jridgewell/gen-mapping": "^0.3.5", "@jridgewell/trace-mapping": "^0.3.24" } }, "sha512-30iZtAPgz+LTIYoeivqYo853f02jBYSd5uGnGpkFV0M3xOt9aN73erkgYAmZU43x4VfqcnLxW9Kpg3R5LC4YYw=="],
@@ -1674,7 +1678,7 @@
 
     "react-is": ["react-is@16.13.1", "", {}, "sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ=="],
 
-    "react-lite-youtube-embed": ["react-lite-youtube-embed@2.5.6", "", { "peerDependencies": { "react": ">=18.2.0", "react-dom": ">=18.2.0" } }, "sha512-gbV2SCpAqZOJ/p8wsIbXahONtX3ofh7WZfOR9pCK5kXEbDhTh+bFTOT/fyE+v3ZP4loQkZRqfp8H67gEcGz74w=="],
+    "react-lite-youtube-embed": ["react-lite-youtube-embed@2.5.1", "", { "peerDependencies": { "react": ">=18.2.0", "react-dom": ">=18.2.0" } }, "sha512-qH/0RumywPtzSx5SmWX/cUGvB3mSB7zMx3VrDe1UwyCEQ0SX785xnjRAodEel1pu3A3EhZyzSjwmLpfcaUN6KQ=="],
 
     "react-player": ["react-player@2.16.1", "", { "dependencies": { "deepmerge": "^4.0.0", "load-script": "^1.0.0", "memoize-one": "^5.1.1", "prop-types": "^15.7.2", "react-fast-compare": "^3.0.1" }, "peerDependencies": { "react": ">=16.6.0" } }, "sha512-mxP6CqjSWjidtyDoMOSHVPdhX0pY16aSvw5fVr44EMaT7X5Xz46uQ4b/YBm1v2x+3hHkB9PmjEEkmbHb9PXQ4w=="],
 
