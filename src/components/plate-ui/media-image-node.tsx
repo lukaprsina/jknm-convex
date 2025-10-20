@@ -28,7 +28,7 @@ import {
 			draggable: true,
 			src: element.url,
 			// src: `https://${import.meta.env.VITE_AWS_BUCKET_NAME}.s3.${import.meta.env.VITE_AWS_REGION}.backblazeb2.com/${element.url}`,
-			// src: `https://gradivo.jknm.site/${element.url}`,
+			// src: `https://gradivo.jknm.org/${element.url}`,
 			onDoubleClickCapture: () => {
 				openImagePreview(editor, element);
 			},

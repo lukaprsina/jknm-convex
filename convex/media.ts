@@ -125,8 +125,8 @@ export const generate_presigned_upload_url = mutation({
 		const key = `${media_db_id}/${variant}${ext}`;
 
 		// Build the final URL
-		const storage_url = `https://gradivo.jknm.site/${key}`;
-		const base_url = `https://gradivo.jknm.site/${media_db_id}`;
+		const storage_url = `https://gradivo.jknm.org/${key}`;
+		const base_url = `https://gradivo.jknm.org/${media_db_id}`;
 
 		// Update the media record with correct URLs
 		await ctx.db.patch(media_db_id, {

@@ -40,14 +40,14 @@ export default defineConfig({
 	preview: {
 		port: 3000,
 		host: true, // This enables listening on all network interfaces
-		allowedHosts: [".jknm.site"],
+		allowedHosts: [".jknm.site", ".jknm.org"],
 		// allowedHosts: true,
 	},
 	server: {
 		// Also add this for development server
 		host: true, // This enables listening on all network interfaces
 		port: 3000,
-		allowedHosts: [".jknm.site"],
+		allowedHosts: [".jknm.site", ".jknm.org"],
 		// allowedHosts: true,
 	},
 	plugins: [
@@ -55,9 +55,7 @@ export default defineConfig({
 		tsConfigPaths({
 			projects: ["./tsconfig.json"],
 		}),
-		tanstackStart({
-			customViteReactPlugin: true,
-		}),
+		tanstackStart(),
 		viteReact(),
 	],
 	resolve: {
