@@ -15,7 +15,7 @@ import { z } from "zod";
 import { Footer2 } from "~/components/layout/footer2";
 import { SiteNavbar } from "~/components/layout/site-navbar";
 import { Button } from "~/components/ui/button";
-import { auth_client } from "~/lib/auth-client";
+import { authClient } from "~/lib/auth-client";
 import { ArticleCard } from "./-article-card";
 import { FilterAccordion } from "./-filter-accordion";
 
@@ -108,7 +108,7 @@ function Home() {
 				<Navbar />
 			</header> */}
 			{/* <Header /> */}
-			<main className="w-full flex-grow">
+			<main className="w-full grow">
 				<div className="container mx-auto px-4">
 					<FilterAccordion />
 					<div className="flex flex-col items-start gap-4">
@@ -122,7 +122,7 @@ function Home() {
 						</Button>
 						<Button
 							onClick={async () => {
-								const result = await auth_client.deleteUser();
+								const result = await authClient.deleteUser();
 								console.log("Delete user result:", result);
 							}}
 						>

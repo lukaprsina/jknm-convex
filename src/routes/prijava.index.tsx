@@ -4,7 +4,7 @@ import { Home } from "lucide-react";
 import { useState } from "react";
 import { Button } from "~/components/ui/button";
 import { Card, CardContent } from "~/components/ui/card";
-import { auth_client } from "~/lib/auth-client";
+import { authClient } from "~/lib/auth-client";
 
 export const Route = createFileRoute("/prijava/")({
 	component: RouteComponent,
@@ -57,7 +57,7 @@ function RouteComponent() {
 										onClick={async () => {
 											setIsLoading(true);
 											try {
-												await auth_client.signOut();
+												await authClient.signOut();
 												navigate({ to: "/" });
 											} catch {
 												setErrorMessage("Napaka pri odjavi");
@@ -78,7 +78,7 @@ function RouteComponent() {
 										onClick={async () => {
 											setIsLoading(true);
 											try {
-												await auth_client.signIn.social({
+												await authClient.signIn.social({
 													provider: "google",
 													callbackURL: "/",
 												});

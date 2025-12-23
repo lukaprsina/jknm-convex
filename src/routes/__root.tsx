@@ -13,42 +13,35 @@ import {
 } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import { createServerFn } from "@tanstack/react-start";
-import { getCookie, getRequest } from "@tanstack/react-start/server";
-import type { ConvexReactClient } from "convex/react";
 import { Toaster } from "react-hot-toast";
 import appCss from "~/app.css?url";
-import { auth_client } from "~/lib/auth-client";
+import { authClient } from "~/lib/auth-client";
+import { getToken } from "~/lib/auth-server";
 import { seo } from "~/lib/seo";
-import { fetchSession, getCookieName } from "~/lib/server-auth-utils";
 
 // Get auth information for SSR using available cookies
-const fetchAuth = createServerFn({ method: 'GET' }).handler(async () => {
-  const { createAuth } = await import('../../convex/auth')
-  const { session } = await fetchSession(getRequest())
-  const sessionCookieName = getCookieName(createAuth)
-  const token = getCookie(sessionCookieName)
-  return {
-    userId: session?.user.id,
-    token,
-  }
-})
+const getAuth = createServerFn({ method: "GET" }).handler(async () => {
+	return await getToken();
+});
 
 export const Route = createRootRouteWithContext<{
 	queryClient: QueryClient;
-	convexClient: ConvexReactClient;
 	convexQueryClient: ConvexQueryClient;
 }>()({
 	beforeLoad: async (ctx) => {
-    // all queries, mutations and action made with TanStack Query will be
-    // authenticated by an identity token.
-    const { userId, token } = await fetchAuth()
-    // During SSR only (the only time serverHttpClient exists),
-    // set the auth token to make HTTP queries with.
-    if (token) {
-      ctx.context.convexQueryClient.serverHttpClient?.setAuth(token)
-    }
-    return { userId, token }
-  },
+		const token = await getAuth();
+		if (token) {
+			// all queries, mutations and actions through TanStack Query will be
+			// authenticated during SSR if we have a valid token
+			// During SSR only (the only time serverHttpClient exists),
+			// set the auth token to make HTTP queries with.
+			ctx.context.convexQueryClient.serverHttpClient?.setAuth(token);
+		}
+		return {
+			isAuthenticated: Boolean(token),
+			token,
+		};
+	},
 	head: () => ({
 		meta: [
 			{
@@ -72,14 +65,6 @@ export const Route = createRootRouteWithContext<{
 			// { src: "https://unpkg.com/@styleglide/theme-editor" },
 		],
 	}),
-	/* errorComponent: (props) => {
-		return (
-			<RootDocument>
-				<DefaultCatchBoundary {...props} />
-			</RootDocument>
-		);
-	},
-	notFoundComponent: () => <NotFound />, */
 	component: RootComponent,
 });
 
@@ -88,8 +73,9 @@ function RootComponent() {
 
 	return (
 		<ConvexBetterAuthProvider
-			client={context.convexClient}
-			authClient={auth_client}
+			client={context.convexQueryClient.convexClient}
+			authClient={authClient}
+			initialToken={context.token}
 		>
 			<RootDocument>
 				<Outlet />
@@ -106,7 +92,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 			</head>
 			<body>
 				<div className="flex h-screen min-h-0 flex-col">
-					<div className="flex min-h-0 flex-grow flex-col">
+					<div className="flex min-h-0 grow flex-col">
 						{children}
 						<Toaster />
 					</div>

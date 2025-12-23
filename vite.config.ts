@@ -6,6 +6,7 @@ import { defineConfig } from "vite";
 import tsConfigPaths from "vite-tsconfig-paths";
 
 const problematicPackages = [
+	"@convex-dev/better-auth",
 	"@platejs/math",
 	"react-lite-youtube-embed",
 	"react-tweet",
@@ -64,10 +65,4 @@ export default defineConfig({
 			"@convex": path.resolve(__dirname, "./convex"),
 		},
 	},
-	/* build: {
-		rollupOptions: {
-			// temp fix: https://github.com/rollup/rollup/issues/6012
-			treeshake: false,
-		},
-	}, */
 });
