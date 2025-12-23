@@ -1,5 +1,5 @@
-import type { Id, TableNames } from "@convex/_generated/dataModel";
 import type { SystemTableNames } from "convex/server";
+import type { Id, TableNames } from "./_generated/dataModel";
 
 export function without_system_fields<
 	T extends TableNames | SystemTableNames,

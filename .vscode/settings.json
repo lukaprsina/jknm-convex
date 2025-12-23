@@ -35,5 +35,5 @@
   },
   // always choose typescript from node_modules
   "typescript.tsdk": "./node_modules/typescript/lib",
-  "typescript.experimental.useTsgo": false
+  "typescript.experimental.useTsgo": true
 }
