@@ -25,8 +25,8 @@ function RouteComponent() {
 	}
 
 	return (
-		<div className="flex flex-col gap-6">
-			<Card className="overflow-hidden p-0">
+		<div className="flex min-h-screen flex-col items-center">
+			<Card className="my-auto w-full max-w-3xl overflow-hidden p-0">
 				<CardContent className="grid p-0 md:grid-cols-2">
 					<div className="p-6 md:p-8">
 						<div className="flex flex-col gap-16">
@@ -130,7 +130,7 @@ function RouteComponent() {
 					</div>
 				</CardContent>
 			</Card>
-			<div className="text-balance text-center text-muted-foreground text-xs">
+			<div className="mt-auto w-full text-balance py-4 text-center text-muted-foreground text-xs">
 				Jamarski klub Novo mesto - Specialisti za dokumentirano raziskovanje in
 				ohranjanje čistega ter zdravega podzemskega sveta.
 			</div>
