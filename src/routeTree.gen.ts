@@ -64,12 +64,12 @@ const AdminStatusArticle_slugUrediIndexRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteRouteWithChildren
-  '/prijava': typeof PrijavaIndexRoute
+  '/prijava/': typeof PrijavaIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
-  '/admin/$status': typeof AdminStatusIndexRoute
-  '/novica/$article_slug': typeof NovicaArticle_slugIndexRoute
-  '/admin/$status/$article_slug': typeof AdminStatusArticle_slugIndexRoute
-  '/admin/$status/$article_slug/uredi': typeof AdminStatusArticle_slugUrediIndexRoute
+  '/admin/$status/': typeof AdminStatusIndexRoute
+  '/novica/$article_slug/': typeof NovicaArticle_slugIndexRoute
+  '/admin/$status/$article_slug/': typeof AdminStatusArticle_slugIndexRoute
+  '/admin/$status/$article_slug/uredi/': typeof AdminStatusArticle_slugUrediIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -97,12 +97,12 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/admin'
-    | '/prijava'
+    | '/prijava/'
     | '/api/auth/$'
-    | '/admin/$status'
-    | '/novica/$article_slug'
-    | '/admin/$status/$article_slug'
-    | '/admin/$status/$article_slug/uredi'
+    | '/admin/$status/'
+    | '/novica/$article_slug/'
+    | '/admin/$status/$article_slug/'
+    | '/admin/$status/$article_slug/uredi/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -152,21 +152,21 @@ declare module '@tanstack/react-router' {
     '/prijava/': {
       id: '/prijava/'
       path: '/prijava'
-      fullPath: '/prijava'
+      fullPath: '/prijava/'
       preLoaderRoute: typeof PrijavaIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/novica/$article_slug/': {
       id: '/novica/$article_slug/'
       path: '/novica/$article_slug'
-      fullPath: '/novica/$article_slug'
+      fullPath: '/novica/$article_slug/'
       preLoaderRoute: typeof NovicaArticle_slugIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin/$status/': {
       id: '/admin/$status/'
       path: '/$status'
-      fullPath: '/admin/$status'
+      fullPath: '/admin/$status/'
       preLoaderRoute: typeof AdminStatusIndexRouteImport
       parentRoute: typeof AdminRouteRoute
     }
@@ -180,14 +180,14 @@ declare module '@tanstack/react-router' {
     '/admin/$status/$article_slug/': {
       id: '/admin/$status/$article_slug/'
       path: '/$status/$article_slug'
-      fullPath: '/admin/$status/$article_slug'
+      fullPath: '/admin/$status/$article_slug/'
       preLoaderRoute: typeof AdminStatusArticle_slugIndexRouteImport
       parentRoute: typeof AdminRouteRoute
     }
     '/admin/$status/$article_slug/uredi/': {
       id: '/admin/$status/$article_slug/uredi/'
       path: '/$status/$article_slug/uredi'
-      fullPath: '/admin/$status/$article_slug/uredi'
+      fullPath: '/admin/$status/$article_slug/uredi/'
       preLoaderRoute: typeof AdminStatusArticle_slugUrediIndexRouteImport
       parentRoute: typeof AdminRouteRoute
     }
