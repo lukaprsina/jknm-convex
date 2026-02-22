@@ -1,75 +1,75 @@
 {
-  "$schema": "https://biomejs.dev/schemas/2.3.10/schema.json",
-  "vcs": {
-    "enabled": true,
-    "clientKind": "git",
-    "useIgnoreFile": true,
-  },
-  "files": {
-    "ignoreUnknown": false,
-    "includes": [
-      "**/*.{js,jsx,ts,tsx,json,jsonc,css}",
-      "!convex/_generated",
-      "!src/routeTree.gen.ts",
-    ],
-  },
-  "formatter": {
-    "enabled": true,
-    "formatWithErrors": true,
-  },
-  "linter": {
-    "enabled": true,
-    /* "domains": {
+	"$schema": "https://biomejs.dev/schemas/2.3.10/schema.json",
+	"vcs": {
+		"enabled": true,
+		"clientKind": "git",
+		"useIgnoreFile": true
+	},
+	"files": {
+		"ignoreUnknown": false,
+		"includes": [
+			"**/*.{js,jsx,ts,tsx,json,jsonc,css}",
+			"!convex/_generated",
+			"!src/routeTree.gen.ts"
+		]
+	},
+	"formatter": {
+		"enabled": true,
+		"formatWithErrors": true
+	},
+	"linter": {
+		"enabled": true,
+		/* "domains": {
 			"react": "recommended"
 		}, */
-    "rules": {
-      "nursery": {
-        "useSortedClasses": {
-          "level": "on",
-          "fix": "safe",
-          "options": {
-            "functions": ["clsx", "cva", "cn"],
-          },
-        },
-      },
-      "style": {
-        "useImportType": "error",
-        "useExportType": "error",
-        "useLiteralEnumMembers": "error",
-        "useNodejsImportProtocol": "error",
-        "useAsConstAssertion": "error",
-        "useEnumInitializers": "error",
-        "useSelfClosingElements": "error",
-        "useConst": "error",
-        "useSingleVarDeclarator": "error",
-        "noUnusedTemplateLiteral": "error",
-        "useNumberNamespace": "error",
-        "noInferrableTypes": "error",
-        "useExponentiationOperator": "error",
-        "useTemplate": "error",
-        "noParameterAssign": "error",
-        "noNonNullAssertion": "off",
-        "useDefaultParameterLast": "error",
-        "noUselessElse": "error",
-        "useShorthandFunctionType": "error",
-      },
-      "a11y": {
-        "noSvgWithoutTitle": "off",
-        "useButtonType": "off",
-        "useAltText": "off",
-      },
-      "complexity": {
-        "noBannedTypes": "off",
-      },
-      "recommended": true,
-    },
-  },
-  "assist": {
-    "enabled": true,
-    "actions": {
-      "source": {
-        "organizeImports": "on",
-      },
-    },
-  },
+		"rules": {
+			"nursery": {
+				"useSortedClasses": {
+					"level": "on",
+					"fix": "safe",
+					"options": {
+						"functions": ["clsx", "cva", "cn"]
+					}
+				}
+			},
+			"style": {
+				"useImportType": "error",
+				"useExportType": "error",
+				"useLiteralEnumMembers": "error",
+				"useNodejsImportProtocol": "error",
+				"useAsConstAssertion": "error",
+				"useEnumInitializers": "error",
+				"useSelfClosingElements": "error",
+				"useConst": "error",
+				"useSingleVarDeclarator": "error",
+				"noUnusedTemplateLiteral": "error",
+				"useNumberNamespace": "error",
+				"noInferrableTypes": "error",
+				"useExponentiationOperator": "error",
+				"useTemplate": "error",
+				"noParameterAssign": "error",
+				"noNonNullAssertion": "off",
+				"useDefaultParameterLast": "error",
+				"noUselessElse": "error",
+				"useShorthandFunctionType": "error"
+			},
+			"a11y": {
+				"noSvgWithoutTitle": "off",
+				"useButtonType": "off",
+				"useAltText": "off"
+			},
+			"complexity": {
+				"noBannedTypes": "off"
+			},
+			"recommended": true
+		}
+	},
+	"assist": {
+		"enabled": true,
+		"actions": {
+			"source": {
+				"organizeImports": "on"
+			}
+		}
+	}
 }

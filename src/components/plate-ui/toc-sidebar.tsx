@@ -37,7 +37,7 @@ export function TocSidebar({
 			{...navProps}
 			ref={navProps.ref as React.RefObject<HTMLDivElement>}
 			className={cn(
-				"-translate-y-1/2 fixed top-1/2 right-4 z-50 max-h-96 w-64 overflow-y-auto rounded-lg border bg-background/95 p-4 shadow-lg backdrop-blur supports-[backdrop-filter]:bg-background/60",
+				"fixed top-1/2 right-4 z-50 max-h-96 w-64 -translate-y-1/2 overflow-y-auto rounded-lg border bg-background/95 p-4 shadow-lg backdrop-blur supports-[backdrop-filter]:bg-background/60",
 				className,
 			)}
 		>

@@ -426,7 +426,7 @@ function ButtonArrow({
 	return (
 		<Icon
 			data-slot="button-arrow"
-			className={cn("-me-1 ms-auto", className)}
+			className={cn("ms-auto -me-1", className)}
 			{...props}
 		/>
 	);

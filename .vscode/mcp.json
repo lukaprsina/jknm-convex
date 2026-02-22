@@ -1,8 +1,8 @@
 {
-  "servers": {
-    "convex": {
-      "command": "bunx",
-      "args": ["convex@latest", "mcp", "start"]
-    }
-  }
+	"servers": {
+		"convex": {
+			"command": "bunx",
+			"args": ["convex@latest", "mcp", "start"]
+		}
+	}
 }
