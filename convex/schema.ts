@@ -20,7 +20,10 @@ const schema = defineSchema({
 	users: defineTable({
 		email: v.string(),
 		author_id: v.optional(v.id("authors")),
-	}).index("by_email", ["email"]),
+		authId: v.optional(v.string()), // Better Auth component user _id
+	})
+		.index("by_email", ["email"])
+		.index("by_authId", ["authId"]),
 
 	articles: defineTable({
 		title: v.string(),

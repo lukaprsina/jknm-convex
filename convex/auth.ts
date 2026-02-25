@@ -6,10 +6,10 @@ import {
 import { convex } from "@convex-dev/better-auth/plugins";
 import { type BetterAuthOptions, betterAuth } from "better-auth";
 import { components, internal } from "./_generated/api";
-import type { DataModel, Id } from "./_generated/dataModel";
+import type { DataModel } from "./_generated/dataModel";
 import { query } from "./_generated/server";
 import authConfig from "./auth.config";
-import betterAuthSchema from "./schema";
+import betterAuthSchema from "./betterAuth/schema";
 
 const siteUrl = process.env.SITE_URL!;
 
@@ -26,27 +26,31 @@ export const authComponent = createClient<DataModel, typeof betterAuthSchema>(
 		},
 		verbose: false,
 		triggers: {
-			users: {
+			user: {
 				onCreate: async (ctx, authUser) => {
-					const userId = await ctx.db.insert("users", {
+					await ctx.db.insert("users", {
 						email: authUser.email,
+						authId: authUser._id,
 					});
-					await authComponent.setUserId(ctx, authUser._id, userId);
 				},
 				onUpdate: async (ctx, newUser, oldUser) => {
 					if (oldUser.email === newUser.email) {
 						return;
 					}
-					await ctx.db.patch(newUser._id as Id<"users">, {
-						email: newUser.email,
-					});
+					const appUser = await ctx.db
+						.query("users")
+						.withIndex("by_authId", (q) => q.eq("authId", newUser._id))
+						.unique();
+					if (!appUser) return;
+					await ctx.db.patch(appUser._id, { email: newUser.email });
 				},
 				onDelete: async (ctx, authUser) => {
-					const user = await ctx.db.get(authUser._id as Id<"users">);
-					if (!user) {
-						return;
-					}
-					await ctx.db.delete(user._id);
+					const appUser = await ctx.db
+						.query("users")
+						.withIndex("by_authId", (q) => q.eq("authId", authUser._id))
+						.unique();
+					if (!appUser) return;
+					await ctx.db.delete(appUser._id);
 				},
 			},
 		},

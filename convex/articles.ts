@@ -262,6 +262,25 @@ function slugify_title(title: string, id: Id<"articles">): string {
 	});
 }
 
+/* 
+ERROR:
+[dev:server] 25/02/2026, 18:50:05 [CONVEX M(articles:create_draft)] [LOG] 'Creating draft article. User identity:' {       
+[dev:server]   tokenIdentifier: 'https://adventurous-dragon-131.convex.site|m17fp5zae67vy8z59qxfysp6hd81t6r0',
+[dev:server]   issuer: 'https://adventurous-dragon-131.convex.site',
+[dev:server]   subject: 'm17fp5zae67vy8z59qxfysp6hd81t6r0',
+[dev:server]   createdAt: '2026-02-25T17:49:54.205Z',
+[dev:server]   email: 'luka.prsina@jknm.si',
+[dev:server]   emailVerified: true,      
+[dev:server]   name: 'Luka Pršina',      
+[dev:server]   sessionId: 'kd7azpjmfy239xbw66ty18vxv981v6tr',
+tch the schema: Value does not match validator.
+[dev:server] Path: .created_by
+[dev:server] Value: "m17fp5zae67vy8z59qxfysp6hd81t6r0"
+[dev:server] Validator: v.id("users")
+[dev:server]     at async handler (../convex/articles.ts:277:11)
+[dev:server]
+*/
+
 export const create_draft = mutation({
 	args: {},
 	handler: async (ctx) => {
@@ -270,6 +289,15 @@ export const create_draft = mutation({
 
 		if (!user) {
 			throw new Error("User must be authenticated to create a draft article.");
+		}
+
+		// Look up app user by authId
+		const appUser = await ctx.db
+			.query("users")
+			.withIndex("by_authId", (q) => q.eq("authId", user.subject))
+			.unique();
+		if (!appUser) {
+			throw new Error("App user not found");
 		}
 
 		const title = "Neimenovana novica"; // Default title
@@ -286,7 +314,7 @@ export const create_draft = mutation({
 			]),
 			view_count: 0,
 			updated_at: Date.now(),
-			created_by: user.subject as Id<"users">,
+			created_by: appUser._id,
 		});
 
 		const slug = new_draft_id;
@@ -311,6 +339,15 @@ export const copy_published_into_draft = mutation({
 			);
 		}
 
+		// Look up app user by authId
+		const appUser = await ctx.db
+			.query("users")
+			.withIndex("by_authId", (q) => q.eq("authId", user.subject))
+			.unique();
+		if (!appUser) {
+			throw new Error("App user not found");
+		}
+
 		const article = await ctx.db.get(args.article_id);
 		if (!article || article.status !== "published") {
 			throw new Error("Article not found or is not published.");
@@ -324,7 +361,7 @@ export const copy_published_into_draft = mutation({
 			content_json: article.content_json,
 			view_count: 0,
 			updated_at: Date.now(),
-			created_by: user.subject as Id<"users">,
+			created_by: appUser._id,
 		});
 
 		await ctx.db.patch(new_draft_id, {
