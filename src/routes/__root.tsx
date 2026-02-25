@@ -30,9 +30,9 @@ export const Route = createRootRouteWithContext<{
 }>()({
 	beforeLoad: async (ctx) => {
 		const token = await getAuth();
+		// all queries, mutations and actions through TanStack Query will be
+		// authenticated during SSR if we have a valid token
 		if (token) {
-			// all queries, mutations and actions through TanStack Query will be
-			// authenticated during SSR if we have a valid token
 			// During SSR only (the only time serverHttpClient exists),
 			// set the auth token to make HTTP queries with.
 			ctx.context.convexQueryClient.serverHttpClient?.setAuth(token);

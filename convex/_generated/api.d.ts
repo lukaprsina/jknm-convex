@@ -10,6 +10,7 @@
 
 import type * as articles from "../articles.js";
 import type * as auth from "../auth.js";
+import type * as auth_functions from "../auth_functions.js";
 import type * as authors from "../authors.js";
 import type * as authors_google from "../authors_google.js";
 import type * as http from "../http.js";
@@ -26,6 +27,7 @@ import type {
 declare const fullApi: ApiFromModules<{
   articles: typeof articles;
   auth: typeof auth;
+  auth_functions: typeof auth_functions;
   authors: typeof authors;
   authors_google: typeof authors_google;
   http: typeof http;

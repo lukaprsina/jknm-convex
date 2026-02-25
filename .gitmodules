@@ -1,3 +1,6 @@
 [submodule "vendor/jknm-old"]
 	path = vendor/jknm-old
 	url = https://github.com/lukaprsina/jknm
+[submodule "vendor/convex-better-auth"]
+	path = vendor/convex-better-auth
+	url = https://github.com/get-convex/better-auth

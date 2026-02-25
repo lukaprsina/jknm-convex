@@ -266,6 +266,7 @@ export const create_draft = mutation({
 	args: {},
 	handler: async (ctx) => {
 		const user = await ctx.auth.getUserIdentity();
+		console.log("Creating draft article. User identity:", user);
 
 		if (!user) {
 			throw new Error("User must be authenticated to create a draft article.");

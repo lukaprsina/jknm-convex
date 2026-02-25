@@ -57,7 +57,14 @@ function RouteComponent() {
 										onClick={async () => {
 											setIsLoading(true);
 											try {
-												await authClient.signOut();
+												// https://labs.convex.dev/better-auth/framework-guides/tanstack-start#signing-out-with-expectauth-true
+												await authClient.signOut({
+													fetchOptions: {
+														onSuccess: () => {
+															location.reload(); // because of expectAuth: true
+														},
+													},
+												});
 												navigate({ to: "/" });
 											} catch {
 												setErrorMessage("Napaka pri odjavi");
