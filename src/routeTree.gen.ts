@@ -12,7 +12,6 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as AdminRouteRouteImport } from './routes/admin/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as PrijavaIndexRouteImport } from './routes/prijava.index'
-import { Route as AdminDraftRouteImport } from './routes/admin/draft'
 import { Route as NovicaArticle_slugIndexRouteImport } from './routes/novica/$article_slug.index'
 import { Route as AdminStatusIndexRouteImport } from './routes/admin/$status/index'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
@@ -33,11 +32,6 @@ const PrijavaIndexRoute = PrijavaIndexRouteImport.update({
   id: '/prijava/',
   path: '/prijava/',
   getParentRoute: () => rootRouteImport,
-} as any)
-const AdminDraftRoute = AdminDraftRouteImport.update({
-  id: '/draft',
-  path: '/draft',
-  getParentRoute: () => AdminRouteRoute,
 } as any)
 const NovicaArticle_slugIndexRoute = NovicaArticle_slugIndexRouteImport.update({
   id: '/novica/$article_slug/',
@@ -70,7 +64,6 @@ const AdminStatusArticle_slugUrediIndexRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteRouteWithChildren
-  '/admin/draft': typeof AdminDraftRoute
   '/prijava/': typeof PrijavaIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/admin/$status/': typeof AdminStatusIndexRoute
@@ -81,7 +74,6 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteRouteWithChildren
-  '/admin/draft': typeof AdminDraftRoute
   '/prijava': typeof PrijavaIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/admin/$status': typeof AdminStatusIndexRoute
@@ -93,7 +85,6 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteRouteWithChildren
-  '/admin/draft': typeof AdminDraftRoute
   '/prijava/': typeof PrijavaIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/admin/$status/': typeof AdminStatusIndexRoute
@@ -106,7 +97,6 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/admin'
-    | '/admin/draft'
     | '/prijava/'
     | '/api/auth/$'
     | '/admin/$status/'
@@ -117,7 +107,6 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/admin'
-    | '/admin/draft'
     | '/prijava'
     | '/api/auth/$'
     | '/admin/$status'
@@ -128,7 +117,6 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/admin'
-    | '/admin/draft'
     | '/prijava/'
     | '/api/auth/$'
     | '/admin/$status/'
@@ -167,13 +155,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/prijava/'
       preLoaderRoute: typeof PrijavaIndexRouteImport
       parentRoute: typeof rootRouteImport
-    }
-    '/admin/draft': {
-      id: '/admin/draft'
-      path: '/draft'
-      fullPath: '/admin/draft'
-      preLoaderRoute: typeof AdminDraftRouteImport
-      parentRoute: typeof AdminRouteRoute
     }
     '/novica/$article_slug/': {
       id: '/novica/$article_slug/'
@@ -214,14 +195,12 @@ declare module '@tanstack/react-router' {
 }
 
 interface AdminRouteRouteChildren {
-  AdminDraftRoute: typeof AdminDraftRoute
   AdminStatusIndexRoute: typeof AdminStatusIndexRoute
   AdminStatusArticle_slugIndexRoute: typeof AdminStatusArticle_slugIndexRoute
   AdminStatusArticle_slugUrediIndexRoute: typeof AdminStatusArticle_slugUrediIndexRoute
 }
 
 const AdminRouteRouteChildren: AdminRouteRouteChildren = {
-  AdminDraftRoute: AdminDraftRoute,
   AdminStatusIndexRoute: AdminStatusIndexRoute,
   AdminStatusArticle_slugIndexRoute: AdminStatusArticle_slugIndexRoute,
   AdminStatusArticle_slugUrediIndexRoute:

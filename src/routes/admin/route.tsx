@@ -5,7 +5,7 @@ import { AdminSidebar } from "./-sidebar";
 export const Route = createFileRoute("/admin")({
 	component: Page,
 	beforeLoad: async ({ context }) => {
-		if (!context.userId) throw notFound();
+		if (!context.isAuthenticated) throw notFound();
 	},
 });
 

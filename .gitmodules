@@ -1,0 +1,3 @@
+[submodule "vendor/jknm-old"]
+	path = vendor/jknm-old
+	url = https://github.com/lukaprsina/jknm
