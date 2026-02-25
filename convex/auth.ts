@@ -63,7 +63,7 @@ export const createAuthOptions = (
 	({
 		baseURL: siteUrl,
 		database: authComponent.adapter(ctx),
-		trustedOrigins: [siteUrl],
+		// trustedOrigins: [siteUrl],
 		socialProviders: {
 			google: {
 				clientId: process.env.GOOGLE_CLIENT_ID as string,
@@ -83,6 +83,7 @@ export const createAuthOptions = (
 		plugins: [
 			convex({
 				authConfig,
+				jwksRotateOnTokenGenerationError: true,
 			}),
 		],
 	}) satisfies BetterAuthOptions;
