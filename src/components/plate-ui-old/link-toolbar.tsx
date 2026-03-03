@@ -169,7 +169,7 @@ export function LinkFloatingToolbar({
 
 function LinkOpenButton() {
 	const editor = useEditorRef();
-	const selection = useEditorSelection();
+	const _selection = useEditorSelection();
 
 	const attributes = React.useMemo(
 		() => {
@@ -183,7 +183,7 @@ function LinkOpenButton() {
 			return getLinkAttributes(editor, element);
 		},
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-		[editor, selection],
+		[editor],
 	);
 
 	return (

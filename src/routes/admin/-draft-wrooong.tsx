@@ -1,12 +1,5 @@
-import { article_status_validator } from "@convex/schema";
-import { convexQuery, useConvexMutation } from "@convex-dev/react-query";
-import { useMutation } from "@tanstack/react-query";
-import { createFileRoute, getRouteApi, notFound } from "@tanstack/react-router";
-import type { EmptyObject } from "better-auth/react";
-import { api } from "convex/_generated/api";
-import type { Infer } from "convex/values";
+import { getRouteApi } from "@tanstack/react-router";
 import { status_meta } from "~/components/status-meta";
-import { Button } from "~/components/ui/button";
 import { ArticleCard } from "./$status/-article-card";
 
 /* export const Route = createFileRoute("/admin/draft")({
@@ -34,7 +27,7 @@ import { ArticleCard } from "./$status/-article-card";
 
 const status_route = getRouteApi("/admin/$status/");
 
-function RouteComponent() {
+function _RouteComponent() {
 	const { articles, status } = status_route.useLoaderData();
 
 	const meta = status_meta.get(status);

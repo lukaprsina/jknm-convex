@@ -1,35 +1,35 @@
 {
-  "editor.codeActionsOnSave": {
-    "source.fixAll.biome": "explicit",
-    "source.organizeImports.biome": "always"
-  },
-  "editor.quickSuggestions": {
-    // https://marketplace.visualstudio.com/items?itemName=bradlc.vscode-tailwindcss#recommended-vs-code-settings
-    "strings": "on"
-  },
-  "explorer.fileNesting.enabled": true,
-  "explorer.fileNesting.patterns": {
-    "package.json": "package-lock.json, pnpm*, .yarnrc*, yarn*, .eslint*, eslint*, .prettier*, prettier*, .editorconfig, .gitattributes, bun.lock",
-    "tsconfig.json": "tsconfig.*.json, env.d.ts",
-    "vite.config.*": "jsconfig*, vitest.config.*, cypress.config.*, playwright.config.*"
-  },
-  // https://github.com/tailwindlabs/tailwindcss/discussions/5258
-  "css.lint.unknownAtRules": "ignore",
-  // use LF line endings
-  "files.eol": "\n",
-  "files.readonlyInclude": {
-    "**/.tanstack/**/*": true,
-    "**/routeTree.gen.ts": true,
-    "bun.lock": true
-  },
-  "files.watcherExclude": {
-    "**/.tanstack/**/*": true,
-    "**/routeTree.gen.ts": true,
-    "bun.lock": true
-  },
-  "search.exclude": {
-    "**/.tanstack/**/*": true,
-    "**/routeTree.gen.ts": true,
-    "bun.lock": true
-  }
+	"editor.codeActionsOnSave": {
+		"source.fixAll.biome": "explicit",
+		"source.organizeImports.biome": "always"
+	},
+	"editor.quickSuggestions": {
+		// https://marketplace.visualstudio.com/items?itemName=bradlc.vscode-tailwindcss#recommended-vs-code-settings
+		"strings": "on"
+	},
+	"explorer.fileNesting.enabled": true,
+	"explorer.fileNesting.patterns": {
+		"package.json": "package-lock.json, pnpm*, .yarnrc*, yarn*, .eslint*, eslint*, .prettier*, prettier*, .editorconfig, .gitattributes, bun.lock",
+		"tsconfig.json": "tsconfig.*.json, env.d.ts",
+		"vite.config.*": "jsconfig*, vitest.config.*, cypress.config.*, playwright.config.*"
+	},
+	// https://github.com/tailwindlabs/tailwindcss/discussions/5258
+	"css.lint.unknownAtRules": "ignore",
+	// use LF line endings
+	"files.eol": "\n",
+	"files.readonlyInclude": {
+		"**/.tanstack/**/*": true,
+		"**/routeTree.gen.ts": true,
+		"bun.lock": true
+	},
+	"files.watcherExclude": {
+		"**/.tanstack/**/*": true,
+		"**/routeTree.gen.ts": true,
+		"bun.lock": true
+	},
+	"search.exclude": {
+		"**/.tanstack/**/*": true,
+		"**/routeTree.gen.ts": true,
+		"bun.lock": true
+	}
 }

@@ -1,4 +1,3 @@
-import { Link } from "@tanstack/react-router";
 import { Mail, Phone } from "lucide-react";
 import {
 	FacebookIcon,

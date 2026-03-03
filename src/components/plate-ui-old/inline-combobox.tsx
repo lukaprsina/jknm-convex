@@ -152,15 +152,7 @@ const InlineCombobox = ({
 			showTrigger,
 			trigger,
 		}),
-		[
-			trigger,
-			showTrigger,
-			filter,
-			inputRef,
-			inputProps,
-			removeInput,
-			setHasEmpty,
-		],
+		[trigger, showTrigger, filter, inputProps, removeInput],
 	);
 
 	const store = useComboboxStore({
@@ -178,7 +170,7 @@ const InlineCombobox = ({
 		if (!store.getState().activeId) {
 			store.setActiveId(store.first());
 		}
-	}, [items, store]);
+	}, [store]);
 
 	return (
 		<span contentEditable={false}>
