@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { ExcalidrawPlugin } from '@platejs/excalidraw/react';
+import { ExcalidrawPlugin } from "@platejs/excalidraw/react";
 
-import { ExcalidrawElement } from '~/components/excalidraw-node';
+import { ExcalidrawElement } from "~/components/excalidraw-node";
 
 export const ExcalidrawKit = [
-  ExcalidrawPlugin.withComponent(ExcalidrawElement),
+	ExcalidrawPlugin.withComponent(ExcalidrawElement),
 ];
