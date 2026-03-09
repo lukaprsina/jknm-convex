@@ -1,7 +1,7 @@
-import { BaseCommentPlugin } from '@platejs/comment';
+import { BaseCommentPlugin } from "@platejs/comment";
 
-import { CommentLeafStatic } from '~/components/editor/comment-node-static';
+import { CommentLeafStatic } from "~/components/editor/comment-node-static";
 
 export const BaseCommentKit = [
-  BaseCommentPlugin.withComponent(CommentLeafStatic),
+	BaseCommentPlugin.withComponent(CommentLeafStatic),
 ];
