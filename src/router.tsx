@@ -16,6 +16,7 @@ export function getRouter() {
 	if (!convexUrl) {
 		throw new Error("VITE_CONVEX_URL is not set");
 	}
+
 	const convexQueryClient = new ConvexQueryClient(convexUrl, {
 		expectAuth: true,
 	});
@@ -28,6 +29,7 @@ export function getRouter() {
 			},
 		},
 	});
+
 	convexQueryClient.connect(queryClient);
 
 	const router = createTanStackRouter({
@@ -38,6 +40,7 @@ export function getRouter() {
 		context: { queryClient, convexQueryClient },
 		scrollRestoration: true,
 	});
+
 	setupRouterSsrQueryIntegration({
 		router,
 		queryClient,

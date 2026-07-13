@@ -4,14 +4,14 @@ import {
 	type GenericCtx,
 } from "@convex-dev/better-auth";
 import { convex } from "@convex-dev/better-auth/plugins";
-import { type BetterAuthOptions, betterAuth } from "better-auth";
+import { type Auth, type BetterAuthOptions, betterAuth } from "better-auth";
 import { components, internal } from "./_generated/api";
 import type { DataModel } from "./_generated/dataModel";
 import { query } from "./_generated/server";
 import authConfig from "./auth.config";
 import betterAuthSchema from "./betterAuth/schema";
 
-const siteUrl = process.env.SITE_URL!;
+const siteUrl = process.env.VITE_SITE_URL!;
 
 const authFunctions: AuthFunctions = internal.auth;
 
@@ -93,7 +93,16 @@ export const createAuthOptions = (
 	}) satisfies BetterAuthOptions;
 
 export const createAuth = (ctx: GenericCtx<DataModel>) => {
-	return betterAuth(createAuthOptions(ctx));
+	// Narrow the BetterAuth options so `baseURL` is a plain string (not the
+	// DynamicBaseURLConfig union). Convex's `registerRoutes` expects the
+	// registerable auth object's `options.baseURL` to be `string | undefined`.
+	// We keep the runtime behavior the same and only narrow types for TS.
+	type StrictBetterAuthOptions = Omit<BetterAuthOptions, "baseURL"> & {
+		baseURL?: string;
+	};
+	return betterAuth(
+		createAuthOptions(ctx) as StrictBetterAuthOptions,
+	) as Auth<StrictBetterAuthOptions>;
 };
 
 // Example function for getting the current user
